@@ -95,7 +95,7 @@ public class ActivityMails extends AppCompatActivity
 
         // Create the Child observer object that will fire the event
         mailReader = new MailReader(this,"imap.gmail.com", "hemedmeir@gmail.com", "13579Mot");
-        IsHaveToCheckNewEmails = MainActivity.MailStayOnLine;
+        IsHaveToCheckNewEmails = true;      //TODO:MainActivity.MailStayOnLine;
 
         // Register the listener for this object
         mailReader.setOnMessagesLoaded(new PersonalEvents.OnMessageLoaded()
@@ -113,10 +113,10 @@ public class ActivityMails extends AppCompatActivity
 
         //Messages = mailReader.ReadMailImap();
 
-        if (MainActivity.MailStayOnLine)
-        {
+        //if (MainActivity.MailStayOnLine)
+        //{
             CheckNewMails();
-        }
+        //}
 
         int rrr;
 
@@ -227,6 +227,7 @@ public class ActivityMails extends AppCompatActivity
 
     public void CheckNewMails()
     {
+        System.out.println("In CheckMail");
         thread = new Thread()
         {
             @Override
@@ -238,6 +239,7 @@ public class ActivityMails extends AppCompatActivity
                     {
                         Thread.sleep(5000);
 
+                        System.out.println("In check mail loop");
                         Store store = null;
                         Folder folder;
                         // Connect to email server
