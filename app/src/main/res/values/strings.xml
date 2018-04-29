@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MH Organanizer</string>
+    <string name="MainUserName">MainUserName</string>
+    <string name="EmailAddress">MainAddress</string>
+    <string name="EmailPassword">EmailPassword</string>
+    <string name="email_address">EmailAddress</string>
+</resources>
