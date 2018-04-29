@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorView_background"
     tools:context="com.example.meirh.mhorgananizer.ActivityMusic">
 
     <TextView
@@ -11,8 +12,9 @@
         android:layout_width="156dp"
         android:layout_height="22dp"
         android:text="Meia Player"
-        android:textAlignment="center"
-        android:textSize="18sp"
+        android:textAlignment="textStart"
+        android:textColor="#ef0920"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -20,23 +22,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.239" />
 
-    <SeekBar
-        android:id="@+id/barSeek"
-        android:layout_width="357dp"
-        android:layout_height="33dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:max="100"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.545"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.398" />
-
-    <TextView
+     <TextView
         android:id="@+id/lblSongArtist"
         android:layout_width="150dp"
         android:layout_height="19dp"
@@ -52,6 +38,22 @@
         app:layout_constraintTop_toBottomOf="@+id/lblSongName"
         app:layout_constraintVertical_bias="0.026" />
 
+    <TextView
+        android:id="@+id/lblAlbum"
+        android:layout_width="156dp"
+        android:layout_height="21dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Album"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblSongArtist"
+        app:layout_constraintVertical_bias="0.003" />
+
     <ImageView
         android:id="@+id/imgSongArtist"
         android:layout_width="90dp"
@@ -60,44 +62,45 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/meir1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/meir1" />
+        app:srcCompat="@drawable/oval" />
 
     <TextView
         android:id="@+id/lblPosNow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="40dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="33dp"
         android:text="0.00"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/lblPosLeft"
-        app:layout_constraintHorizontal_bias="0.027"
+        app:layout_constraintEnd_toStartOf="@+id/barSeek"
+        app:layout_constraintHorizontal_bias="0.333"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.455" />
+        app:layout_constraintVertical_bias="0.401" />
 
     <TextView
         android:id="@+id/lblPosLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="360dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="40dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="33dp"
         android:text="0.00"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.375"
+        app:layout_constraintStart_toEndOf="@+id/barSeek"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.455" />
+        app:layout_constraintVertical_bias="0.401" />
 
     <ImageView
         android:id="@+id/imgLine"
@@ -110,39 +113,70 @@
         app:layout_constraintTop_toBottomOf="@+id/imgSongArtist"
         app:srcCompat="@drawable/divider" />
 
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="64dp"
+    <SeekBar
+        android:id="@+id/barSeek"
+        android:layout_width="307dp"
+        android:layout_height="33dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:background="@color/playButtons"
-        android:padding="11dp"
+        android:layout_marginTop="8dp"
+        android:max="100"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintHorizontal_bias="0.545"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.398" />
 
-        <Button
-            android:id="@+id/btnPrev"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@android:drawable/ic_media_previous"
-            android:textSize="9dp" />
+    <Button
+        android:id="@+id/btnPrev"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:drawable/ic_media_previous"
+        android:textSize="9dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnPlay"
+        app:layout_constraintHorizontal_bias="0.568"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.843" />
 
-        <Button
-            android:id="@+id/btnPlay"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@android:drawable/ic_media_play"
-            android:textSize="9dp" />
+    <Button
+        android:id="@+id/btnPlay"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:drawable/ic_media_play"
+        android:textSize="9dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.843" />
 
-        <Button
-            android:id="@+id/btnNext"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@android:drawable/ic_media_next"
-            android:textSize="9dp" />
-    </TableRow>
+    <Button
+        android:id="@+id/btnNext"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:drawable/ic_media_next"
+        android:textSize="9dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnPlay"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.843" />
 
     <Button
         android:id="@+id/btnBack"
@@ -170,6 +204,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="@color/list_background_player"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.333"
@@ -177,20 +212,5 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.642" />
 
-    <TextView
-        android:id="@+id/lblAlbum"
-        android:layout_width="156dp"
-        android:layout_height="21dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Album"
-        android:textStyle="italic"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblSongArtist"
-        app:layout_constraintVertical_bias="0.003" />
 
 </android.support.constraint.ConstraintLayout>

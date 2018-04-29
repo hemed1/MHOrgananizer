@@ -21,10 +21,12 @@ import java.util.List;
 
 import javax.mail.Address;
 import javax.mail.BodyPart;
+import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.NoSuchProviderException;
+import javax.mail.Store;
 
 import Adapter.AdapterEmail;
 import Model.ListItemEmail;
@@ -47,6 +49,8 @@ public class ActivityMails extends AppCompatActivity
 
     MailReader                      mailReader;
     Message[]                       Messages = null;
+    private Thread                  thread;
+    private boolean                 IsHaveToCheckNewEmails;
 
 
     @Override
@@ -91,6 +95,7 @@ public class ActivityMails extends AppCompatActivity
 
         // Create the Child observer object that will fire the event
         mailReader = new MailReader(this,"imap.gmail.com", "hemedmeir@gmail.com", "13579Mot");
+        IsHaveToCheckNewEmails = MainActivity.MailStayOnLine;
 
         // Register the listener for this object
         mailReader.setOnMessagesLoaded(new PersonalEvents.OnMessageLoaded()
@@ -107,6 +112,18 @@ public class ActivityMails extends AppCompatActivity
         mailReader.execute();
 
         //Messages = mailReader.ReadMailImap();
+
+        if (MainActivity.MailStayOnLine)
+        {
+            CheckNewMails();
+        }
+
+        int rrr;
+
+        rrr=2;
+        System.out.println(rrr);
+
+
         //Messages = mailReader.ReadMailImap2();
         //Messages = mailReader.ReadMailPop3();
 
@@ -208,10 +225,76 @@ public class ActivityMails extends AppCompatActivity
         return item;
     }
 
+    public void CheckNewMails()
+    {
+        thread = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    while (IsHaveToCheckNewEmails)
+                    {
+                        Thread.sleep(5000);
+
+                        Store store = null;
+                        Folder folder;
+                        // Connect to email server
+                        folder = mailReader.ConnectServer(store);
+                        if (mailReader.getLastMessageIndexWasRead() > 100)
+                        //TODO: if (folder.getMessageCount() > LastMessageIndexWasRead)
+                        {
+                            folder.close(true);
+                            store.close();
+                            mailReader.execute();
+                            //Message[] messages = mailReader.ReadMailImap();
+
+//                            if (listener != null)
+//                            {
+//                                // Now let's fire listener here
+//                                listener.onDataLoaded(messages);
+//                            }
+                        }
+                        //TODO: folder.close(true);
+                        //store.close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.out.println("Exception arise at the time of read mail");
+                    ex.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
+
+
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable()
+//        {
+//            @Override
+//            public void run() {
+//                try
+//                {
+//                    Store store = null;
+//                }
+//                catch (Exception ex)
+//                {
+//                    System.out.println("Exception arise at the time of read mail");
+//                    ex.printStackTrace();
+//                }
+//            }
+//        }, 6000);
+
+    }
+
     private void goBack()
     {
         String returnedData;
 
+        this.IsHaveToCheckNewEmails = false;
         returnedData = "18 emails haz been read";
 
         Intent  intent = getIntent();

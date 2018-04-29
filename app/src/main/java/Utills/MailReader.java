@@ -48,9 +48,9 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     private ProgressDialog                      progressDialog;
 
     private Message[]                           MessageResults;
+
     private long                                LastMessageIndexWasRead;
     public static final String                  FOLDER_NAME = "INBOX";
-    private Thread          thread;
 
     // The listener must implement the events interface and passes messages up to the parent.
     private PersonalEvents.OnMessageLoaded      listener;
@@ -81,6 +81,23 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         MessageResults = null;
     }
 
+    @Override
+    protected void onCancelled(Message[] messages)
+    {
+        super.onCancelled(messages);
+    }
+
+    @Override
+    protected void onCancelled()
+    {
+        super.onCancelled();
+    }
+
+    @Override
+    protected void onProgressUpdate(Void... values)
+    {
+        super.onProgressUpdate(values);
+    }
 
     @Override
     protected void onPreExecute()
@@ -115,89 +132,8 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             // Now let's fire listener here
             listener.onDataLoaded(messages);
         }
-
-        CheckNewMails();
     }
 
-    private void CheckNewMails()
-    {
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable()
-        {
-            @Override
-            public void run() {
-                try
-                {
-                    Store store = null;
-                    Folder folder = ConnectServer(store);
-                    if (folder.getMessageCount() > LastMessageIndexWasRead) {
-                        folder.close(true);
-                        store.close();
-
-                        Message[] messages = ReadMailImap();
-                        //execute();
-                        //animMain.stop();
-                    }
-                    folder.close(true);
-                    store.close();
-                }
-                catch (Exception ex)
-                {
-                    System.out.println("Exception arise at the time of read mail");
-                    ex.printStackTrace();
-                }
-            }
-        }, 6000);
-    }
-
-    public void updateThread() {
-        thread = new Thread() {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    Store store = null;
-                    Folder folder = ConnectServer(store);
-                    if (folder.getMessageCount() > LastMessageIndexWasRead) {
-                        folder.close(true);
-                        store.close();
-
-                        Message[] messages = ReadMailImap();
-                        //execute();
-                        //animMain.stop();
-                    }
-                    folder.close(true);
-                    store.close();
-                }
-                catch (Exception ex)
-                {
-                    System.out.println("Exception arise at the time of read mail");
-                    ex.printStackTrace();
-                }
-
-
-                try {
-                    while (true) {
-                        Thread.sleep(50);
-                        context.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                //barSeek.setMax(newMax);
-                                //int newMax = mediaPlayer.getDuration();
-                                int newPosition = mediaPlayer.getCurrentPosition();
-                                barSeek.setProgress(newPosition);
-                            }
-                        });
-
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        thread.start();
-    }
 
     public String getHostAddress()
     {
@@ -229,6 +165,10 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         Password = password;
     }
 
+    public long getLastMessageIndexWasRead()
+    {
+        return LastMessageIndexWasRead;
+    }
 
 
 
@@ -242,8 +182,10 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 
         messages= new Message[0];
 
-        try
-        {
+// TODO: UnRemark
+//        try
+//        {
+            // Connect to email server
             folder = ConnectServer(store);
 
             //folder.getMessages(new int[]{1,2,3,4,5,6,7,8,9,10});
@@ -251,39 +193,42 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             //folder.setFlags(1,30, new Flags(Flags.Flag.RECENT), false);
             //folder.setFlags(messages, new Flags(Flags.Flag.RECENT), false);
             //messages = folder.getMessages(1, 30);
-            messages = folder.getMessages(folder.getMessageCount() - MainActivity.DEFUALT_MESSAGES_TO_READ, folder.getMessageCount());
-            // Get All messages
-            //messages = folder.getMessages();
-            // Get specific message
-            //Message message = folder.getMessage(inbox.getMessageCount());  // .getUnreadMessageCount()
 
-            System.out.println("No of Unread Messages : " + folder.getUnreadMessageCount());
+// TODO: UnRemark
+//            messages = folder.getMessages(folder.getMessageCount() - MainActivity.DEFUALT_MESSAGES_TO_READ, folder.getMessageCount());
+//            // Get All messages
+//            //messages = folder.getMessages();
+//            // Get specific message
+//            //Message message = folder.getMessage(inbox.getMessageCount());  // .getUnreadMessageCount()
+//
+//            System.out.println("No of Unread Messages : " + folder.getUnreadMessageCount());
+//
+//            FetchProfile fetchProfile = new FetchProfile();
+//            fetchProfile.add(FetchProfile.Item.ENVELOPE);
+//            fetchProfile.add(FetchProfile.Item.CONTENT_INFO);
+//            fetchProfile.add(FetchProfile.Item.FLAGS);
 
-            FetchProfile fetchProfile = new FetchProfile();
-            fetchProfile.add(FetchProfile.Item.ENVELOPE);
-            fetchProfile.add(FetchProfile.Item.CONTENT_INFO);
-            fetchProfile.add(FetchProfile.Item.FLAGS);
 
-
-            try
-            {
-                folder.fetch(messages, fetchProfile);
-                //printAllMessages(messages);
-                folder.close(true);
-                store.close();
-            }
-            catch (Exception ex)
-            {
-                System.out.println("Exception arise at the time of read mail");
-                ex.printStackTrace();
-            }
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-            //System.exit(1);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            //System.exit(2);
-        }
+// TODO: UnRemark
+//            try
+//            {
+//                folder.fetch(messages, fetchProfile);
+//                //printAllMessages(messages);
+//                folder.close(true);
+//                store.close();
+//            }
+//            catch (Exception ex)
+//            {
+//                System.out.println("Exception arise at the time of read mail");
+//                ex.printStackTrace();
+//            }
+//        } catch (NoSuchProviderException e) {
+//            e.printStackTrace();
+//            //System.exit(1);
+//        } catch (MessagingException e) {
+//            e.printStackTrace();
+//            //System.exit(2);
+//        }
 
         // Now let's fire listener here
         ///if (listener != null)
@@ -294,7 +239,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         return messages;
     }
 
-    private Folder ConnectServer(Store store)
+    public Folder ConnectServer(Store store)
     {
         Properties  properties = null;
         Session     session = null;
@@ -306,34 +251,37 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+// TODO: UnRemark
+//        //HostAddress = "imap.gmail.com";
+//        StoreType = "imaps";
+//
+//        try
+//        {
+//            properties = System.getProperties();
+//            properties.setProperty("mail.store.protocol", StoreType);
+//
+//            session = Session.getDefaultInstance(properties, null);
+//            store = session.getStore(StoreType);
+//
+//            store.connect(HostAddress,UserAddress,Password);
+//
+//            foler = store.getFolder(FOLDER_NAME);
+//            foler.open(Folder.READ_ONLY);
+//
+//            LastMessageIndexWasRead = foler.getMessageCount();
+//        }
+//        catch (NoSuchProviderException e)
+//        {
+//            e.printStackTrace();
+//            //System.exit(1);
+//        }
+//        catch (MessagingException e) {
+//            e.printStackTrace();
+//            //System.exit(2);
+//        }
 
-        //HostAddress = "imap.gmail.com";
-        StoreType = "imaps";
-
-        try
-        {
-            properties = System.getProperties();
-            properties.setProperty("mail.store.protocol", StoreType);
-
-            session = Session.getDefaultInstance(properties, null);
-            store = session.getStore(StoreType);
-
-            store.connect(HostAddress,UserAddress,Password);
-
-            foler = store.getFolder(FOLDER_NAME);
-            foler.open(Folder.READ_ONLY);
-
-            LastMessageIndexWasRead = foler.getMessageCount();
-        }
-        catch (NoSuchProviderException e)
-        {
-            e.printStackTrace();
-            //System.exit(1);
-        }
-        catch (MessagingException e) {
-            e.printStackTrace();
-            //System.exit(2);
-        }
+        //TODO:
+        LastMessageIndexWasRead = 20;
 
         return  foler;
     }
