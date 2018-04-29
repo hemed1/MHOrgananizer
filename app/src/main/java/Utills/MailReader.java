@@ -193,7 +193,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             //folder.setFlags(1,30, new Flags(Flags.Flag.RECENT), false);
             //folder.setFlags(messages, new Flags(Flags.Flag.RECENT), false);
             //messages = folder.getMessages(1, 30);
-
+// xxxx
 // TODO: UnRemark
 //            messages = folder.getMessages(folder.getMessageCount() - MainActivity.DEFUALT_MESSAGES_TO_READ, folder.getMessageCount());
 //            // Get All messages
