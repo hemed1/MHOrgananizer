@@ -147,7 +147,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                     ex.printStackTrace();
                 }
             }
-        }, 5000);
+        }, 6000);
     }
 
     public void updateThread() {
