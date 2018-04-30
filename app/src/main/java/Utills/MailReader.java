@@ -317,7 +317,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                             System.out.println("In check mail loop: fetach new messages/n");
                             store.close();
                             folder.close(true);
-
+// vvvv
                             ////IsHaveToCheckNewEmails=false;
                             //ReadMailImap();
                             //execute();
