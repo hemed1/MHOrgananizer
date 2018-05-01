@@ -70,6 +70,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         this.Password = password;
         this.context = context;
         thread=null;
+        IsHaveToCheckNewEmails = true;
         MessageResults = null;
     }
 
@@ -79,6 +80,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         this.Password = password;
         this.context = context;
         thread=null;
+        IsHaveToCheckNewEmails = true;
         MessageResults = null;
     }
 
@@ -315,23 +317,25 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                         if (folder.getMessageCount() > LastMessageIndexWasRead)
                         {
                             System.out.println("In check mail loop: fetach new messages/n");
-                            store.close();
                             folder.close(true);
-// vvvv
-                            ////IsHaveToCheckNewEmails=false;
-                            //ReadMailImap();
-                            //execute();
-                            //Message[] messages = mailReader.ReadMailImap();
+                            store=null;  // store.close();
 
-//                            if (listener != null)
-//                            {
-//                                // Now let's fire listener here
-//                                listener.onDataLoaded(messages);
-//                            }
+                            IsHaveToCheckNewEmails=false;
+                            thread=null;
+
+                            //execute();
+                            Message[] messages = ReadMailImap();
+                            if (listener != null)
+                            {
+                                // Now let's fire listener here
+                                listener.onDataLoaded(messages);
+                            }
+                            break;
                         }
 
-                        store.close();
                         folder.close(true);
+                        //store.close();
+                        store=null;
                     }
                 }
                 catch (Exception ex)

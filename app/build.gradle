@@ -14,7 +14,14 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
+            jniDebuggable false
+            renderscriptDebuggable false
+            renderscriptOptimLevel 3
+            zipAlignEnabled true
         }
+    }
+    productFlavors {
     }
 }
 
