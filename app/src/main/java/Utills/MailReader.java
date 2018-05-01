@@ -237,7 +237,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                 folder.fetch(messages, fetchProfile);
                 //printAllMessages(messages);
                 folder.close(true);
-                //TODO: store.close();
+                //TODO:store.close();
             }
             catch (Exception ex)
             {
@@ -344,6 +344,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                             //    listener.onDataLoaded(messages);
                             //}
                             //return;
+                            //if (thread.isInterrupted());
                             stopThread(this);
                             //return;
                             //break;
@@ -376,6 +377,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         {
             //theThread.stop();
             //theThread.interrupt();
+            theThread.destroy();
             theThread = null;
         }
 

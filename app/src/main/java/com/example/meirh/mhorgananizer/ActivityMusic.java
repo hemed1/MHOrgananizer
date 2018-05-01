@@ -300,7 +300,8 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onDestroy()
     {
-        if (mediaPlayer != null) {
+        if (mediaPlayer != null)
+        {
             Toast.makeText(ActivityMusic.this, "Destroing Media Player control", Toast.LENGTH_SHORT).show();
             mediaPlayer.stop();
             mediaPlayer.release();

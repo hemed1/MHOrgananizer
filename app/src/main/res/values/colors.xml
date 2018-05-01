@@ -11,4 +11,6 @@
     <color name="player_play_buttons">#c645b7</color>
     <color name="card_view_background_player">#73646c</color>
     <color name="card_view_background_mail">#312f2f</color>
+    <color name="titles_second_foreground">#ece8e8</color>
+    <color name="titles_main_foreground">#ece8e8</color>
 </resources>
