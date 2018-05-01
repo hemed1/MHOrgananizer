@@ -70,6 +70,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         this.Password = password;
         this.context = context;
         thread=null;
+        IsHaveToCheckNewEmails = true;
         MessageResults = null;
     }
 
@@ -79,6 +80,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         this.Password = password;
         this.context = context;
         thread=null;
+        IsHaveToCheckNewEmails = true;
         MessageResults = null;
     }
 
@@ -309,30 +311,32 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                         Store store = null;
                         Folder folder;
                         // Connect to email server
-         //               folder = ConnectServer(store);
-         //               LastMessageIndexWasRead=folder.getMessageCount()-2;  // TODO:
+                        folder = ConnectServer(store);
+                        LastMessageIndexWasRead=folder.getMessageCount()-2;  // TODO:
                         //if (mailReader.getLastMessageIndexWasRead() > 100)
-         //               if (folder.getMessageCount() > LastMessageIndexWasRead)
-         //               {
+                        if (folder.getMessageCount() > LastMessageIndexWasRead)
+                        {
                             System.out.println("In check mail loop: fetach new messages/n");
-         //                   store.close();
-         //                   folder.close(true);
+                            folder.close(true);
+                            store=null;  // store.close();
 
-                            ////IsHaveToCheckNewEmails=false;
-                            //ReadMailImap();
+                            IsHaveToCheckNewEmails=false;
+                            thread=null;
+
                             //execute();
-                            //Message[] messages = mailReader.ReadMailImap();
-
-//                            if (listener != null)
-//                            {
-//                                // Now let's fire listener here
-//                                listener.onDataLoaded(messages);
-//                            }
+                            Message[] messages = ReadMailImap();
+                            if (listener != null)
+                            {
+                                // Now let's fire listener here
+                                listener.onDataLoaded(messages);
+                            }
+                            break;
                         }
 
-          //              store.close();
-          //              folder.close(true);
-          //          }
+                        folder.close(true);
+                        //store.close();
+                        store=null;
+                    }
                 }
                 catch (Exception ex)
                 {
