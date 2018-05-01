@@ -309,15 +309,15 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                         Store store = null;
                         Folder folder;
                         // Connect to email server
-                        folder = ConnectServer(store);
-                        LastMessageIndexWasRead=folder.getMessageCount()-2;  // TODO:
+         //               folder = ConnectServer(store);
+         //               LastMessageIndexWasRead=folder.getMessageCount()-2;  // TODO:
                         //if (mailReader.getLastMessageIndexWasRead() > 100)
-                        if (folder.getMessageCount() > LastMessageIndexWasRead)
-                        {
+         //               if (folder.getMessageCount() > LastMessageIndexWasRead)
+         //               {
                             System.out.println("In check mail loop: fetach new messages/n");
-                            store.close();
-                            folder.close(true);
-// vvvv
+         //                   store.close();
+         //                   folder.close(true);
+
                             ////IsHaveToCheckNewEmails=false;
                             //ReadMailImap();
                             //execute();
@@ -330,9 +330,9 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 //                            }
                         }
 
-                        store.close();
-                        folder.close(true);
-                    }
+          //              store.close();
+          //              folder.close(true);
+          //          }
                 }
                 catch (Exception ex)
                 {
