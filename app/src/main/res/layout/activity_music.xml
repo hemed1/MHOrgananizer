@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.239" />
 
-     <TextView
+    <TextView
         android:id="@+id/lblSongArtist"
         android:layout_width="150dp"
         android:layout_height="19dp"
@@ -105,7 +105,7 @@
     <ImageView
         android:id="@+id/imgLine"
         android:layout_width="350dp"
-        android:layout_height="5dp"
+        android:layout_height="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -198,19 +198,18 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/listSongs"
-        android:layout_width="371dp"
-        android:layout_height="123dp"
+        android:layout_width="368dp"
+        android:layout_height="185dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@color/list_background_player"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnPlay"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintHorizontal_bias="0.461"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.642" />
+        app:layout_constraintTop_toBottomOf="@+id/barSeek" />
 
 
 </android.support.constraint.ConstraintLayout>

@@ -104,8 +104,8 @@ public class ActivityMails extends AppCompatActivity
             {
                 FillList(messages);
 
-                mailReader.IsHaveToCheckNewEmails=true;
-                mailReader.CheckNewMails();
+                //mailReader.IsHaveToCheckNewEmails=true;
+                //mailReader.CheckNewMails();
             }
         });
 

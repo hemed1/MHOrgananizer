@@ -96,6 +96,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
             lblSongName = (TextView) cardViewItem.findViewById(R.id.lblSongName);
             lblArtist = (TextView) cardViewItem.findViewById(R.id.lblArtist);
             lblAlbum = (TextView) cardViewItem.findViewById(R.id.lblAlbum);
+            lblAlbum.setVisibility(View.INVISIBLE);
             lblYear = (TextView) cardViewItem.findViewById(R.id.lblYear);
             lblYear.setVisibility(View.INVISIBLE);
             Image = (ImageView) cardViewItem.findViewById(R.id.imgItem);
