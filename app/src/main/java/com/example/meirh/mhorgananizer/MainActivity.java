@@ -65,9 +65,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             case R.id.btnMails:
                 Intent intentMail = new Intent(MainActivity.this, ActivityMails.class);
-                intentMail.putExtra("email_address", MailAdresss);
-                intentMail.putExtra("email_password", MailPassword);
-                intentMail.putExtra("email_hostAddress", MailPassword);
+                intentMail.putExtra(MainActivity.SETTING_MAIL_USER_NAME, MainUserName);
+                intentMail.putExtra(MainActivity.SETTING_MAIL_EMAIL_ADDRESS, MailAdresss);
+                intentMail.putExtra(MainActivity.SETTING_MAIL_EMAIL_PASSWORD, MailPassword);
+                intentMail.putExtra(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS, MailHostAdress);
+                intentMail.putExtra(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE, MailStayOnLine);
                 startActivityForResult(intentMail, REQUEST_CODE_MAILS);
                 break;
 
