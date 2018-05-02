@@ -12,9 +12,9 @@ public class ListItemSong
     private String      Artist;
     private String      Album;
     private String      Year;
-    private int         resourceID;
+    private int         Duration;
+    private int         ResourceID;
     private ImageView   ImageItem;
-
 
 
 
@@ -25,12 +25,23 @@ public class ListItemSong
         this.Album=album;
     }
 
-    public int getResourceID() {
-        return resourceID;
+    public int getDuration()
+    {
+        return Duration;
+    }
+
+    public void setDuration(int duration)
+    {
+        Duration = duration;
+    }
+
+    public int getResourceID()
+    {
+        return ResourceID;
     }
 
     public void setResourceID(int resourceID) {
-        this.resourceID = resourceID;
+        this.ResourceID = resourceID;
     }
 
     public String getSongName() {

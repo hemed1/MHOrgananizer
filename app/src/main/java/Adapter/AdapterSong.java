@@ -23,6 +23,9 @@ import android.os.Bundle;
 import com.example.meirh.mhorgananizer.ActivityMusic;
 import com.example.meirh.mhorgananizer.MainActivity;
 import com.example.meirh.mhorgananizer.R;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import Model.ListItemSong;
 import Utills.PersonalEvents;
@@ -69,7 +72,12 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
         holder.lblSongName.setText(item.getSongName());
         holder.lblArtist.setText(item.getArtist());
         holder.lblAlbum.setText(item.getAlbum());
-        holder.lblYear.setText(item.getYear());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss");
+        holder.lblYear.setText(dateFormat.format(new Date(item.getDuration())));
+        //holder.lblYear.setText(String.valueOf(item.getDuration()/1000));
+        //holder.lblYear.setText(item.getYear());
+
         holder.Image.setImageDrawable(item.getImageItem().getDrawable());
     }
 
@@ -98,7 +106,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
             lblAlbum = (TextView) cardViewItem.findViewById(R.id.lblAlbum);
             lblAlbum.setVisibility(View.INVISIBLE);
             lblYear = (TextView) cardViewItem.findViewById(R.id.lblYear);
-            lblYear.setVisibility(View.INVISIBLE);
+            lblYear.setVisibility(View.VISIBLE);
             Image = (ImageView) cardViewItem.findViewById(R.id.imgItem);
         }
 

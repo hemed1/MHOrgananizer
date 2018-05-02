@@ -60,7 +60,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
         FillList();
 
-        LoadSongIntoPlayer(R.raw.love_the_one, 1);
+        LoadSongIntoPlayer(R.raw.love_the_one, 3);
     }
 
     private void setUpUI()
@@ -146,6 +146,9 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         mediaPlayer = MediaPlayer.create(getApplicationContext(), resourceID);
         barSeek.setMax(mediaPlayer.getDuration());
 
+        // done in 'FillList()' func
+        //listItems.get(listPositionIndex).setDuration(mediaPlayer.getDuration());
+
         lblSongName.setText(listItems.get(listPositionIndex).getSongName());
         lblSongArtist.setText(listItems.get(listPositionIndex).getArtist());
         lblAlbum.setText(listItems.get(listPositionIndex).getAlbum());
@@ -163,7 +166,9 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             ListItemSong item = new ListItemSong(fields[i].getName(), "Artist of Item " + (i+1), "Album of Item " + (i+1));  // TODO: add album
 
             int resourceId = this.getResources().getIdentifier(fields[i].getName(), "raw", this.getPackageName());
+            int duration   = MediaPlayer.create(getApplicationContext(), resourceId).getDuration();
             item.setResourceID(resourceId);
+            item.setDuration(duration);
             item.setYear("Year " + String.valueOf(2000+i+1));   // TODO: get year
 
             ImageView imageView = new ImageView(this);

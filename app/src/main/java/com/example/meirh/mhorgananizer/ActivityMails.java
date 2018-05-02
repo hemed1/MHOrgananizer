@@ -50,6 +50,10 @@ public class ActivityMails extends AppCompatActivity
     MailReader                      mailReader;
     Message[]                       Messages = null;
 
+    private Thread                              thread;
+    private int                                 LastMessageIndexWasRead;
+    public static final String                  FOLDER_NAME = "INBOX";
+    public boolean                              IsHaveToCheckNewEmails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -92,7 +96,7 @@ public class ActivityMails extends AppCompatActivity
         adapterEmail = new AdapterEmail(this, listItems);
 
         // Create the Child observer object that will fire the event
-        mailReader = new MailReader(this,"imap.gmail.com", "hemedmeir@gmail.com", "13579Mot");
+        mailReader = new MailReader(this,"imap.gmail.com", MainActivity.MailAdresss, MainActivity.MailPassword);
         mailReader.IsHaveToCheckNewEmails = true;      //TODO:MainActivity.MailStayOnLine;
 
         // Register the listener for this object
@@ -104,8 +108,14 @@ public class ActivityMails extends AppCompatActivity
             {
                 FillList(messages);
 
-                //mailReader.IsHaveToCheckNewEmails=true;
+                mailReader = null;
+                mailReader = new MailReader(ActivityMails.this,"imap.gmail.com", MainActivity.MailAdresss, MainActivity.MailPassword);
+                mailReader.IsHaveToCheckNewEmails=true;
                 //mailReader.CheckNewMails();
+
+                mailReader.execute();
+                //IsHaveToCheckNewEmails=true;
+                ////CheckNewMails();
             }
         });
 
@@ -131,21 +141,10 @@ public class ActivityMails extends AppCompatActivity
     }
 
 
-    private boolean SendEmail()
-    {
-        boolean  result = true;
-
-        MailSender mailSender = new MailSender(this, "hemedmeir@gmail.com", "Test Me", "Body Test");
-
-        mailSender.SendMailSimple();
-
-        return result;
-    }
-
     private void FillList(Message[]  messages) //throws IOException
     {
 
-        listItems = new ArrayList<>();  //new List<ListItemEmail>
+        //listItems = new ArrayList<>();  //new List<ListItemEmail>
 
         for (int i=messages.length-1; i>0; i--)
         {
@@ -220,6 +219,93 @@ public class ActivityMails extends AppCompatActivity
         return item;
     }
 
+
+    public void CheckNewMails()
+    {
+
+        Messages = new Message[0];
+
+
+        thread = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    while (IsHaveToCheckNewEmails)
+                    {
+                        Thread.sleep(5000);
+
+                        System.out.println("'CheckNewMails' check new mails In loop/n/n");
+                        Store store = null;
+                        Folder folder;
+
+                        // Connect to email server
+                        folder = mailReader.ConnectServer(store);
+
+                        mailReader.LastMessageIndexWasRead=folder.getMessageCount()-2;  // TODO:
+                        //if (mailReader.getLastMessageIndexWasRead() > 100)
+                        if (folder.getMessageCount() > mailReader.LastMessageIndexWasRead)
+                        {
+                            System.out.println("'CheckNewMail()' found new mails" + new Date().toString()+"/n");
+                            folder.close(true);
+                            store=null;  // store.close();
+
+                            //IsHaveToCheckNewEmails=false;
+
+                            //execute();
+                            Messages = mailReader.ReadMailImap();
+
+                            FillList(Messages);
+
+                            //thread.stop();
+                            //if (listener != null)
+                            //{
+                            //    // Now let's fire listener here
+                            //    listener.onDataLoaded(messages);
+                            //}
+                            //return;
+                            //if (thread.isInterrupted());
+                            //stopThread(this);
+                            //return;
+                            //break;
+                        }
+                        else
+                        {
+
+                            folder.close(true);
+                            //store.close();
+                            store = null;
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    System.out.println("Exception rise at 'CheckNewMails': " + ex.getMessage());
+                    ex.printStackTrace();
+                }
+            }
+
+        };
+
+        //thread = new Thread(myRunnable);
+
+        thread.start();
+
+    }
+
+    private boolean SendEmail()
+    {
+        boolean  result = true;
+
+        MailSender mailSender = new MailSender(this, "hemedmeir@gmail.com", "Test Me", "Body Test");
+
+        mailSender.SendMailSimple();
+
+        return result;
+    }
 
     private void goBack()
     {

@@ -49,9 +49,10 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 
     private Message[]                           MessageResults;
     private Thread                              thread;
-    private int                                 LastMessageIndexWasRead;
+    public int                                  LastMessageIndexWasRead;
     public static final String                  FOLDER_NAME = "INBOX";
     public boolean                              IsHaveToCheckNewEmails;
+    public int                                  ModeLoad;
 
     // The listener must implement the events interface and passes messages up to the parent.
     private PersonalEvents.OnMessageLoaded      listener;
@@ -72,6 +73,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         thread=null;
         IsHaveToCheckNewEmails = true;
         MessageResults = null;
+        ModeLoad=1;
     }
 
     public MailReader(Context context, String userAddress, String password)
@@ -82,6 +84,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         thread=null;
         IsHaveToCheckNewEmails = true;
         MessageResults = null;
+        ModeLoad=1;
     }
 
     @Override
@@ -114,9 +117,18 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     @Override
     protected Message[] doInBackground(Void... params)
     {
-        Message[] messages = ReadMailImap();
-        //ReadMailImap2();
-        //ReadMailPop3();
+        Message[] messages=null;
+
+        if (ModeLoad==1)
+        {
+            messages = ReadMailImap();
+            //ReadMailImap2();
+            //ReadMailPop3();
+        }
+        else
+        {
+            CheckNewMails();
+        }
 
         return messages;
     }
@@ -277,7 +289,8 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             properties = System.getProperties();
             properties.setProperty("mail.store.protocol", StoreType);
 
-            session = Session.getDefaultInstance(properties, null);
+            //session = Session.getDefaultInstance(properties, null);
+            session = Session.getDefaultInstance(properties);
             store = session.getStore(StoreType);
 
             store.connect(HostAddress,UserAddress,Password);
@@ -307,16 +320,16 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         MessageResults = new Message[0];
 
 
-        thread = new Thread()
-        {
-            @Override
-            public void run()
-            {
+//        thread = new Thread()
+//        {
+//            @Override
+//            public void run()
+//            {
                 try
                 {
                     while (IsHaveToCheckNewEmails)
                     {
-                        Thread.sleep(5000);
+                        Thread.sleep(4000);
 
                         System.out.println("'CheckNewMails' check new mails In loop/n/n");
                         Store store = null;
@@ -325,7 +338,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                         // Connect to email server
                         folder = ConnectServer(store);
 
-                        LastMessageIndexWasRead=folder.getMessageCount()-2;  // TODO:
+                        LastMessageIndexWasRead = folder.getMessageCount()- 2;  // TODO: Delete
                         //if (mailReader.getLastMessageIndexWasRead() > 100)
                         if (folder.getMessageCount() > LastMessageIndexWasRead)
                         {
@@ -336,7 +349,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                             IsHaveToCheckNewEmails=false;
 
                             //execute();
-                            MessageResults = ReadMailImap();
+                            //MessageResults = ReadMailImap();
                             //thread.stop();
                             //if (listener != null)
                             //{
@@ -345,7 +358,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                             //}
                             //return;
                             //if (thread.isInterrupted());
-                            stopThread(this);
+                            //stopThread(this);
                             //return;
                             //break;
                         }
@@ -361,14 +374,15 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                     System.out.println("Exception rise at 'CheckNewMails': " + ex.getMessage());
                     ex.printStackTrace();
                 }
-            }
+//            }
 
-        };
+//        };
 
         //thread = new Thread(myRunnable);
 
-        thread.start();
-
+//        thread.start();
+//
+//
     }
 
     private synchronized void stopThread(Thread theThread)
@@ -377,13 +391,13 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         {
             //theThread.stop();
             //theThread.interrupt();
-            theThread.destroy();
+            //theThread.destroy();
+            //thread.stop();
             theThread = null;
         }
 
         if (listener != null && MessageResults.length>0)
         {
-            //thread.stop();
             // Now let's fire listener here
             listener.onDataLoaded(MessageResults);
         }
