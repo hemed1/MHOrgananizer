@@ -96,7 +96,7 @@ public class ActivityMails extends AppCompatActivity
         adapterEmail = new AdapterEmail(this, listItems);
 
         // Create the Child observer object that will fire the event
-        mailReader = new MailReader(this,"imap.gmail.com", MainActivity.MailAdresss, MainActivity.MailPassword);
+        mailReader = new MailReader(ActivityMails.this,"imap.gmail.com", "hemedmeir@gmail.com", "13579Mot");
         mailReader.IsHaveToCheckNewEmails = true;      //TODO:MainActivity.MailStayOnLine;
 
         // Register the listener for this object
@@ -109,7 +109,7 @@ public class ActivityMails extends AppCompatActivity
                 FillList(messages);
 
                 mailReader = null;
-                mailReader = new MailReader(ActivityMails.this,"imap.gmail.com", MainActivity.MailAdresss, MainActivity.MailPassword);
+                mailReader = new MailReader(ActivityMails.this,"imap.gmail.com", "hemedmeir@gmail.com", "13579Mot");
                 mailReader.IsHaveToCheckNewEmails=true;
                 //mailReader.CheckNewMails();
 

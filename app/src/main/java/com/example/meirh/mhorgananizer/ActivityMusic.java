@@ -3,6 +3,8 @@ package com.example.meirh.mhorgananizer;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Parcel;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -144,10 +146,8 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
     {
         MusicPause();
         mediaPlayer = MediaPlayer.create(getApplicationContext(), resourceID);
+        //mediaPlayer = MediaPlayer.create(new Uri("/0/Music/one.mp3");  //TODO: load from smartphone disk
         barSeek.setMax(mediaPlayer.getDuration());
-
-        // done in 'FillList()' func
-        //listItems.get(listPositionIndex).setDuration(mediaPlayer.getDuration());
 
         lblSongName.setText(listItems.get(listPositionIndex).getSongName());
         lblSongArtist.setText(listItems.get(listPositionIndex).getArtist());

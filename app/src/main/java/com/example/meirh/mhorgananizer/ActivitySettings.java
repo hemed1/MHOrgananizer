@@ -19,10 +19,12 @@ public class ActivitySettings extends AppCompatActivity
 {
 
     private Button          btnSave;
+    private Button          btnBack;
     private EditText        txtEmailAddress;
     private EditText        txtPassword;
     private EditText        txtUserName;
     private EditText        txtMailHostAddress;
+    private EditText        txtCheckMailInterval;
     private CheckBox        chkStayOnLine;
 
     private Bundle          extras;
@@ -37,16 +39,27 @@ public class ActivitySettings extends AppCompatActivity
         setContentView(R.layout.activity_settings);
 
         btnSave = (Button) this.findViewById(R.id.btnSave);
+        btnBack = (Button) this.findViewById(R.id.btnBack);
         txtUserName = (EditText) this.findViewById(R.id.txtUsserName);
         txtEmailAddress = (EditText) this.findViewById(R.id.txtEmailAddress);
         txtPassword = (EditText) this.findViewById(R.id.txtPassword);
         txtMailHostAddress = (EditText) this.findViewById(R.id.txtMailHostAddress);
+        txtCheckMailInterval = (EditText) this.findViewById(R.id.txtCheckMailInterval);
         chkStayOnLine = (CheckBox) this.findViewById(R.id.chkStayOnLine);
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 SaveSetting();
+            }
+        });
+        btnBack.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                goBack();
             }
         });
 
@@ -66,6 +79,7 @@ public class ActivitySettings extends AppCompatActivity
         txtEmailAddress.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_ADDRESS));
         txtPassword.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_PASSWORD));
         txtMailHostAddress.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS));
+        txtCheckMailInterval.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL));
         chkStayOnLine.setChecked(extras.getBoolean(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE));
     }
 
@@ -88,6 +102,7 @@ public class ActivitySettings extends AppCompatActivity
         editor.putString(MainActivity.SETTING_MAIL_EMAIL_ADDRESS, txtEmailAddress.getText().toString());
         editor.putString(MainActivity.SETTING_MAIL_EMAIL_PASSWORD, txtPassword.getText().toString());
         editor.putString(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS, txtMailHostAddress.getText().toString());  //TODO:
+        editor.putString(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL, txtCheckMailInterval.getText().toString());
         editor.putBoolean(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE, chkStayOnLine.isChecked());
 
         editor.commit();
@@ -107,6 +122,7 @@ public class ActivitySettings extends AppCompatActivity
             stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_ADDRESS + ": " + txtEmailAddress.getText().toString() + "\n");
             stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_PASSWORD + ": " + txtPassword.getText().toString() + "\n");
             stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS + ": " + txtMailHostAddress.getText().toString() + "\n");
+            stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL + ": " + txtCheckMailInterval.getText().toString() + "\n");
             stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE + ": " + String.valueOf(chkStayOnLine.isChecked()) + "\n");
 
             textToSave = stringBuilder.toString();
@@ -127,7 +143,7 @@ public class ActivitySettings extends AppCompatActivity
     {
         String returnedData;
 
-        returnedData = "18 emails haz been read";
+        returnedData = "Setting was saved";
 
         Intent intent = getIntent();
         intent.putExtra("returnedData",  returnedData);

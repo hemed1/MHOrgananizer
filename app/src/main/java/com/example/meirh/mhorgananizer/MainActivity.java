@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String       MailAdresss;
     public static String       MailPassword;
     public static String       MailHostAdress;
+    public static String       MailCheckMailInterval;
     public static boolean      MailStayOnLine;
 
     public static final String  PREFS_NAME = "MHOrganaizerPrefsFile";
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String  SETTING_MAIL_EMAIL_ADDRESS = "EmailAddress";
     public static final String  SETTING_MAIL_EMAIL_PASSWORD = "EmailPassword";
     public static final String  SETTING_MAIL_EMAIL_HOST_ADDRESS = "EmailHostAddress";
+    public static final String  SETTING_MAIL_EMAIL_CHECK_INTERVAL = "EmailCheckMailInterval";
     public static final String  SETTING_MAIL_EMAIL_STAY_ONLINE = "MailStayOnLine";
 
     public static final int     DEFUALT_MESSAGES_TO_READ = 30;
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intentSetting.putExtra(MainActivity.SETTING_MAIL_EMAIL_ADDRESS, MailAdresss);
                 intentSetting.putExtra(MainActivity.SETTING_MAIL_EMAIL_PASSWORD, MailPassword);
                 intentSetting.putExtra(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS, MailHostAdress);
+                intentSetting.putExtra(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL, MailCheckMailInterval);
                 intentSetting.putExtra(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE, MailStayOnLine);
 
                 startActivityForResult(intentSetting, REQUEST_CODE_SETTING);
@@ -178,6 +181,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (pos>-1 && (pos + SETTING_MAIL_EMAIL_HOST_ADDRESS.length() + 1 < tmpLine.length()))
                     {
                         MailHostAdress = tmpLine.substring(pos + SETTING_MAIL_EMAIL_HOST_ADDRESS.length() + 2);
+                    }
+                    pos = tmpLine.indexOf(SETTING_MAIL_EMAIL_CHECK_INTERVAL);
+                    if (pos>-1 && (pos + SETTING_MAIL_EMAIL_CHECK_INTERVAL.length() + 1 < tmpLine.length()))
+                    {
+                        MailCheckMailInterval = tmpLine.substring(pos + SETTING_MAIL_EMAIL_CHECK_INTERVAL.length() + 2);
                     }
                     pos = tmpLine.indexOf(SETTING_MAIL_EMAIL_STAY_ONLINE);
                     if (pos>-1 && (pos + SETTING_MAIL_EMAIL_STAY_ONLINE.length() + 1 < tmpLine.length()))

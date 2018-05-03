@@ -139,12 +139,10 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         super.onPostExecute(messages);
 
         progressDialog.dismiss();
-
+        thread=null;
         MessageResults = messages;
 
         Toast.makeText(context,"Messages read: " + String.valueOf(messages.length), Toast.LENGTH_LONG).show();
-
-        //cancel(true);
 
         if (listener != null)
         {
@@ -253,13 +251,17 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             }
             catch (Exception ex)
             {
-                System.out.println("Exception arise at the time of read mail");
+                System.out.println("Exception rised when try to fetach mails");
+                Toast.makeText(context,"Exception rised when try to fetach mails: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
                 ex.printStackTrace();
             }
         } catch (NoSuchProviderException e) {
             e.printStackTrace();
             //System.exit(1);
-        } catch (MessagingException e) {
+        }
+        catch (MessagingException e)
+        {
+            Toast.makeText(context,"Exception rised when try to read mails: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
             //System.exit(2);
         }
@@ -289,8 +291,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             properties = System.getProperties();
             properties.setProperty("mail.store.protocol", StoreType);
 
-            //session = Session.getDefaultInstance(properties, null);
-            session = Session.getDefaultInstance(properties);
+            session = Session.getDefaultInstance(properties, null);
             store = session.getStore(StoreType);
 
             store.connect(HostAddress,UserAddress,Password);
@@ -305,7 +306,9 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             e.printStackTrace();
             //System.exit(1);
         }
-        catch (MessagingException e) {
+        catch (MessagingException e)
+        {
+            Toast.makeText(context,"Can't connect to Mail server: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
             //System.exit(2);
         }
@@ -347,6 +350,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                             store=null;  // store.close();
 
                             IsHaveToCheckNewEmails=false;
+                            break;
 
                             //execute();
                             //MessageResults = ReadMailImap();
@@ -412,8 +416,6 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 
         HostAddress = "imap.gmail.com";          // change accordingly
         StoreType = "imaps";
-        UserAddress = "hemedmeir@gmail.com";    // I purposefully hid these
-        Password = "13579Mot";           // I purposefully hid these
 
         try
         {
@@ -468,14 +470,14 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         try
         {
             //create properties field
-//            Properties properties = new Properties();
+            Properties properties = new Properties();
 
-//            properties.put("mail.pop3.host", HostAddress);
-//            properties.put("mail.pop3.port", "995");
-//            properties.put("mail.pop3.starttls.enable", "true");
+            properties.put("mail.pop3.host", HostAddress);
+            properties.put("mail.pop3.port", "995");
+            properties.put("mail.pop3.starttls.enable", "true");
 
-            Properties properties = System.getProperties();
-            properties.setProperty("mail.pop3.protocol", StoreType);
+            //Properties properties = System.getProperties();
+            //properties.setProperty("mail.pop3.protocol", StoreType);
 
             Session session = Session.getDefaultInstance(properties);
             //Session session = Session.getDefaultInstance(properties, null);
