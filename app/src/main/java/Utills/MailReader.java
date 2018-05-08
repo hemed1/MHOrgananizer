@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import javax.mail.Address;
+import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.FetchProfile;
 import javax.mail.Flags;
@@ -25,6 +26,7 @@ import javax.mail.Message;
 import javax.mail.NoSuchProviderException;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Store;
 import javax.mail.Part;
 import javax.mail.Session;
@@ -48,11 +50,10 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     private ProgressDialog                      progressDialog;
 
     private Message[]                           MessageResults;
-    private Thread                              thread;
+    public Thread                               CheckMailThread;
     public int                                  LastMessageIndexWasRead;
     public static final String                  FOLDER_NAME = "INBOX";
     public boolean                              IsHaveToCheckNewEmails;
-    public int                                  ModeLoad;
 
     // The listener must implement the events interface and passes messages up to the parent.
     private PersonalEvents.OnMessageLoaded      listener;
@@ -70,10 +71,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         this.UserAddress = userAddress;
         this.Password = password;
         this.context = context;
-        thread=null;
-        IsHaveToCheckNewEmails = true;
         MessageResults = null;
-        ModeLoad=1;
     }
 
     public MailReader(Context context, String userAddress, String password)
@@ -81,24 +79,21 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         this.UserAddress = userAddress;
         this.Password = password;
         this.context = context;
-        thread=null;
-        IsHaveToCheckNewEmails = true;
         MessageResults = null;
-        ModeLoad=1;
     }
 
-    @Override
-    protected void onCancelled(Message[] messages)
-    {
-        super.onCancelled(messages);
-        thread=null;
-    }
+//    @Override
+//    protected void onCancelled(Message[] messages)
+//    {
+//        super.onCancelled(messages);
+//        CheckMailThread=null;
+//    }
 
     @Override
     protected void onCancelled()
     {
         super.onCancelled();
-        thread=null;
+        CheckMailThread=null;
     }
 
     @Override
@@ -111,24 +106,17 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     protected void onPreExecute()
     {
         super.onPreExecute();
-        progressDialog = ProgressDialog.show(context, "Reciveing Mails... ", "Reading mails...", false);
+        //progressDialog = ProgressDialog.show(context, "Reciveing Mails... ", "Reading mails...", false);
     }
 
     @Override
     protected Message[] doInBackground(Void... params)
     {
-        Message[] messages=null;
+        Message[] messages = new Message[0];
 
-        if (ModeLoad==1)
-        {
-            messages = ReadMailImap();
-            //ReadMailImap2();
-            //ReadMailPop3();
-        }
-        else
-        {
-            CheckNewMails();
-        }
+        //TryMe();
+
+        messages = FetchMails();
 
         return messages;
     }
@@ -138,12 +126,6 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     {
         super.onPostExecute(messages);
 
-        progressDialog.dismiss();
-        thread=null;
-        MessageResults = messages;
-
-        Toast.makeText(context,"Messages read: " + String.valueOf(messages.length), Toast.LENGTH_LONG).show();
-
         if (listener != null)
         {
             // Now let's fire listener here
@@ -152,42 +134,20 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     }
 
 
-    public String getHostAddress()
+    public Message[] FetchMails()
     {
-        return HostAddress;
+        Message[]  messages;
+
+        //progressDialog = ProgressDialog.show(context, "Reciveing Mails... ", "Reading mails...", false);
+
+        messages = ReadMailImap();
+
+        //progressDialog.dismiss();
+
+        //Toast.makeText(context,"Finish to fetch mails", Toast.LENGTH_LONG).show();
+
+        return messages;
     }
-
-    public void setHostAddress(String hostAddress)
-    {
-        HostAddress = hostAddress;
-    }
-
-    public String getUserAddress()
-    {
-        return UserAddress;
-    }
-
-    public void setUserAddress(String userAddress)
-    {
-        UserAddress = userAddress;
-    }
-
-    public String getPassword()
-    {
-        return Password;
-    }
-
-    public void setPassword(String password)
-    {
-        Password = password;
-    }
-
-    public int getLastMessageIndexWasRead()
-    {
-        return LastMessageIndexWasRead;
-    }
-
-
 
     public Message[] ReadMailImap()
     {
@@ -197,6 +157,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         int         fetachMessageFrom=0;
         int         fetachMessageUntil=0;
         int         tmpMessageCount=0;
+        Object[]    mailObjects;
 
 
 
@@ -205,13 +166,13 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         try
         {
             // Connect to email server
-            folder = ConnectServer(store);
+            mailObjects = ConnectServer();     // folder / store
 
-            //folder.getMessages(new int[]{1,2,3,4,5,6,7,8,9,10});
-            //messages = folder.search(new FlagTerm(new Flags(Flags.Flag.RECENT), false));  //Flag.SEEN / RECENT
-            //folder.setFlags(1,30, new Flags(Flags.Flag.RECENT), false);
-            //folder.setFlags(messages, new Flags(Flags.Flag.RECENT), false);
-            //messages = folder.getMessages(1, 30);
+            folder = (Folder) mailObjects[0];
+            store = (Store) mailObjects[1];
+
+            //Toast.makeText(context,"Calculating mails to fetch ...", Toast.LENGTH_SHORT).show();
+            //System.out.println("Calculating mails to fetch ...");
 
             tmpMessageCount = folder.getMessageCount();
             if (LastMessageIndexWasRead==0)
@@ -229,39 +190,58 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             fetachMessageUntil = tmpMessageCount;
             LastMessageIndexWasRead = tmpMessageCount;
 
-             messages = folder.getMessages(fetachMessageFrom, fetachMessageUntil);
-            // Get All messages
-            //messages = folder.getMessages();
-            // Get specific message
-            //Message message = folder.getMessage(inbox.getMessageCount());  // .getUnreadMessageCount()
+            //Toast.makeText(context,"Fetching " + String.valueOf(fetachMessageUntil-fetachMessageFrom) + "mails from server ...", Toast.LENGTH_LONG).show();
+            //System.out.println("Fetching " + String.valueOf(fetachMessageUntil-fetachMessageFrom) + "mails from server ...");
 
-            //System.out.println("No of Unread Messages : " + folder.getUnreadMessageCount());
+            messages = folder.getMessages(fetachMessageFrom, fetachMessageUntil);
 
             FetchProfile fetchProfile = new FetchProfile();
             fetchProfile.add(FetchProfile.Item.ENVELOPE);
             fetchProfile.add(FetchProfile.Item.CONTENT_INFO);
             fetchProfile.add(FetchProfile.Item.FLAGS);
 
+            // Get All messages
+            //messages = folder.getMessages();
+            // Get specific message
+            //Message message = folder.getMessage(inbox.getMessageCount());  // .getUnreadMessageCount()
+            //folder.getMessages(new int[]{1,2,3,4,5,6,7,8,9,10});
+            //messages = folder.search(new FlagTerm(new Flags(Flags.Flag.RECENT), false));  //Flag.SEEN / RECENT
+            //folder.setFlags(1,30, new Flags(Flags.Flag.RECENT), false);
+            //folder.setFlags(messages, new Flags(Flags.Flag.RECENT), false);
+            //messages = folder.getMessages(1, 30);
+
             try
             {
+                //Toast.makeText(context,"Fetching mails and there's content from server ...", Toast.LENGTH_LONG).show();
+                //System.out.println("Fetching mails and there's content from server ...");
+
+                // Fetching the mails with all it's content
                 folder.fetch(messages, fetchProfile);
-                //printAllMessages(messages);
+
                 folder.close(true);
-                //TODO:store.close();
+                store.close();
+
+                //printAllMessages(messages);
             }
             catch (Exception ex)
             {
-                System.out.println("Exception rised when try to fetach mails");
-                Toast.makeText(context,"Exception rised when try to fetach mails: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context,"Exception rised when try to fetach mails: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                //System.out.println("Exception rised when try to fetach mails");
                 ex.printStackTrace();
             }
-        } catch (NoSuchProviderException e) {
+        }
+
+        catch (NoSuchProviderException e)
+        {
+            //Toast.makeText(context,"Exception rised when try to read mails: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            //System.out.println("Exception rised when try to fetach mails");
             e.printStackTrace();
             //System.exit(1);
         }
         catch (MessagingException e)
         {
-            Toast.makeText(context,"Exception rised when try to read mails: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context,"Exception rised when try to read mails: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            //System.out.println("Exception rised when try to fetach mails");
             e.printStackTrace();
             //System.exit(2);
         }
@@ -270,15 +250,17 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         return messages;
     }
 
-    public Folder ConnectServer(Store store)
+    public Object[] ConnectServer()        // Folder
     {
         Properties  properties = null;
         Session     session = null;
         Folder      foler = null;
-        //Store       store;
+        Store       store;
+        Object[]    mailObjects = null;
 
 
 
+        //Toast.makeText(context,"Connecting to mails server", Toast.LENGTH_SHORT).show();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -291,15 +273,29 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             properties = System.getProperties();
             properties.setProperty("mail.store.protocol", StoreType);
 
+            //Authenticator aa = new javax.mail.Authenticator()
+            //{
+            //    //Authenticating the password
+            //    protected PasswordAuthentication getPasswordAuthentication() {
+            //        return new PasswordAuthentication(UserAddress, Password); //Config.EMAIL, Bitmap.Config.PASSWORD);
+            //    }
+            //};
+
             session = Session.getDefaultInstance(properties, null);
             store = session.getStore(StoreType);
 
-            store.connect(HostAddress,UserAddress,Password);
+            store.connect(HostAddress, UserAddress, Password);
+
+            //store.connect(HostAddress, 993, UserAddress, Password);
+            //store.connect(UserAddress, Password);
 
             foler = store.getFolder(FOLDER_NAME);
             foler.open(Folder.READ_ONLY);
 
-            //ToDO: check if can close folder here
+            mailObjects = new Object[2];
+            mailObjects[0] = foler;
+            mailObjects[1] = store;
+
         }
         catch (NoSuchProviderException e)
         {
@@ -308,102 +304,152 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         }
         catch (MessagingException e)
         {
-            Toast.makeText(context,"Can't connect to Mail server: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context,"Can't connect to Mail server: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
             //System.exit(2);
         }
 
 
-        return  foler;
+        return mailObjects;     //foler;
     }
 
-    public void CheckNewMails()
+    public void TryMe()
     {
 
-        MessageResults = new Message[0];
+        System.out.println("TryMe");
 
+    }
 
-//        thread = new Thread()
-//        {
+//    public void TryMeAsync()
+//    {
+//
+//        Thread thread = new Thread() {
 //            @Override
 //            public void run()
 //            {
-                try
-                {
-                    while (IsHaveToCheckNewEmails)
-                    {
-                        Thread.sleep(4000);
-
-                        System.out.println("'CheckNewMails' check new mails In loop/n/n");
-                        Store store = null;
-                        Folder folder;
-
-                        // Connect to email server
-                        folder = ConnectServer(store);
-
-                        LastMessageIndexWasRead = folder.getMessageCount()- 2;  // TODO: Delete
-                        //if (mailReader.getLastMessageIndexWasRead() > 100)
-                        if (folder.getMessageCount() > LastMessageIndexWasRead)
-                        {
-                            System.out.println("'CheckNewMail()' found new mails" + new Date().toString()+"/n");
-                            folder.close(true);
-                            store=null;  // store.close();
-
-                            IsHaveToCheckNewEmails=false;
-                            break;
-
-                            //execute();
-                            //MessageResults = ReadMailImap();
-                            //thread.stop();
-                            //if (listener != null)
-                            //{
-                            //    // Now let's fire listener here
-                            //    listener.onDataLoaded(messages);
-                            //}
-                            //return;
-                            //if (thread.isInterrupted());
-                            //stopThread(this);
-                            //return;
-                            //break;
-                        }
-
-                        folder.close(true);
-                        //store.close();
-                        store=null;
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    System.out.println("Exception rise at 'CheckNewMails': " + ex.getMessage());
-                    ex.printStackTrace();
-                }
+//                if (listener != null)
+//                {
+//                    // Now let's fire listener here
+//                    listener.onDataLoaded(new Message[0]);
+//                }
 //            }
-
 //        };
-
-        //thread = new Thread(myRunnable);
-
+//
 //        thread.start();
-//
-//
+//    }
+
+    public boolean CheckNewMails()
+    {
+        boolean  isFoundNewMessages = false;
+        final Message[]  messages = new Message[0];
+        Store   store = null;
+        Folder  folder = null;
+        Object[]    mailObjects;
+
+
+        try
+        {
+            //Toast.makeText(context,"Checking from new mails ...", Toast.LENGTH_SHORT).show();
+
+            while (IsHaveToCheckNewEmails)
+            {
+                Thread.sleep(4000);
+
+                System.out.println("'CheckNewMails' check new mails In loop/n/n" + (new Date()).toString());
+
+                // Connect to email server
+                mailObjects = ConnectServer();     // folder / store
+
+                folder = (Folder) mailObjects[0];
+                store = (Store) mailObjects[1];
+
+                LastMessageIndexWasRead = folder.getMessageCount()- 2;  // TODO: Delete
+
+                if (folder.getMessageCount() > LastMessageIndexWasRead)
+                {
+                    System.out.println("'CheckNewMail()' found new mails" + new Date().toString()+"/n");
+                    isFoundNewMessages = true;
+                    break;
+                }
+            }
+
+            if (folder != null)
+            {
+                folder.close(true);
+                store.close();
+            }
+
+            if (isFoundNewMessages)
+            {
+                MessageResults = FetchMails();
+
+                CheckMailThread = null;
+                //stopThread(this);
+
+                if (listener != null)
+                {
+                    // Now let's fire listener here
+                    listener.onDataLoaded(MessageResults);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            //System.out.println("Exception rise at 'CheckNewMails': " + ex.getMessage());
+            ex.printStackTrace();
+        }
+
+        //folder = null;
+        //store = null;
+
+        return isFoundNewMessages;
+    }
+
+    public void CheckNewMailsAsyncThread()
+    {
+
+        CheckMailThread = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                if (CheckNewMails())
+                {
+                    CheckMailThread.stop();
+                    CheckMailThread=null;
+                    //stopThread(this);
+
+                    MessageResults = ReadMailImap();
+
+                    if (listener != null)
+                    {
+                        System.out.println("Going to fire event " + new Date().toString()+"/n");
+                        // Now let's fire listener here
+                        listener.onDataLoaded(MessageResults);
+                    }
+                }
+            }
+
+        };
+
+        CheckMailThread.start();
+
     }
 
     private synchronized void stopThread(Thread theThread)
     {
         if (theThread != null)
         {
-            //theThread.stop();
-            //theThread.interrupt();
-            //theThread.destroy();
-            //thread.stop();
+//            theThread.stop();
+//            //theThread.interrupt();
+//            theThread.destroy();
             theThread = null;
-        }
-
-        if (listener != null && MessageResults.length>0)
-        {
-            // Now let's fire listener here
-            listener.onDataLoaded(MessageResults);
+//        }
+//
+//        if (listener != null && MessageResults.length>0)
+//        {
+//            // Now let's fire listener here
+//            listener.onDataLoaded(MessageResults);
         }
 
     }
@@ -603,5 +649,41 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             System.out.write(c);
         }
     }
+
+    public String getHostAddress()
+    {
+        return HostAddress;
+    }
+
+    public void setHostAddress(String hostAddress)
+    {
+        HostAddress = hostAddress;
+    }
+
+    public String getUserAddress()
+    {
+        return UserAddress;
+    }
+
+    public void setUserAddress(String userAddress)
+    {
+        UserAddress = userAddress;
+    }
+
+    public String getPassword()
+    {
+        return Password;
+    }
+
+    public void setPassword(String password)
+    {
+        Password = password;
+    }
+
+    public int getLastMessageIndexWasRead()
+    {
+        return LastMessageIndexWasRead;
+    }
+
 
 }

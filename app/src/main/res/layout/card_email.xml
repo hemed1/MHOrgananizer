@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -44,7 +43,7 @@
                     android:paddingTop="1dp"
                     android:text="Sender"
                     android:textSize="16sp"
-                    android:textColor="@color/cardview_dark_background"
+                    android:textColor="@color/titles_main_foreground"
                     android:textStyle="bold" />
 
                 <TextView
@@ -55,6 +54,7 @@
                     android:paddingStart="14dp"
                     android:paddingTop="1dp"
                     android:text="Subject"
+                    android:textColor="@color/titles_second_foreground"
                     android:textSize="15sp" />
 
                 <TextView

@@ -70,8 +70,8 @@ public class MailSender extends AsyncTask<Void,Void,Void>
     @Override
     protected Void doInBackground(Void... params)
     {
-        SendMailSimple();
-        //SendMailSmpt();
+        //SendMailSimple();
+        SendMailSmpt();
 
         return null;
     }
@@ -109,7 +109,7 @@ public class MailSender extends AsyncTask<Void,Void,Void>
             //Setting sender address
             mm.setFrom(new InternetAddress(UserAddress));
             //Adding receiver
-            mm.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
+            mm.addRecipient(Message.RecipientType.TO, new InternetAddress(UserAddress));
             //Adding subject
             mm.setSubject(subject);
             //Adding message
@@ -158,7 +158,7 @@ public class MailSender extends AsyncTask<Void,Void,Void>
         try
         {
             context.startActivity(emailIntent);
-            Toast.makeText(context, "Error n send mail",Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, "Mail sent",Toast.LENGTH_LONG).show();
             //finish();
             result = true;
         }

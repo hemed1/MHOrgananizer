@@ -3,6 +3,8 @@ package com.example.meirh.mhorgananizer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import Utills.EventsReader;
+
 public class ActivityMeetings extends AppCompatActivity
 {
 
@@ -11,5 +13,9 @@ public class ActivityMeetings extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meetings);
+
+        EventsReader eventsReader = new EventsReader();
+
+        eventsReader.getCalendars();
     }
 }
