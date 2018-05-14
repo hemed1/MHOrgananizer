@@ -11,17 +11,17 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerMain"
         android:layout_width="390dp"
-        android:layout_height="373dp"
+        android:layout_height="341dp"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="6dp"
         android:layout_marginTop="8dp"
         android:background="@color/list_background_mail"
-        app:layout_constraintBottom_toTopOf="@+id/btnAddItem"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lblEmailAddress"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.298" />
 
     <Button
         android:id="@+id/btnBack"
@@ -45,7 +45,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Add Item"
+        android:text="Write Mail"
         android:background="@android:color/holo_orange_dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.113"
@@ -55,36 +55,36 @@
 
     <Button
         android:id="@+id/btnRefresh"
-        style="@style/Button_Back"
+        style="@style/Button_Save"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="156dp"
         android:layout_marginTop="8dp"
-        android:background="@android:color/holo_blue_dark"
         android:text="Refresh"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.982" />
 
-    <TextView
-        android:id="@+id/lblFolderTitle"
-        android:layout_width="60dp"
-        android:layout_height="24dp"
+    <Button
+        android:id="@+id/btnSetFolder"
+        style="@style/Button_Save"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Folder:"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
+        android:text="Folder"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.159" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.08"
+        app:layout_constraintStart_toEndOf="@+id/lblFolderName"
+        app:layout_constraintTop_toBottomOf="@+id/lblEmailAddress"
+        app:layout_constraintVertical_bias="0.007" />
 
     <TextView
         android:id="@+id/lblFolderName"
-        android:layout_width="77dp"
-        android:layout_height="24dp"
+        android:layout_width="118dp"
+        android:layout_height="23dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -92,12 +92,13 @@
         android:text="INBOX"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerMain"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.027"
-        app:layout_constraintStart_toEndOf="@+id/lblFolderTitle"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.159" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblEmailAddress"
+        app:layout_constraintVertical_bias="0.272" />
 
     <TextView
         android:id="@+id/lblEmailTitle"

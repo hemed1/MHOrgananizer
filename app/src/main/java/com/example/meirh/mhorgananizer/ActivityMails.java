@@ -110,17 +110,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
             @Override
             public void run()
             {
-                System.out.println("Run in Timer " + new Date().toString()+"/n");
-
-                //MailCheckTimer.cancel();
-                //MailCheckTimer.purge();
-                //MailCheckTimerTask.run();
-
-                if (mailReader.IsHaveToCheckNewEmails)
-                {
-                    mailReader.CheckNewMails();
-                }
-                //MailCheckTimer.schedule(MailCheckTimerTask, 100, 5000);
+                MailCheckTimer_onTick();
             }
         };
 
@@ -128,7 +118,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         IsTimerWork = false;
 
         // Create the Child observer object that will fire the event
-        mailReader = new MailReader(ActivityMails.this,"imap.gmail.com", "hemedmeir@gmail.com", "13579Mot");
+        mailReader = new MailReader(ActivityMails.this,"imap.gmail.com", MainActivity.MailAdresss, MainActivity.MailPassword);
         mailReader.IsHaveToCheckNewEmails = true;      //TODO:MainActivity.MailStayOnLine;
 
         // Register the listener for this object
@@ -138,13 +128,13 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
             @Override
             public void onDataLoaded(Message[] messages)
             {
-                RecivedMessagesLoadedEvent(messages);
+                mailReader_RecivedMessages(messages);
             }
         });
 
     }
 
-    private void RecivedMessagesLoadedEvent(Message[] messages)
+    private void mailReader_RecivedMessages(Message[] messages)
     {
         System.out.println("Reach the event was fired with " + String.valueOf(messages.length) + " Messages/n");
 
@@ -169,6 +159,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
 
 
+    /// Not in Use
     public boolean CheckNewMails()
     {
         boolean  isFoundNewMessages = false;
@@ -198,7 +189,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
                 if (folder.getMessageCount() > mailReader.LastMessageIndexWasRead)
                 {
-                    System.out.println("'CheckNewMail()' found new mails" + new Date().toString()+"/n");
+                    System.out.println("'CheckNewMail()' found new mails: " + new Date().toString()+"/n");
                     isFoundNewMessages = true;
                     break;
                 }
@@ -234,6 +225,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         return isFoundNewMessages;
     }
 
+    /// Not in Use
     public void CheckNewMailsAsyncThread()
     {
 
@@ -267,7 +259,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
         //listItems = new ArrayList<>();  //new List<ListItemEmail>
 
-        for (int i=messages.length-1; i>0; i--)
+        for (int i=messages.length-1; i>=0; i--)
         {
             ListItemEmail item = AddItem(messages[i]);
             //listItems.add(item);
@@ -275,8 +267,12 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
         Messages = messages;
 
+        System.out.println("Items count: " + String.valueOf(listItems.size()));
+
         adapterEmail = new AdapterEmail(this, listItems);
         recyclerView.setAdapter(adapterEmail);
+
+        //Toast.makeText(this,"Items count: " + String.valueOf(recyclerView.getAdapter().getItemCount()), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -351,9 +347,11 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
         MailSender mailSender = new MailSender(this, "hemedmeir@gmail.com", "Test Me", "Body Test");
 
+        mailSender.SendMailsSmpt3();
+        //mailSender.SendMailsSmpt2();
         //mailSender.execute();
         //mailSender.SendMailSmpt();
-        mailSender.SendMailSimple();
+        //mailSender.SendMailSimple();
 
         return result;
     }
@@ -362,10 +360,10 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
     {
         String returnedData;
 
+        TimerStop();
+
         mailReader.IsHaveToCheckNewEmails = false;
         mailReader.CheckMailThread = null;
-
-        TimerStop();
 
         returnedData = "Mail handle was finished";
 
@@ -380,13 +378,16 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
     private void TimerRun()
     {
+        System.out.println("Run timer " + (new Date()).toString());
+
         IsTimerWork = true;
         // Run the Timer
-        MailCheckTimer.schedule(MailCheckTimerTask, 100, 5000);
+        MailCheckTimer.schedule(MailCheckTimerTask, 100, 6000);
     }
 
     private void TimerStop()
     {
+        System.out.println("Stop timer " + (new Date()).toString());
         MailCheckTimer.cancel();
         MailCheckTimer.purge();
         IsTimerWork = false;
@@ -405,15 +406,29 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
                 TimerStop();
                 mailReader.LastMessageIndexWasRead = 0;
                 mailReader.FetchMails();
+                TimerRun();
                 break;
 
             case R.id.btnAddItem:
+                TimerStop();
                 ListItemEmail item = AddItem(Messages[0]);
                 //listItems.add(1, item);   // TODO: Insert
                 recyclerView.setAdapter(adapterEmail);
-                System.out.println("Items count: " + String.valueOf(recyclerView.getAdapter().getItemCount()));
-                Toast.makeText(this,"Items count: " + String.valueOf(recyclerView.getAdapter().getItemCount()), Toast.LENGTH_SHORT).show();
+                TimerRun();
                 break;
+        }
+    }
+
+    private void MailCheckTimer_onTick()
+    {
+        System.out.println("Run in Timer " + new Date().toString() + "/n");
+
+        //MailCheckTimer.cancel();
+        //MailCheckTimer.purge();
+        //MailCheckTimerTask.run();
+        if (mailReader.IsHaveToCheckNewEmails)
+        {
+            mailReader.CheckNewMails();
         }
     }
 }

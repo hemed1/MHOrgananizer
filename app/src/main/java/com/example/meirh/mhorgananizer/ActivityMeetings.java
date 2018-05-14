@@ -16,6 +16,6 @@ public class ActivityMeetings extends AppCompatActivity
 
         EventsReader eventsReader = new EventsReader();
 
-        eventsReader.getCalendars();
+        eventsReader.readCalendar(ActivityMeetings.this);
     }
 }

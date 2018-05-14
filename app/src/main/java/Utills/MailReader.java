@@ -106,7 +106,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     protected void onPreExecute()
     {
         super.onPreExecute();
-        //progressDialog = ProgressDialog.show(context, "Reciveing Mails... ", "Reading mails...", false);
+        progressDialog = ProgressDialog.show(context, "Reciveing Mails... ", "Reading mails...", false);
     }
 
     @Override
@@ -142,9 +142,9 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 
         messages = ReadMailImap();
 
-        //progressDialog.dismiss();
+        progressDialog.dismiss();
 
-        //Toast.makeText(context,"Finish to fetch mails", Toast.LENGTH_LONG).show();
+        //Toast.makeText(context,"Finish to fetch mails. Items count: " + String.valueOf(messages.length), Toast.LENGTH_LONG).show();
 
         return messages;
     }
@@ -168,11 +168,13 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             // Connect to email server
             mailObjects = ConnectServer();     // folder / store
 
+            if (mailObjects==null || mailObjects.length==0 || mailObjects[0]==null)
+            {
+                return messages;
+            }
+
             folder = (Folder) mailObjects[0];
             store = (Store) mailObjects[1];
-
-            //Toast.makeText(context,"Calculating mails to fetch ...", Toast.LENGTH_SHORT).show();
-            //System.out.println("Calculating mails to fetch ...");
 
             tmpMessageCount = folder.getMessageCount();
             if (LastMessageIndexWasRead==0)
@@ -246,6 +248,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             //System.exit(2);
         }
 
+        MessageResults = messages;
 
         return messages;
     }
@@ -300,11 +303,12 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         catch (NoSuchProviderException e)
         {
             e.printStackTrace();
+            Toast.makeText(context,"Can't connect to Mail server: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             //System.exit(1);
         }
         catch (MessagingException e)
         {
-            //Toast.makeText(context,"Can't connect to Mail server: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"Can't connect to Mail server: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
             //System.exit(2);
         }
@@ -353,17 +357,22 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 
             while (IsHaveToCheckNewEmails)
             {
-                Thread.sleep(4000);
+                Thread.sleep(Long.valueOf(MainActivity.MailCheckMailInterval) * 3600 * 1000);
 
-                System.out.println("'CheckNewMails' check new mails In loop/n/n" + (new Date()).toString());
+                System.out.println("'CheckNewMails' check new mails In loop  " + (new Date()).toString() + "/n");
 
                 // Connect to email server
                 mailObjects = ConnectServer();     // folder / store
 
+                if (mailObjects==null || mailObjects.length==0 || mailObjects[0]==null)
+                {
+                    return false;
+                }
+
                 folder = (Folder) mailObjects[0];
                 store = (Store) mailObjects[1];
 
-                LastMessageIndexWasRead = folder.getMessageCount()- 2;  // TODO: Delete
+                LastMessageIndexWasRead = folder.getMessageCount() - 2;  // TODO: Delete
 
                 if (folder.getMessageCount() > LastMessageIndexWasRead)
                 {
@@ -371,6 +380,13 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                     isFoundNewMessages = true;
                     break;
                 }
+
+                //if (folder.hasNewMessages()) // TODO: this instead
+                //{
+                //    System.out.println("'CheckNewMail()' found new mails" + new Date().toString()+"/n");
+                //    isFoundNewMessages = true;
+                //    break;
+                //}
             }
 
             if (folder != null)
@@ -446,10 +462,6 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             theThread = null;
 //        }
 //
-//        if (listener != null && MessageResults.length>0)
-//        {
-//            // Now let's fire listener here
-//            listener.onDataLoaded(MessageResults);
         }
 
     }

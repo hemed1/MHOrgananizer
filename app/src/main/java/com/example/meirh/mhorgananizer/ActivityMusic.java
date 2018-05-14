@@ -10,8 +10,10 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +22,7 @@ import android.support.v7.widget.CardView;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -32,9 +35,11 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 {
 
     private Button          btnBack;
+    private Button          btnList;
     private Button          btnPlay;
     private Button          btnPrev;
     private Button          btnNext;
+    private Button          btnSetFolder;
     public  MediaPlayer     mediaPlayer;
     private TextView        lblSongName;
     private TextView        lblSongArtist;
@@ -62,15 +67,18 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
         FillList();
 
-        LoadSongIntoPlayer(R.raw.love_the_one, 3);
+        //LoadSongIntoPlayer(R.raw.love_the_one, 3);
     }
+
 
     private void setUpUI()
     {
 
         btnBack = (Button) findViewById(R.id.btnBack);
+        btnList = (Button) findViewById(R.id.btnList);
         btnPlay = (Button) findViewById(R.id.btnPlay);
         btnPrev = (Button) findViewById(R.id.btnPrev);
+        btnSetFolder = (Button) findViewById(R.id.btnSetFolder);
         btnNext = (Button) findViewById(R.id.btnNext);
         lblSongName = (TextView) findViewById(R.id.lblSongName);
         lblSongArtist = (TextView) findViewById(R.id.lblSongArtist);
@@ -80,12 +88,12 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         imgSongArtist = (ImageView) findViewById(R.id.imgSongArtist);
         //crdView = (CardView) findViewById(R.id.cardItemSong);
 
+
         listSongs = (RecyclerView) findViewById(R.id.listSongs);
         listSongs.setHasFixedSize(true);
         listSongs.setLayoutManager(new LinearLayoutManager(this));
 
         listItems = new ArrayList<>();  //new List<ListItem>  //new List<ListItemSong>[];
-
         adapterSong = new AdapterSong(this, listItems);
 
         // Register the listener for this object
@@ -103,6 +111,8 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         btnPrev.setOnClickListener(this);
         btnNext.setOnClickListener(this);
         btnBack.setOnClickListener(this);
+        btnList.setOnClickListener(this);
+        btnSetFolder.setOnClickListener(this);
 
         //crdView.setOnClickListener(this);
         listSongs.setOnClickListener(this);
@@ -238,6 +248,11 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                 seekMusic(-5000);
                 break;
 
+            case R.id.btnList:
+                Intent intentMusic = new Intent(ActivityMusic.this, ActivitySongList.class);
+                startActivity(intentMusic);
+                break;
+
             case R.id.btnBack:
                 goBack();
                 break;
@@ -247,19 +262,17 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), SongResourceID);
                 break;
 
-            case R.id.cardItemSong:
-                //SongResourceID = listItems.get(0).getResourceID();
-                mediaPlayer = MediaPlayer.create(getApplicationContext(), SongResourceID);
-                break;
         }
     }
 
-    private void seekMusic(int interval) {
+    private void seekMusic(int interval)
+    {
         barSeek.setProgress(barSeek.getProgress() + interval);
         mediaPlayer.seekTo(barSeek.getProgress());
     }
 
-    public void MusicPause() {
+    public void MusicPause()
+    {
         if (mediaPlayer != null) {
             mediaPlayer.pause();
             btnPlay.setBackgroundResource(android.R.drawable.ic_media_play);   //R.drawable.ic_media_play);
@@ -267,7 +280,8 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    public void MusicPlay() {
+    public void MusicPlay()
+    {
         if (mediaPlayer != null) {
             mediaPlayer.start();
             btnPlay.setBackgroundResource(android.R.drawable.ic_media_pause);    // R.drawable.ic_media_pause);
