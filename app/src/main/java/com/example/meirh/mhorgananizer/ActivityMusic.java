@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 import Adapter.AdapterSong;
+import Model.ListItem;
 import Model.ListItemSong;
 import Utills.PersonalEvents;
 
@@ -39,7 +40,6 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
     private Button          btnPlay;
     private Button          btnPrev;
     private Button          btnNext;
-    private Button          btnSetFolder;
     public  MediaPlayer     mediaPlayer;
     private TextView        lblSongName;
     private TextView        lblSongArtist;
@@ -48,6 +48,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
     private TextView        lblPosLeft;
     private SeekBar         barSeek;
     private ImageView       imgSongArtist;
+    private ImageView       imgLine;
     private Thread          thread;
     private CardView        crdView;
     private RecyclerView            listSongs;
@@ -67,7 +68,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
         FillList();
 
-        //LoadSongIntoPlayer(R.raw.love_the_one, 3);
+        LoadSongIntoPlayer(R.raw.love_the_one, 3);
     }
 
 
@@ -78,7 +79,6 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         btnList = (Button) findViewById(R.id.btnList);
         btnPlay = (Button) findViewById(R.id.btnPlay);
         btnPrev = (Button) findViewById(R.id.btnPrev);
-        btnSetFolder = (Button) findViewById(R.id.btnSetFolder);
         btnNext = (Button) findViewById(R.id.btnNext);
         lblSongName = (TextView) findViewById(R.id.lblSongName);
         lblSongArtist = (TextView) findViewById(R.id.lblSongArtist);
@@ -86,12 +86,15 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         lblPosNow = (TextView) findViewById(R.id.lblPosNow);
         lblPosLeft = (TextView) findViewById(R.id.lblPosLeft);
         imgSongArtist = (ImageView) findViewById(R.id.imgSongArtist);
+        imgLine = (ImageView) findViewById(R.id.imgLine);
         //crdView = (CardView) findViewById(R.id.cardItemSong);
-
 
         listSongs = (RecyclerView) findViewById(R.id.listSongs);
         listSongs.setHasFixedSize(true);
         listSongs.setLayoutManager(new LinearLayoutManager(this));
+        listSongs.setVisibility(View.INVISIBLE);
+        //listSongs.setOnClickListener(this);
+        //crdView.setOnClickListener(this);
 
         listItems = new ArrayList<>();  //new List<ListItem>  //new List<ListItemSong>[];
         adapterSong = new AdapterSong(this, listItems);
@@ -112,10 +115,14 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         btnNext.setOnClickListener(this);
         btnBack.setOnClickListener(this);
         btnList.setOnClickListener(this);
-        btnSetFolder.setOnClickListener(this);
 
-        //crdView.setOnClickListener(this);
-        listSongs.setOnClickListener(this);
+        imgLine.bringToFront();
+        lblSongArtist.bringToFront();
+        lblSongName.bringToFront();
+        lblAlbum.bringToFront();
+        //barSeek.bringToFront();
+        lblAlbum.bringToFront();
+        listSongs.bringToFront();
 
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener()
@@ -250,6 +257,25 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
             case R.id.btnList:
                 Intent intentMusic = new Intent(ActivityMusic.this, ActivitySongList.class);
+                String[]  listItemArray = new String[3];
+                listItemArray[0]="Meir";
+                listItemArray[1]="Amit";
+                listItemArray[2]="Ronen";
+//                ArrayList<ListItem>  listItemArray = new ArrayList<ListItem>();
+//                listItemArray.add(new ListItem("Meir", "abc", "def"));
+//                listItemArray.add(new ListItem("Amit", "abc", "def"));
+//                listItemArray.add(new ListItem("Ronen", "abc", "def"));
+
+                //intentMusic.putParcelableArrayListExtra("ListItems", listItemArray);
+                //intentMusic.putExtra("ListItems", listItemArray);
+                //intentMusic.putExtra("ListItems", listItemArray);
+
+                Bundle data = new Bundle();
+                //data.putStringArrayList("ListItems", new ArrayList<String>());
+                data.putStringArray("ListItems", listItemArray);
+                //data.putParcelableArrayList("search.resultSet", resultSet);
+                intentMusic.putExtra("ListItems", data);
+
                 startActivity(intentMusic);
                 break;
 
@@ -257,12 +283,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                 goBack();
                 break;
 
-            case R.id.listSongs:
-                SongResourceID = listItems.get(0).getResourceID();
-                mediaPlayer = MediaPlayer.create(getApplicationContext(), SongResourceID);
-                break;
-
-        }
+         }
     }
 
     private void seekMusic(int interval)

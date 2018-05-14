@@ -7,15 +7,19 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -42,11 +46,13 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
     private Button                  btnBack;
     private Button                  btnAddItem;
     private Button                  btnRefresh;
+    private Button                  btnSetFolder;
     private RecyclerView            recyclerView;
     private AdapterEmail            adapterEmail;    // RecyclerView.Adapter
     private List<ListItemEmail>     listItems;
     private TextView                lblFolderName;
     private TextView                lblEmailAddress;
+    private ListView                listFolders;
 
     private Bundle                  extras;
 
@@ -69,6 +75,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
         SetIOControls();
 
+        FillFloatListView();
 
         // Execute Asyncronic
         mailReader.execute();
@@ -82,26 +89,28 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         //extras = getIntent().getExtras();
     }
 
+
+
     private void SetIOControls()
     {
         btnBack = (Button)findViewById(R.id.btnBack);
         btnAddItem = (Button)findViewById(R.id.btnAddItem);
         btnRefresh = (Button)findViewById(R.id.btnRefresh);
-
-        btnBack.setOnClickListener(this);
-        btnAddItem.setOnClickListener(this);
-        btnRefresh.setOnClickListener(this);
-
+        btnSetFolder = (Button) findViewById(R.id.btnSetFolder);
+        listFolders = (ListView) findViewById(R.id.listFolders);
         lblEmailAddress = (TextView) findViewById(R.id.lblEmailAddress);
         lblFolderName = (TextView) findViewById(R.id.lblFolderName);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerMain);
+
 
         lblEmailAddress.setText(MainActivity.MailAdresss);
         lblFolderName.setText("INBOX");
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerMain);
+        listFolders.bringToFront();
+        listFolders.setVisibility(View.INVISIBLE);
+
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         listItems = new ArrayList<>();  //new List<ListItemEmail>
         adapterEmail = new AdapterEmail(this, listItems);
 
@@ -121,6 +130,20 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         mailReader = new MailReader(ActivityMails.this,"imap.gmail.com", MainActivity.MailAdresss, MainActivity.MailPassword);
         mailReader.IsHaveToCheckNewEmails = true;      //TODO:MainActivity.MailStayOnLine;
 
+        // Events
+        btnBack.setOnClickListener(this);
+        btnAddItem.setOnClickListener(this);
+        btnRefresh.setOnClickListener(this);
+        btnSetFolder.setOnClickListener(this);
+        listFolders.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3)
+            {
+                OnListClick(adapterView, view, position, arg3);
+            }
+        });
+
         // Register the listener for this object
         mailReader.setOnMessagesLoaded(new PersonalEvents.OnMessageLoaded()
         {
@@ -132,6 +155,30 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
             }
         });
 
+    }
+
+    private void OnListClick(AdapterView<?> adapterView, View view, int position, long arg3)
+    {
+        listFolders.setVisibility(View.INVISIBLE);
+
+        System.out.println("View name: "+view.getTransitionName());
+        System.out.println("Item index: "+position);
+        //adapterView.setSelection(position);
+        //listFolders.getAdapter().getItem(position);
+        System.out.println("Item index: "+ adapterView.getSelectedItemPosition());   // +adapterView.getSelectedItem().toString()+"  "
+        String value = (String)adapterView.getItemAtPosition(position);
+        System.out.println("Item value: "+ value);
+
+
+        // TODO: set background color
+        //(adapterView.getAdapter())findViewById(adapterView.getItemIdAtPosition(position));
+
+        lblFolderName.setText(value);
+        mailReader.FolderName = value;
+
+        Message[] messages = mailReader.FetchMails();
+
+        FillList(messages);
     }
 
     private void mailReader_RecivedMessages(Message[] messages)
@@ -156,8 +203,6 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         //    mailReader.CheckNewMailsAsyncThread();
         //}
     }
-
-
 
     /// Not in Use
     public boolean CheckNewMails()
@@ -267,12 +312,11 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
         Messages = messages;
 
-        System.out.println("Items count: " + String.valueOf(listItems.size()));
-
         adapterEmail = new AdapterEmail(this, listItems);
         recyclerView.setAdapter(adapterEmail);
 
-        //Toast.makeText(this,"Items count: " + String.valueOf(recyclerView.getAdapter().getItemCount()), Toast.LENGTH_SHORT).show();
+        System.out.println("Items count: " + String.valueOf(listItems.size()));
+        Toast.makeText(this,"Items count: " + String.valueOf(recyclerView.getAdapter().getItemCount()), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -416,7 +460,26 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
                 recyclerView.setAdapter(adapterEmail);
                 TimerRun();
                 break;
+
+            case R.id.btnSetFolder:
+                TimerStop();
+                listFolders.setVisibility(View.VISIBLE);
+                 //TimerRun();
+                break;
         }
+    }
+
+    private void FillFloatListView()
+    {
+        String[]  items = new String[3];
+        items[0]="INBOX";
+        items[1]="Drafts";
+        items[2]="sent Items";
+        ArrayList<String> ListItemArray = new ArrayList<String>();
+        ListItemArray.addAll(Arrays.asList(items));
+        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.list_row, R.id.lblListRow, ListItemArray);
+
+        listFolders.setAdapter(listAdapter);
     }
 
     private void MailCheckTimer_onTick()

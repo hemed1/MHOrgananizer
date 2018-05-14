@@ -52,7 +52,8 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     private Message[]                           MessageResults;
     public Thread                               CheckMailThread;
     public int                                  LastMessageIndexWasRead;
-    public static final String                  FOLDER_NAME = "INBOX";
+    public String                               FolderName;
+    //public static final String                  FOLDER_NAME = "INBOX";
     public boolean                              IsHaveToCheckNewEmails;
 
     // The listener must implement the events interface and passes messages up to the parent.
@@ -72,6 +73,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         this.Password = password;
         this.context = context;
         MessageResults = null;
+        FolderName = "INBOX";
     }
 
     public MailReader(Context context, String userAddress, String password)
@@ -80,6 +82,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         this.Password = password;
         this.context = context;
         MessageResults = null;
+        FolderName = "INBOX";
     }
 
 //    @Override
@@ -114,9 +117,9 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     {
         Message[] messages = new Message[0];
 
-        //TryMe();
-
         messages = FetchMails();
+
+        //TryMe();
 
         return messages;
     }
@@ -125,6 +128,8 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     protected void onPostExecute(Message[] messages)
     {
         super.onPostExecute(messages);
+
+        //progressDialog.dismiss();
 
         if (listener != null)
         {
@@ -143,6 +148,13 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         messages = ReadMailImap();
 
         progressDialog.dismiss();
+
+        // TODO:  Meybe Yes
+//        if (listener != null)
+//        {
+//            // Now let's fire listener here
+//            listener.onDataLoaded(MessageResults);
+//        }
 
         //Toast.makeText(context,"Finish to fetch mails. Items count: " + String.valueOf(messages.length), Toast.LENGTH_LONG).show();
 
@@ -214,8 +226,8 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 
             try
             {
-                //Toast.makeText(context,"Fetching mails and there's content from server ...", Toast.LENGTH_LONG).show();
-                //System.out.println("Fetching mails and there's content from server ...");
+                //Toast.makeText(context,"Fetching mails and there's content from server ... " + String.valueOf(messages.length) + " Messages", Toast.LENGTH_LONG).show();
+                //System.out.println(""Fetching mails and there's content from server ... " + String.valueOf(messages.length) + " Messages"");
 
                 // Fetching the mails with all it's content
                 folder.fetch(messages, fetchProfile);
@@ -265,6 +277,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 
         //Toast.makeText(context,"Connecting to mails server", Toast.LENGTH_SHORT).show();
 
+        // TODO: Maybe to delete
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -292,7 +305,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             //store.connect(HostAddress, 993, UserAddress, Password);
             //store.connect(UserAddress, Password);
 
-            foler = store.getFolder(FOLDER_NAME);
+            foler = store.getFolder(FolderName);
             foler.open(Folder.READ_ONLY);
 
             mailObjects = new Object[2];

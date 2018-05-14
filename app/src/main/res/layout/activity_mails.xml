@@ -139,5 +139,22 @@
         app:layout_constraintTop_toBottomOf="@+id/lblEmailTitle"
         app:layout_constraintVertical_bias="0.002" />
 
+    <ListView
+        android:id="@+id/listFolders"
+        android:layout_width="193dp"
+        android:layout_height="109dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/holo_orange_dark"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.02" />
+
 
 </android.support.constraint.ConstraintLayout>
