@@ -34,6 +34,7 @@ import javax.mail.Multipart;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Store;
 
+import Adapter.AdapterBaseList;
 import Adapter.AdapterEmail;
 import Model.ListItemEmail;
 import Utills.*;
@@ -78,12 +79,11 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         FillFloatListView();
 
         // Execute Asyncronic
-        mailReader.execute();
+        //mailReader.execute();
 
         //Messages = mailReader.ReadMailImap();
         //Messages = mailReader.ReadMailImap2();
         //Messages = mailReader.ReadMailPop3();
-
         //SendEmail();
 
         //extras = getIntent().getExtras();
@@ -135,14 +135,14 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         btnAddItem.setOnClickListener(this);
         btnRefresh.setOnClickListener(this);
         btnSetFolder.setOnClickListener(this);
-        listFolders.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3)
-            {
-                OnListClick(adapterView, view, position, arg3);
-            }
-        });
+//        listFolders.setOnItemClickListener(new AdapterView.OnItemClickListener()
+//        {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3)
+//            {
+//                OnListClick(adapterView, view, position, arg3);
+//            }
+//        });
 
         // Register the listener for this object
         mailReader.setOnMessagesLoaded(new PersonalEvents.OnMessageLoaded()
@@ -157,28 +157,19 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private void OnListClick(AdapterView<?> adapterView, View view, int position, long arg3)
+    // Fired from AdapterBaseList class (not from 'listFolder' control)
+    private void OnListClick(int listPositionIndex, String selectedItemText)          //AdapterView<?> adapterView, View view, int position, long arg3)
     {
         listFolders.setVisibility(View.INVISIBLE);
 
-        System.out.println("View name: "+view.getTransitionName());
-        System.out.println("Item index: "+position);
-        //adapterView.setSelection(position);
-        //listFolders.getAdapter().getItem(position);
-        System.out.println("Item index: "+ adapterView.getSelectedItemPosition());   // +adapterView.getSelectedItem().toString()+"  "
-        String value = (String)adapterView.getItemAtPosition(position);
-        System.out.println("Item value: "+ value);
+        System.out.println("Item index: " + listPositionIndex + "  Item value: " + selectedItemText);
 
+        lblFolderName.setText(selectedItemText);
+        mailReader.FolderName = selectedItemText;
 
-        // TODO: set background color
-        //(adapterView.getAdapter())findViewById(adapterView.getItemIdAtPosition(position));
+        //Message[] messages = mailReader.FetchMails();
 
-        lblFolderName.setText(value);
-        mailReader.FolderName = value;
-
-        Message[] messages = mailReader.FetchMails();
-
-        FillList(messages);
+        //FillList(messages);
     }
 
     private void mailReader_RecivedMessages(Message[] messages)
@@ -475,11 +466,26 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         items[0]="INBOX";
         items[1]="Drafts";
         items[2]="sent Items";
+
         ArrayList<String> ListItemArray = new ArrayList<String>();
         ListItemArray.addAll(Arrays.asList(items));
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.list_row, R.id.lblListRow, ListItemArray);
 
-        listFolders.setAdapter(listAdapter);
+        AdapterBaseList adapterBaseList = new AdapterBaseList(this, ListItemArray, listFolders);
+        adapterBaseList.LayoutCardResourceID = R.layout.list_row;
+        adapterBaseList.LayoutControlToShowResourceID = R.id.lblListRow;
+
+        // Register the listener for this object
+        adapterBaseList.setOnListViewItemClick(new PersonalEvents.OnListViewItemClick()
+        {
+            // Listen to event. wait here when the event invoked in child object.
+            @Override
+            public void onListViewItemPressed(int listPositionIndex, String selectedItemText)
+            {
+                OnListClick(listPositionIndex, selectedItemText);
+            }
+        });
+
+        adapterBaseList.FillList();
     }
 
     private void MailCheckTimer_onTick()

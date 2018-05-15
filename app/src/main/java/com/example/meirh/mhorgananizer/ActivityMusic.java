@@ -162,6 +162,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
     private void LoadSongIntoPlayer(int resourceID, int listPositionIndex)
     {
         MusicPause();
+
         mediaPlayer = MediaPlayer.create(getApplicationContext(), resourceID);
         //mediaPlayer = MediaPlayer.create(new Uri("/0/Music/one.mp3");  //TODO: load from smartphone disk
         barSeek.setMax(mediaPlayer.getDuration());
@@ -261,22 +262,28 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                 listItemArray[0]="Meir";
                 listItemArray[1]="Amit";
                 listItemArray[2]="Ronen";
-//                ArrayList<ListItem>  listItemArray = new ArrayList<ListItem>();
-//                listItemArray.add(new ListItem("Meir", "abc", "def"));
-//                listItemArray.add(new ListItem("Amit", "abc", "def"));
-//                listItemArray.add(new ListItem("Ronen", "abc", "def"));
 
+
+                ArrayList<String> ArrayListItem = new ArrayList<String>();
+                ArrayListItem.addAll(Arrays.asList(listItemArray));
+
+                Bundle data = new Bundle();
+
+                data.putStringArrayList("ListItems", ArrayListItem);
+                //data.putStringArray("ListItems", listItemArray);
+                //data.putParcelableArrayList("search.resultSet", listArray);
+
+                intentMusic.putExtra("ListItems", data);
+                startActivity(intentMusic);
+
+                //ArrayList<ListItem>  listArray = new ArrayList<ListItem>();
+                //listArray.add(new ListItem("Meir", "abc", "def"));
+                //listArray.add(new ListItem("Amit", "abc", "def"));
+                //listArray.add(new ListItem("Ronen", "abc", "def"));
                 //intentMusic.putParcelableArrayListExtra("ListItems", listItemArray);
                 //intentMusic.putExtra("ListItems", listItemArray);
                 //intentMusic.putExtra("ListItems", listItemArray);
 
-                Bundle data = new Bundle();
-                //data.putStringArrayList("ListItems", new ArrayList<String>());
-                data.putStringArray("ListItems", listItemArray);
-                //data.putParcelableArrayList("search.resultSet", resultSet);
-                intentMusic.putExtra("ListItems", data);
-
-                startActivity(intentMusic);
                 break;
 
             case R.id.btnBack:

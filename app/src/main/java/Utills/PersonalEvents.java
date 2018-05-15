@@ -19,4 +19,8 @@ public class PersonalEvents
         void onSongPressed(int cardViewPressedResID, int listPositionIndex);
     }
 
+    public interface OnListViewItemClick
+    {
+        void onListViewItemPressed(int listPositionIndex, String selectedItemText);
+    }
 }
