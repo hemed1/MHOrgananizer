@@ -14,13 +14,13 @@ public class PersonalEvents
         void onDataLoaded(Message[] messages);
     }
 
-    public interface OnSongClick
+    public interface OnRecyclerViewItemClick
     {
-        void onSongPressed(int cardViewPressedResID, int listPositionIndex);
+        void setOnRecyclerViewItemPressed(int cardViewPressedResID, int listPositionIndex);
     }
 
     public interface OnListViewItemClick
     {
-        void onListViewItemPressed(int listPositionIndex, String selectedItemText);
+        void setOnListViewItemPressed(int listPositionIndex, String selectedItemText);
     }
 }

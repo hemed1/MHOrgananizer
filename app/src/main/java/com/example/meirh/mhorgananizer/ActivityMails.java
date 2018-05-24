@@ -64,7 +64,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
     public Thread                   CheckMailThread;
     private PersonalEvents.OnMessageLoaded      listener;
     private boolean                 IsTimerWork;
-
+    private AdapterBaseList         adapterBaseList;
 
 
 
@@ -135,6 +135,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         btnAddItem.setOnClickListener(this);
         btnRefresh.setOnClickListener(this);
         btnSetFolder.setOnClickListener(this);
+
 //        listFolders.setOnItemClickListener(new AdapterView.OnItemClickListener()
 //        {
 //            @Override
@@ -465,12 +466,12 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         String[]  items = new String[3];
         items[0]="INBOX";
         items[1]="Drafts";
-        items[2]="sent Items";
+        items[2]="Sent Items";
 
         ArrayList<String> ListItemArray = new ArrayList<String>();
         ListItemArray.addAll(Arrays.asList(items));
 
-        AdapterBaseList adapterBaseList = new AdapterBaseList(this, ListItemArray, listFolders);
+        adapterBaseList = new AdapterBaseList(this, ListItemArray, listFolders);
         adapterBaseList.LayoutCardResourceID = R.layout.list_row;
         adapterBaseList.LayoutControlToShowResourceID = R.id.lblListRow;
 
@@ -479,7 +480,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         {
             // Listen to event. wait here when the event invoked in child object.
             @Override
-            public void onListViewItemPressed(int listPositionIndex, String selectedItemText)
+            public void setOnListViewItemPressed(int listPositionIndex, String selectedItemText)
             {
                 OnListClick(listPositionIndex, selectedItemText);
             }

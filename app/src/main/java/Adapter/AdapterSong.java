@@ -25,6 +25,7 @@ import com.example.meirh.mhorgananizer.MainActivity;
 import com.example.meirh.mhorgananizer.R;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import Model.ListItemSong;
@@ -35,15 +36,15 @@ import static android.app.Activity.RESULT_OK;
 
 public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
 {
-    private Context context;
-    private List<ListItemSong> listItems;
+    private Context                 context;
+    private List<ListItemSong>      listItems;
 
 
     // The listener must implement the events interface and passes messages up to the parent.
-    private PersonalEvents.OnSongClick      listener;
+    private PersonalEvents.OnRecyclerViewItemClick      listener;
 
     // Assign the listener implementing events interface that will receive the events
-    public void setOnSongClick(PersonalEvents.OnSongClick  listener)
+    public void setOnSongClick(PersonalEvents.OnRecyclerViewItemClick  listener)
     {
         this.listener = listener;
     }
@@ -125,7 +126,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
             if (listener != null)
             {
                 // Now let's fire listener here
-                listener.onSongPressed(item.getResourceID(), getAdapterPosition());
+                listener.setOnRecyclerViewItemPressed(item.getResourceID(), getAdapterPosition());
             }
 
 //            Intent intent = getIntent();
@@ -146,4 +147,15 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
 
         }
     }
+
+    public List<ListItemSong> getListItems() {
+        return listItems;
+    }
+
+    public void setListItems(List<ListItemSong> listItems)
+    {
+        this.listItems = listItems;
+    }
+
+
 }

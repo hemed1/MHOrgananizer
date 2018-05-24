@@ -33,7 +33,7 @@ public class AdapterBaseList
     public int                          LayoutControlToShowResourceID;
 
     // The listener must implement the events interface and passes messages up to the parent.
-    private PersonalEvents.OnListViewItemClick listener;
+    private PersonalEvents.OnListViewItemClick AdapterListener;
 
 
     public AdapterBaseList(Context context, ArrayList<String> listItems, ListView listViewControl)
@@ -42,7 +42,7 @@ public class AdapterBaseList
         this.ListItems = listItems;
         this.ListViewControl = listViewControl;
 
-        listener = null;
+        AdapterListener = null;
 
         ListViewControl.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -59,7 +59,7 @@ public class AdapterBaseList
     // Assign the listener implementing events interface that will receive the events
     public void setOnListViewItemClick(PersonalEvents.OnListViewItemClick listener)
     {
-        this.listener = listener;
+        this.AdapterListener = listener;
     }
 
 
@@ -126,10 +126,10 @@ public class AdapterBaseList
         // TODO: set background color
         //(adapterView.getAdapter())findViewById(adapterView.getItemIdAtPosition(position));
 
-        if (listener != null)
+        if (AdapterListener != null)
         {
             // Now let's fire listener here
-            listener.onListViewItemPressed(position, itemValue);
+            AdapterListener.setOnListViewItemPressed(position, itemValue);
         }
 
         //System.out.println("View name: "+view.getTransitionName());
@@ -137,6 +137,16 @@ public class AdapterBaseList
         //listFolders.getAdapter().getItem(position);
         //System.out.println("Item index: "+ adapterView.getSelectedItemPosition());   // +adapterView.getSelectedItem().toString()+"  "
 
+    }
+
+    public ArrayList<String> getListItems()
+    {
+        return ListItems;
+    }
+
+    public void setListItems(ArrayList<String> listItems)
+    {
+        ListItems = listItems;
     }
 
     private void ListFillExample()

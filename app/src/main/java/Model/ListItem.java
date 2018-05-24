@@ -6,9 +6,9 @@ import android.widget.ImageView;
  * Created by meirh on 09/04/2018.
  */
 
-public class ListItemSong
+public class ListItem
 {
-    private String      SongName;
+    private String      Name;
     private String      Artist;
     private String      Album;
     private String      Year;
@@ -18,9 +18,9 @@ public class ListItemSong
 
 
 
-    public ListItemSong(String songName, String artist, String album)
+    public ListItem(String Name, String artist, String album)
     {
-        this.SongName = songName;
+        this.Name = Name;
         this.Artist = artist;
         this.Album=album;
     }
@@ -44,13 +44,12 @@ public class ListItemSong
         this.ResourceID = resourceID;
     }
 
-    public String getSongName()
-    {
-        return SongName;
+    public String getName() {
+        return Name;
     }
 
-    public void setSongName(String songName) {
-        SongName = songName;
+    public void setName(String Name) {
+        Name = Name;
     }
 
     public String getArtist() {
