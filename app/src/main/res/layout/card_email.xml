@@ -50,7 +50,7 @@
                     android:layout_weight="2"
                     android:text="Sender"
                     android:textSize="16sp"
-                    android:textColor="@color/titles_main_foreground"
+                    android:textColor="@color/titles_card_foreground_main"
                     android:textStyle="bold" />
 
                 <TextView
@@ -59,7 +59,7 @@
                     android:layout_height="16dp"
                     android:layout_weight="1"
                     android:text="Subject"
-                    android:textColor="@color/titles_second_foreground"
+                    android:textColor="@color/titles_card_foreground_second"
                     android:textSize="15sp" />
 
                 <TextView
@@ -68,6 +68,8 @@
                     android:layout_height="16dp"
                     android:layout_weight="1"
                     android:text="Content"
+                    android:textSize="14sp"
+                    android:textColor="@color/titles_card_foreground_third"
                     android:textStyle="italic" />
 
             </LinearLayout>

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorView_background"
     tools:context="com.example.meirh.mhorgananizer.ActivityMusic">
+    <!--android:background="@drawable/colored"    -->
 
     <TextView
         android:id="@+id/lblSongName"
@@ -21,7 +22,7 @@
         app:layout_constraintHorizontal_bias="0.500"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.75" />
+        app:layout_constraintVertical_bias="0.760" />
 
     <TextView
         android:id="@+id/lblSongArtist"
@@ -52,8 +53,8 @@
         android:layout_marginTop="8dp"
         android:text="Album"
         android:textAlignment="center"
-        android:textColor="@color/titles_second_foreground"
-        android:textSize="15dp"
+        android:textColor="@color/titles_third_foreground"
+        android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -91,7 +92,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.970" />
+        app:layout_constraintVertical_bias="0.960" />
 
     <TextView
         android:id="@+id/lblPosLeft"
@@ -108,7 +109,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.030"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.970" />
+        app:layout_constraintVertical_bias="0.960" />
 
     <ImageView
         android:id="@+id/imgLine"
@@ -138,10 +139,10 @@
         android:textSize="9dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.500"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.982"
-        app:srcCompat="@drawable/oval"/>
+        app:layout_constraintVertical_bias="0.982" />
 
     <Button
         android:id="@+id/btnPrev"
@@ -181,19 +182,28 @@
 
     <Button
         android:id="@+id/btnList"
-        style="@style/Button_Save"
+        style="@android:style/Widget.DeviceDefault.Light.Button.Inset"
+        android:layout_width="40dp"
+        android:layout_height="20dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="List"
+        android:background="@android:color/transparent"
+        android:elevation="0dp"
+        android:text="..."
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="15sp"
+        android:textStyle="bold"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnPrev"
-        app:layout_constraintHorizontal_bias="0.38"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.140"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.964" />
+        app:layout_constraintVertical_bias="0.965" />
 
 
     <!--<LinearLayout-->
@@ -203,42 +213,61 @@
         <!--android:layout_height="fill_parent">-->
 
     <HorizontalScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/imgSongArtist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:adjustViewBounds="false"
-                android:background="@drawable/meir1" />
-            <!--app:srcCompat="@drawable/oval"-->
-
-            <ImageView
-                android:id="@+id/imgSongArtist2"
+            <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:adjustViewBounds="false"
-                android:background="@drawable/meir1" />
-            <!--app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--app:layout_constraintEnd_toEndOf="parent"-->
-            <!--app:layout_constraintHorizontal_bias="0.511"-->
-            <!--app:layout_constraintStart_toStartOf="parent"-->
-            <!--app:layout_constraintTop_toTopOf="parent"-->
-            <!--app:layout_constraintVertical_bias="0.039" />-->
+                android:padding="0dp">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="0dp"
+                    android:background="@color/colorAccent">
+
+                    <ImageView
+                        android:id="@+id/imgSongArtist"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:adjustViewBounds="false"
+                        android:background="@drawable/meir1"
+                        android:filterTouchesWhenObscured="false" />
+                        <!--app:srcCompat="@drawable/oval"-->
+
+                    <ImageView
+                        android:id="@+id/imgSongArtist2"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:adjustViewBounds="false"
+                        android:background="@drawable/meir1" />
+
+                    <ImageView
+                        android:id="@+id/imgSongArtist3"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:adjustViewBounds="false"
+                        android:background="@drawable/meir1" />
+                </TableRow>
+            </TableLayout>
 
         </LinearLayout>
 

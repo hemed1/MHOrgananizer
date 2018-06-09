@@ -43,17 +43,17 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
     // The listener must implement the events interface and passes messages up to the parent.
     private PersonalEvents.OnRecyclerViewItemClick      listener;
 
-    // Assign the listener implementing events interface that will receive the events
-    public void setOnSongClick(PersonalEvents.OnRecyclerViewItemClick  listener)
-    {
-        this.listener = listener;
-    }
-
-    public AdapterSong(Context context, List listItems)
+     public AdapterSong(Context context, List listItems)
     {
         this.context = context;
         this.listItems = listItems;
         listener = null;
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setOnSongClick(PersonalEvents.OnRecyclerViewItemClick  listener)
+    {
+        this.listener = listener;
     }
 
     @Override
@@ -79,7 +79,15 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
         //holder.lblYear.setText(String.valueOf(item.getDuration()/1000));
         //holder.lblYear.setText(item.getYear());
 
-        holder.Image.setImageDrawable(item.getImageItem().getDrawable());
+        if (item.getPicsToSongResIDsArray().get(0)>0)
+        {
+            holder.Image.setBackground(context.getDrawable(item.getPicsToSongResIDsArray().get(0)));
+        }
+        else
+        {
+            Toast.makeText(context, "No Pictures to Song:  " + item.getSongName(), Toast.LENGTH_LONG).show();
+        }
+
     }
 
     @Override
@@ -105,7 +113,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
             lblSongName = (TextView) cardViewItem.findViewById(R.id.lblSongName);
             lblArtist = (TextView) cardViewItem.findViewById(R.id.lblArtist);
             lblAlbum = (TextView) cardViewItem.findViewById(R.id.lblAlbum);
-            lblAlbum.setVisibility(View.INVISIBLE);
+            //lblAlbum.setVisibility(View.INVISIBLE);
             lblYear = (TextView) cardViewItem.findViewById(R.id.lblYear);
             lblYear.setVisibility(View.VISIBLE);
             Image = (ImageView) cardViewItem.findViewById(R.id.imgItem);

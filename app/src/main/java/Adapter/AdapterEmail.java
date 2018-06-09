@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import Model.ListItemEmail;
+import Utills.PersonalEvents;
 
 /**
  * Created by meirh on 09/04/2018.
@@ -26,17 +27,26 @@ public class AdapterEmail extends RecyclerView.Adapter<AdapterEmail.EmailHolder>
     private Context context;
     private List<ListItemEmail> listItems;
 
+    // The listener must implement the events interface and passes messages up to the parent.
+    private PersonalEvents.OnRecyclerViewItemClick      listener;
+
     public AdapterEmail(Context context, List listItems)
     {
         this.context = context;
         this.listItems = listItems;
     }
 
+    // Assign the listener implementing events interface that will receive the events
+    public void setOnSongClick(PersonalEvents.OnRecyclerViewItemClick  listener)
+    {
+        this.listener = listener;
+    }
+
     @Override
     public AdapterEmail.EmailHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        View  view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_email, parent, false);
-        EmailHolder emailHolder = new EmailHolder(view);
+        View  cardViewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_email, parent, false);
+        EmailHolder emailHolder = new EmailHolder(cardViewItem);
 
         return emailHolder;
     }
@@ -52,7 +62,7 @@ public class AdapterEmail extends RecyclerView.Adapter<AdapterEmail.EmailHolder>
         holder.lblDateSent.setText(item.getDateSent());
         holder.lblDateSent.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         //TODO: holder.lblDateReceive.setText(item.getDateReceive());
-        holder.Image.setImageDrawable(item.getImgItem().getDrawable());
+        holder.Image.setBackground(item.getImgItem().getDrawable());
     }
 
     @Override
@@ -93,6 +103,12 @@ public class AdapterEmail extends RecyclerView.Adapter<AdapterEmail.EmailHolder>
             Toast.makeText(context, item.getSender(), Toast.LENGTH_SHORT).show();
 
             //TODO: Open mail details view
+
+//            if (listener != null)
+//            {
+//                // Now let's fire listener here
+//                listener.setOnRecyclerViewItemPressed(item.getResourceID(), getAdapterPosition());
+//            }
 
 //            Intent intent = new Intent(context, DetailsActivity.class);
 //            intent.putExtra("Name", item.getName());

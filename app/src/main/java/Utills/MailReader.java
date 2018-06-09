@@ -85,13 +85,6 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         FolderName = "INBOX";
     }
 
-//    @Override
-//    protected void onCancelled(Message[] messages)
-//    {
-//        super.onCancelled(messages);
-//        CheckMailThread=null;
-//    }
-
     @Override
     protected void onCancelled()
     {
@@ -268,8 +261,8 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     public Object[] ConnectServer()        // Folder
     {
         Properties  properties = null;
-        Session     session = null;
-        Folder      foler = null;
+        Session     session;
+        Folder      folder;
         Store       store;
         Object[]    mailObjects = null;
 
@@ -305,11 +298,11 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             //store.connect(HostAddress, 993, UserAddress, Password);
             //store.connect(UserAddress, Password);
 
-            foler = store.getFolder(FolderName);
-            foler.open(Folder.READ_ONLY);
+            folder = store.getFolder(FolderName);
+            folder.open(Folder.READ_ONLY);
 
             mailObjects = new Object[2];
-            mailObjects[0] = foler;
+            mailObjects[0] = folder;
             mailObjects[1] = store;
 
         }
@@ -327,7 +320,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         }
 
 
-        return mailObjects;     //foler;
+        return mailObjects;
     }
 
     public void TryMe()
@@ -358,7 +351,6 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     public boolean CheckNewMails()
     {
         boolean  isFoundNewMessages = false;
-        final Message[]  messages = new Message[0];
         Store   store = null;
         Folder  folder = null;
         Object[]    mailObjects;
@@ -366,11 +358,11 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 
         try
         {
-            //Toast.makeText(context,"Checking from new mails ...", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context,"Checking new mails ...", Toast.LENGTH_SHORT).show();
 
             while (IsHaveToCheckNewEmails)
             {
-                Thread.sleep(Long.valueOf(MainActivity.MailCheckMailInterval) * 3600 * 1000);
+                Thread.sleep(6000);     //Long.valueOf(MainActivity.MailCheckMailInterval) * 3600 * 1000);
 
                 System.out.println("'CheckNewMails' check new mails In loop  " + (new Date()).toString() + "/n");
 

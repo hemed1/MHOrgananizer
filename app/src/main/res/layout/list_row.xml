@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:paddingTop="5dp"
+    android:paddingTop="15dp"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
@@ -15,7 +15,7 @@
         android:layout_margin="@dimen/cardview_compat_inset_shadow"
         android:background="@color/card_view_background_player"
         android:padding="3dp"
-        android:textColor="@color/titles_main_foreground"
+        android:textColor="@color/card_view_foreground_player"
         android:textSize="18sp"
         tools:text="Item">
     </TextView>

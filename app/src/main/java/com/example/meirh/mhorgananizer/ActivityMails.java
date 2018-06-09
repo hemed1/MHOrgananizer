@@ -64,7 +64,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
     public Thread                   CheckMailThread;
     private PersonalEvents.OnMessageLoaded      listener;
     private boolean                 IsTimerWork;
-    private AdapterBaseList         adapterBaseList;
+    private AdapterBaseList         adapterFoldersList;
 
 
 
@@ -76,10 +76,10 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
         SetIOControls();
 
-        FillFloatListView();
+        FillFoldersListView();
 
         // Execute Asyncronic
-        //mailReader.execute();
+        mailReader.execute();
 
         //Messages = mailReader.ReadMailImap();
         //Messages = mailReader.ReadMailImap2();
@@ -136,15 +136,6 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         btnRefresh.setOnClickListener(this);
         btnSetFolder.setOnClickListener(this);
 
-//        listFolders.setOnItemClickListener(new AdapterView.OnItemClickListener()
-//        {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3)
-//            {
-//                OnListClick(adapterView, view, position, arg3);
-//            }
-//        });
-
         // Register the listener for this object
         mailReader.setOnMessagesLoaded(new PersonalEvents.OnMessageLoaded()
         {
@@ -168,9 +159,9 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         lblFolderName.setText(selectedItemText);
         mailReader.FolderName = selectedItemText;
 
-        //Message[] messages = mailReader.FetchMails();
+        Message[] messages = mailReader.FetchMails();
 
-        //FillList(messages);
+        FillList(messages);
     }
 
     private void mailReader_RecivedMessages(Message[] messages)
@@ -304,11 +295,11 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
         Messages = messages;
 
+        System.out.println("Items count: " + String.valueOf(listItems.size()));
+        //Toast.makeText(this,"Mails count: " + String.valueOf(recyclerView.getAdapter().getItemCount()), Toast.LENGTH_SHORT).show();
+
         adapterEmail = new AdapterEmail(this, listItems);
         recyclerView.setAdapter(adapterEmail);
-
-        System.out.println("Items count: " + String.valueOf(listItems.size()));
-        Toast.makeText(this,"Items count: " + String.valueOf(recyclerView.getAdapter().getItemCount()), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -425,7 +416,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
     {
         System.out.println("Stop timer " + (new Date()).toString());
         MailCheckTimer.cancel();
-        MailCheckTimer.purge();
+        //MailCheckTimer.purge();
         IsTimerWork = false;
     }
 
@@ -446,11 +437,11 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.btnAddItem:
-                TimerStop();
-                ListItemEmail item = AddItem(Messages[0]);
+                //TimerStop();
+                //ListItemEmail item = AddItem(Messages[0]);
                 //listItems.add(1, item);   // TODO: Insert
-                recyclerView.setAdapter(adapterEmail);
-                TimerRun();
+                //recyclerView.setAdapter(adapterEmail);
+                //TimerRun();
                 break;
 
             case R.id.btnSetFolder:
@@ -461,7 +452,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void FillFloatListView()
+    private void FillFoldersListView()
     {
         String[]  items = new String[3];
         items[0]="INBOX";
@@ -471,12 +462,12 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         ArrayList<String> ListItemArray = new ArrayList<String>();
         ListItemArray.addAll(Arrays.asList(items));
 
-        adapterBaseList = new AdapterBaseList(this, ListItemArray, listFolders);
-        adapterBaseList.LayoutCardResourceID = R.layout.list_row;
-        adapterBaseList.LayoutControlToShowResourceID = R.id.lblListRow;
+        adapterFoldersList = new AdapterBaseList(this, ListItemArray, listFolders);
+        adapterFoldersList.LayoutCardResourceID = R.layout.list_row;
+        adapterFoldersList.LayoutControlToShowResourceID = R.id.lblListRow;
 
         // Register the listener for this object
-        adapterBaseList.setOnListViewItemClick(new PersonalEvents.OnListViewItemClick()
+        adapterFoldersList.setOnListViewItemClick(new PersonalEvents.OnListViewItemClick()
         {
             // Listen to event. wait here when the event invoked in child object.
             @Override
@@ -486,7 +477,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
             }
         });
 
-        adapterBaseList.FillList();
+        adapterFoldersList.FillList();
     }
 
     private void MailCheckTimer_onTick()
@@ -498,6 +489,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         //MailCheckTimerTask.run();
         if (mailReader.IsHaveToCheckNewEmails)
         {
+            //Toast.makeText(this,"Checking new mails ...", Toast.LENGTH_SHORT).show();
             mailReader.CheckNewMails();
         }
     }

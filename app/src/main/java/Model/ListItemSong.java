@@ -1,6 +1,11 @@
 package Model;
 
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
+
+import com.example.meirh.mhorgananizer.ActivityMusic;
+
+import java.util.ArrayList;
 
 /**
  * Created by meirh on 09/04/2018.
@@ -14,6 +19,8 @@ public class ListItemSong
     private String      Year;
     private int         Duration;
     private int         ResourceID;
+    private ArrayList<Integer> picsToSongResourcesIDs;
+
     private ImageView   ImageItem;
 
 
@@ -23,6 +30,13 @@ public class ListItemSong
         this.SongName = songName;
         this.Artist = artist;
         this.Album=album;
+        //ImageItem = new ImageView(ActivityMusic.this);
+        picsToSongResourcesIDs = new ArrayList<Integer>();
+    }
+
+    public ArrayList<Integer> getPicsToSongResIDsArray()
+    {
+        return picsToSongResourcesIDs;
     }
 
     public int getDuration()
@@ -77,12 +91,19 @@ public class ListItemSong
         Year = year;
     }
 
-    public ImageView getImageItem() {
+    public ImageView getImageItem()
+    {
         return ImageItem;
     }
 
-    public void setImageItem(ImageView imageItem) {
+    public void setImageItem(ImageView imageItem)
+    {
         ImageItem = imageItem;
+    }
+
+    public void setImagePicture(Drawable drawable)
+    {
+        ImageItem.setBackground(drawable);
     }
 
 
