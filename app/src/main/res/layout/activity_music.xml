@@ -65,6 +65,7 @@
 
     <SeekBar
         android:id="@+id/barSeek"
+        style="@android:style/Widget.Material.Light.SeekBar"
         android:layout_width="307dp"
         android:layout_height="33dp"
         android:layout_marginBottom="8dp"
@@ -214,60 +215,70 @@
 
     <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="1dp"
             android:orientation="horizontal">
 
-            <TableLayout
-                android:layout_width="match_parent"
+            <!--<TableLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_margin="@dimen/cardview_compat_inset_shadow"-->
+                <!--android:padding="0dp">-->
+
+                <!--<TableRow-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:background="@color/colorAccent"-->
+                    <!--android:padding="0dp">-->
+
+            <!--android:background="@drawable/meir1"-->
+                <!--app:srcCompat="@drawable/meir1" />-->
+                <!--android:src="@drawable/meir1" />-->
+                <!--app:srcCompat="@drawable/oval"/>-->
+                <!--android:src="@drawable/oval"-->
+
+            <ImageView
+                android:id="@+id/imgSongArtist1"
+                android:layout_width="405dp"
                 android:layout_height="match_parent"
-                android:padding="0dp">
+                android:layout_marginBottom="1dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="1dp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/meir1" />
+                <!--android:scrollX="100dp"-->
+                <!--android:scrollY="200dp"-->
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="0dp"
-                    android:background="@color/colorAccent">
+            <ImageView
+                android:id="@+id/imgSongArtist2"
+                android:layout_width="405dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="1dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="1dp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/meir1" />
 
-                    <ImageView
-                        android:id="@+id/imgSongArtist"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:adjustViewBounds="false"
-                        android:background="@drawable/meir1"
-                        android:filterTouchesWhenObscured="false" />
-                        <!--app:srcCompat="@drawable/oval"-->
-
-                    <ImageView
-                        android:id="@+id/imgSongArtist2"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:adjustViewBounds="false"
-                        android:background="@drawable/meir1" />
-
-                    <ImageView
-                        android:id="@+id/imgSongArtist3"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:adjustViewBounds="false"
-                        android:background="@drawable/meir1" />
-                </TableRow>
-            </TableLayout>
+            <ImageView
+                android:id="@+id/imgSongArtist3"
+                android:layout_width="405dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="1dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="1dp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/meir1" />
+                <!--</TableRow>-->
+            <!--</TableLayout>-->
 
         </LinearLayout>
 

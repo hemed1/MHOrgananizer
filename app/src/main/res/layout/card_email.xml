@@ -7,6 +7,7 @@
     android:layout_height="wrap_content">-->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:paddingTop="7dp"
     android:layout_width="match_parent"
@@ -33,8 +34,10 @@
                 android:id="@+id/imgItem"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="1dp" />
-                <!--app:srcCompat="@android:drawable/presence_audio_busy"/>-->
+                android:layout_marginStart="1dp"
+                android:background="@drawable/meir1"
+                app:srcCompat="@drawable/oval" />
+
 
             <LinearLayout
                 android:layout_width="205dp"
@@ -50,7 +53,7 @@
                     android:layout_weight="2"
                     android:text="Sender"
                     android:textSize="16sp"
-                    android:textColor="@color/titles_card_foreground_main"
+                    android:textColor="@color/titles_card_foreground_main_mail"
                     android:textStyle="bold" />
 
                 <TextView
@@ -59,7 +62,7 @@
                     android:layout_height="16dp"
                     android:layout_weight="1"
                     android:text="Subject"
-                    android:textColor="@color/titles_card_foreground_second"
+                    android:textColor="@color/titles_card_foreground_second_mail"
                     android:textSize="15sp" />
 
                 <TextView
@@ -69,7 +72,7 @@
                     android:layout_weight="1"
                     android:text="Content"
                     android:textSize="14sp"
-                    android:textColor="@color/titles_card_foreground_third"
+                    android:textColor="@color/titles_card_foreground_third_mail"
                     android:textStyle="italic" />
 
             </LinearLayout>
@@ -82,6 +85,7 @@
                 android:text="Sent date"
                 android:textAlignment="viewStart"
                 android:textSize="13sp"
+                android:textColor="@color/titles_card_foreground_second_mail"
                 android:visibility="visible" />
 
         </TableRow>

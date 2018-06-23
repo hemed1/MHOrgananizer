@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
 
-    <gradient
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:color="#e6aa05"
-        android:startColor="#000000"
-        android:endColor="#2e2b2b"
-        />
+    <!--<gradient-->
+        <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:color="#e6aa05"-->
+        <!--android:startColor="#000000"-->
+        <!--android:endColor="#2e2b2b"-->
+        <!--/>-->
 
     <stroke
         android:color="#e6aa05"

@@ -1,6 +1,10 @@
 package com.example.meirh.mhorgananizer;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -41,7 +45,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
     private TextView            lblPosNow;
     private TextView            lblPosLeft;
     private SeekBar             barSeek;
-    private ImageView           imgSongArtist;
+    private ImageView           imgSongArtist1;
     private ImageView           imgSongArtist2;
     private ImageView           imgSongArtist3;
     private ImageView           imgLine;
@@ -239,7 +243,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         lblAlbum = (TextView) findViewById(R.id.lblAlbum);
         lblPosNow = (TextView) findViewById(R.id.lblPosNow);
         lblPosLeft = (TextView) findViewById(R.id.lblPosLeft);
-        imgSongArtist = (ImageView) findViewById(R.id.imgSongArtist);
+        imgSongArtist1 = (ImageView) findViewById(R.id.imgSongArtist1);
         imgSongArtist2 = (ImageView) findViewById(R.id.imgSongArtist2);
         imgSongArtist3 = (ImageView) findViewById(R.id.imgSongArtist3);
         imgLine = (ImageView) findViewById(R.id.imgLine);
@@ -282,7 +286,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             @Override
             public void onStartTrackingTouch(SeekBar seekBar)
             {
-                    seekBar.bringToFront();
+                    //seekBar.bringToFront();
             }
 
             @Override
@@ -349,32 +353,68 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
     // Set the Song props - Name, Artist, Album, Duration
     private void setSongControls(int listPositionIndex)
     {
+        Drawable drawable;
+
+
         ListItemSong item = ListItemsRecycler.get(listPositionIndex);
 
         lblSongName.setText(item.getSongName());
         lblSongArtist.setText(item.getArtist());
         lblAlbum.setText(item.getAlbum());
 
-
-        //Toast.makeText(ActivityMusic.this, "setSongControls, Pictures count: " + String.valueOf(item.getPicsToSongResIDsArray().size()), Toast.LENGTH_SHORT).show();
+        int widthScreen = (int)(this.getWindow().getDecorView().getWidth() * 0.9);
+        int heightScreen = (int)(this.getWindow().getDecorView().getHeight() * 0.9);
+        //Toast.makeText(this, "Screen Width: "+String.valueOf(widthScreen) +"  Screen Height: "+ String.valueOf(heightScreen), Toast.LENGTH_SHORT).show();
 
         if (item.getPicsToSongResIDsArray().size()>0)
         {
-            //Toast.makeText(ActivityMusic.this, "setSongControls, Loading Pic 1: " + String.valueOf(item.getPicsToSongResIDsArray().get(0)), Toast.LENGTH_SHORT).show();
-            imgSongArtist.setBackground((Drawable) getDrawable(item.getPicsToSongResIDsArray().get(0)));
-            //imgSongArtist.setImageDrawable((Drawable) getDrawable(item.getPicsToSongResIDsArray().get(0)));
+            drawable = this.getDrawable(item.getPicsToSongResIDsArray().get(0));
+            drawable.setLevel(5000);
+            //imgSongArtist1.setMinimumWidth(widthScreen);
+            //imgSongArtist1.setMaxWidth(widthScreen);
+            //Toast.makeText(this, "Width: "+String.valueOf(drawable.getIntrinsicWidth()) +"  Height: "+ String.valueOf(drawable.getIntrinsicHeight()), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Width: "+String.valueOf(imgSongArtist1.getWidth()) +"  Height: "+ String.valueOf(imgSongArtist1.getHeight()), Toast.LENGTH_SHORT).show();
+            //imgSongArtist1.setMinimumWidth(drawable.getIntrinsicWidth());
+            //imgSongArtist1.setMinimumHeight(drawable.getIntrinsicHeight());
+            //Bitmap myBitmap=null
+            //Bitmap bitmap = Bitmap.createBitmap(new int[]{255,0,0},700, 900, Bitmap.Config.RGB_565);
+            //Canvas canvas = new Canvas(bitmap);
+            //Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            //paint.setColor(Color.BLACK);
+            //canvas.drawCircle(50, 50, 10, paint);
+            //imgSongArtist1.setImageBitmap(bitmap);
+            //imgSongArtist1.setImageDrawable(drawable);
+            //imgSongArtist1.setCropToPadding(false);
+            // This prop make sure the picture NOT smash and loss it's proportion - Just crop in center
+            //imgSongArtist1.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imgSongArtist1.setImageDrawable(drawable);   // Equal to prop 'app:srcCompat="@drawable/meir1"'
+            //imgSongArtist1.setBackground(drawable);    // Smash the picture and loos proportion
         }
 
         if (item.getPicsToSongResIDsArray().size()>1 && item.getPicsToSongResIDsArray().get(1)>0)
         {
-            //Toast.makeText(ActivityMusic.this, "setSongControls, Loading Pic 2: " + String.valueOf(item.getPicsToSongResIDsArray().get(1)), Toast.LENGTH_SHORT).show();
-            imgSongArtist2.setBackground((Drawable) getDrawable(item.getPicsToSongResIDsArray().get(1)));
+            drawable = this.getDrawable(item.getPicsToSongResIDsArray().get(1));
+            //Toast.makeText(ActivityMusic.this, "setSongControls, Loading Pic 2: " + String.valueOf(drawable), Toast.LENGTH_SHORT).show();
+            // This prop make sure the picture NOT smash and loss it's proportion - Just crop in center
+            //imgSongArtist2.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imgSongArtist2.setImageDrawable(drawable);   // Equal to prop 'app:srcCompat="@drawable/meir1"'
+            //imgSongArtist2.setBackground(drawable);    // Smash the picture and loos proportion
         }
 
         if (item.getPicsToSongResIDsArray().size()>2 && item.getPicsToSongResIDsArray().get(2)>0)
         {
-            //Toast.makeText(ActivityMusic.this, "setSongControls, Loading Pic 3: " + String.valueOf(item.getPicsToSongResIDsArray().get(2)), Toast.LENGTH_SHORT).show();
-            imgSongArtist3.setBackground((Drawable) getDrawable(item.getPicsToSongResIDsArray().get(2)));
+            drawable = this.getDrawable(item.getPicsToSongResIDsArray().get(2));
+            //Toast.makeText(ActivityMusic.this, "setSongControls, Loading Pic 3: " + String.valueOf(drawable), Toast.LENGTH_SHORT).show();
+            // This prop make sure the picture NOT smash and loss it's proportion - Just crop in center
+            //imgSongArtist3.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            //Toast.makeText(this, "Before: ImageView Width: "+String.valueOf(imgSongArtist3.getWidth()) +"  ImageView Height: "+ String.valueOf(imgSongArtist3.getHeight()), Toast.LENGTH_SHORT).show();
+            imgSongArtist3.setImageDrawable(drawable);   // Equal to prop 'app:srcCompat="@drawable/meir1"'
+            //imgSongArtist3.setBackground(drawable);    // Smash the picture and loos proportion
+            //imgSongArtist3.setMinimumWidth(widthScreen);
+            //imgSongArtist3.setMaxWidth(widthScreen);
+            //imgSongArtist3.setMinimumHeight(heightScreen);
+            //imgSongArtist3.setMaxHeight(heightScreen);
+            //Toast.makeText(this, "After: ImageView Width: "+String.valueOf(imgSongArtist3.getWidth()) +"  ImageView Height: "+ String.valueOf(imgSongArtist3.getHeight()), Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -608,6 +648,8 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         }
 
     }
+
+
 }
 
 //String uriStr = getResources() + "android.resource://"+ this.getPackageName() + "/" + "raw/";

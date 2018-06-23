@@ -13,7 +13,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:background="@color/card_view_background_player"
-        android:textColor="@color/card_view_foreground_player"
         android:layout_margin="@dimen/cardview_compat_inset_shadow"
         android:layout_marginEnd="4dp">
 
@@ -47,7 +46,7 @@
                     android:layout_weight="1"
                     android:shadowColor="@color/colorAccent"
                     android:text="Song Name"
-                    android:textColor="@color/titles_card_foreground_main"
+                    android:textColor="@color/titles_card_foreground_main_song"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -57,7 +56,7 @@
                     android:layout_height="20dp"
                     android:layout_weight="1"
                     android:text="Artist"
-                    android:textColor="@color/titles_card_foreground_second"
+                    android:textColor="@color/titles_card_foreground_second_song"
                     android:textSize="14sp" />
 
                 <TextView
@@ -66,8 +65,9 @@
                     android:layout_height="15dp"
                     android:layout_weight="1"
                     android:text="Album"
-                    android:textColor="@color/titles_card_foreground_third"
+                    android:textColor="@color/titles_card_foreground_third_song"
                     android:textSize="12sp"
+                    android:visibility="invisible"
                     android:textStyle="italic"/>
 
             </LinearLayout>

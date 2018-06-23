@@ -15,7 +15,7 @@
         android:layout_margin="@dimen/cardview_compat_inset_shadow"
         android:background="@color/card_view_background_player"
         android:padding="3dp"
-        android:textColor="@color/card_view_foreground_player"
+        android:textColor="@color/titles_card_foreground_main_song"
         android:textSize="18sp"
         tools:text="Item">
     </TextView>

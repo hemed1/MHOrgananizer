@@ -9,12 +9,18 @@
     <color name="list_background_player">#ffffff</color>
     <color name="list_background_mail">#000000</color>
     <color name="player_play_buttons">#ffffff</color>
+
     <color name="card_view_background_player">#ffffff</color>
     <color name="card_view_background_mail">#312f2f</color>
-    <color name="card_view_foreground_player">#000000</color>
-    <color name="titles_card_foreground_main">#080808</color>
-    <color name="titles_card_foreground_second">#333131</color>
-    <color name="titles_card_foreground_third">#484845</color>
+
+    <color name="titles_card_foreground_main_mail">#ffffff</color>
+    <color name="titles_card_foreground_second_mail">#a9a0a0</color>
+    <color name="titles_card_foreground_third_mail">#be4328</color>
+
+    <color name="titles_card_foreground_main_song">#0b0b0b</color>
+    <color name="titles_card_foreground_second_song">#484545</color>
+    <color name="titles_card_foreground_third_song">#be4328</color>
+
     <color name="titles_main_foreground">#ffffff</color>
     <color name="titles_second_foreground">#dcd6d6</color>
     <color name="titles_third_foreground">#eac807</color>
