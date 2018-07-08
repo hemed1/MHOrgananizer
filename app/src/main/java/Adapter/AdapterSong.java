@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.Intent;
 import android.content.SyncResult;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Parcelable;
@@ -67,18 +68,35 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
     }
 
     @Override
-    public void onBindViewHolder(AdapterSong.SongHolder holder, int position) {
+    public void onBindViewHolder(AdapterSong.SongHolder holder, int position)
+    {
+
         ListItemSong item = listItems.get(position);
 
         holder.lblSongName.setText(item.getSongName());
         holder.lblArtist.setText(item.getArtist());
         //holder.lblAlbum.setText(item.getAlbum());
 
+        if (item.getDuration()==0)
+        {
+            try
+            {
+                Uri uri = Uri.parse(item.getSongPath());
+                ActivityMusic.mediaPlayer = MediaPlayer.create(context, uri);
+                if (ActivityMusic.mediaPlayer != null) {
+                    item.setDuration(ActivityMusic.mediaPlayer.getDuration());
+                }
+            }
+            catch (Exception e)
+            {
+                System.out.println("Get song duration - " + e.getMessage());
+            }
+        }
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss");
         holder.lblLength.setText(dateFormat.format(new Date(item.getDuration())));
-        //holder.lblLength.setText(String.valueOf(item.getDuration()/1000));
-        //holder.lblLength.setText(item.getYear());
 
+        item.setImageItem(new ImageView(context));
         if (item.getPicsToSongPathsArray().size() > 0)
         {
             String picPath = item.getPicsToSongPathsArray().get(0);
@@ -89,21 +107,9 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
         {
             holder.Image.setImageDrawable(context.getDrawable(R.drawable.defualt_song_pic2));
         }
-        // Was filled in 'ActivityMusic.FillList()'
-        //holder.Image.setImageDrawable(item.getImageItem().getDrawable());
-        // Done in 'ActivityMusic.FillList()'
-        //if (item.getPicsToSongPathsArray().size()>0)
-        //if (item.getPicsToSongResIDsArray().get(0)>0)
-        {
-            //holder.Image.setImageBitmap(ActivityMusic.ConvertPictureFileToDrawable(item.getPicsToSongPathsArray().get(0)));
-            //holder.Image.setImageDrawable(context.getDrawable(item.getPicsToSongResIDsArray().get(0)));
-            //holder.Image.setBackground(context.getDrawable(item.getPicsToSongResIDsArray().get(0)));
-        }
-        //else
-        //{
-        //    Toast.makeText(context, "No Pictures to Song:  " + item.getSongName(), Toast.LENGTH_LONG).show();
-        //}
 
+        //holder.Image.setImageDrawable(context.getDrawable(item.getPicsToSongResIDsArray().get(0)));
+        //holder.Image.setBackground(context.getDrawable(item.getPicsToSongResIDsArray().get(0)));
     }
 
     @Override

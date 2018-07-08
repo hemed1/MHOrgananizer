@@ -67,13 +67,12 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
     private Button              btnPrev;
     private Button              btnNext;
     private Button              btnFolders;
-    public  MediaPlayer         mediaPlayer;
+    public  static MediaPlayer  mediaPlayer;
     private TextView            lblSongName;
     private TextView            lblSongArtist;
     private TextView            lblAlbum;
     private TextView            lblPosNow;
     private TextView            lblPosLeft;
-    //private AppCompatSeekBar    barSeek;
     private SeekBar             barSeek;
     private ImageView           imgSongArtist1;
     private ImageView           imgSongArtist2;
@@ -100,6 +99,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
     private ArrayMap            songsMap;
     private ArrayMap            picsMap;
     private ArrayMap            pathMap;
+    private boolean             isFirstSongListLoad;
 
 
     @Override
@@ -112,8 +112,8 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
         String pathToSearch;
 
-        pathToSearch = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath();
-        //pathToSearch = "/sdcard/Music/Genesis"; //Environment.getExternalStorageDirectory().getAbsolutePath();      //"/sdcard/Music/Genesis";  //"/sdcard/Music/Genesis";  //Environment.getExternalStorageDirectory().getAbsolutePath()   // /storage/3437-3532/
+        //pathToSearch = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath();
+        pathToSearch = Environment.getExternalStorageDirectory().getAbsolutePath();         //"/sdcard/Music/Genesis";  //"/sdcard/Music/Genesis";  //Environment.getExternalStorageDirectory().getAbsolutePath()   // /storage/3437-3532/
 
         ReadSongs(pathToSearch);
 
@@ -122,15 +122,16 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
         }
 
-        //ReadAllResources();
-
         FillList();
 
-        if (ListItemsRecycler.size()>0)
-        {
-            ListPositionIndex = 1;
-            LoadSongIntoPlayer(ListPositionIndex);
-        }
+        ListPositionIndex=0;
+
+        //ReadAllResources();
+//        if (ListItemsRecycler.size()>0)
+//        {
+//            ListPositionIndex = 1;
+//            LoadSongIntoPlayer(ListPositionIndex);
+//        }
     }
 
 
@@ -615,13 +616,13 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             {
                 picPath = picsPathsToSong.get(0);
                 item.getPicsToSongPathsArray().add(picPath);
-                imageView = new ImageView(this);
+                //imageView = new ImageView(this);
                 //Bitmap bitmap = ConvertPictureFileToDrawable(picPath);
                 //imageView.setImageBitmap(bitmap);
                 //item.getImageItem().setImageBitmap(bitmap);
                 //imageView.setBackground(getDrawable(resourceId));
                 //item.setImagePicture(getDrawable(resourceId));
-                item.setImageItem(imageView);
+                //item.setImageItem(imageView);
             }
             else
             {
@@ -908,7 +909,6 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
         barSeek = (SeekBar) findViewById(R.id.barSeek);
         barSeek.bringToFront();
-
         barSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
@@ -933,69 +933,6 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             }
         });
 
-
-        ActivitySongList.setOnListSimpleItemClick(new PersonalEvents.OnListViewItemClick()
-        {
-            @Override
-            public void setOnListViewItemPressed(int listPositionIndex, String selectedItemText)
-            {
-                ShowFilesToFolder(selectedItemText);
-            }
-        });
-
-        // Assigned it direct because it's Static var
-//        ActivitySongList.ListenerSimple = new PersonalEvents.OnListViewItemClick()
-//        {
-//            @Override
-//            public void setOnListViewItemPressed(int listPositionIndex, String selectedItemText)
-//            {
-//                ListPositionIndex = listPositionIndex;
-////                int resID=1;
-////                for (ListItemSong item : ListItemsRecycler)                             // TODO: Change to simple
-////                {
-////                    if (item.getSongName().equals(selectedItemText))
-////                    {
-////                        resID = item.getResourceID();
-////                        break;
-////                    }
-////                }
-////                resID = ListItemsRecycler.get(listPositionIndex).getResourceID();       // TODO: Change to simple
-//                LoadSongIntoPlayer(listPositionIndex);
-//            }
-//        };
-
-//        ActivitySongList.ListenerFolder = new PersonalEvents.OnListViewItemClick()
-//        {
-//            @Override
-//            public void setOnListViewItemPressed(int listPositionIndex, String selectedItemText)
-//            {
-//                ListPositionIndex = listPositionIndex;
-////                int resID=1;
-////                for (ListItemSong item : ListItemsRecycler)                             // TODO: Change to simple
-////                {
-////                    if (item.getSongName().equals(selectedItemText))
-////                    {
-////                        resID = item.getResourceID();
-////                        break;
-////                    }
-////                }
-////                resID = ListItemsRecycler.get(listPositionIndex).getResourceID();       // TODO: Change to simple
-//                ShowFilesToFolder(selectedItemText);
-//            }
-//        };
-
-
-        // Assigned it direct because it's Static var
-        ActivitySongList.ListenerRecycler = new PersonalEvents.OnRecyclerViewItemClick()
-        {
-            @Override
-            public void setOnRecyclerViewItemPressed(int cardViewPressedResID, int listPositionIndex)
-            {
-                ListPositionIndex = listPositionIndex;
-                int resID = ListItemsRecycler.get(listPositionIndex).getResourceID();
-                LoadSongIntoPlayer(listPositionIndex);
-            }
-        };
     }
 
     private void LoadSongIntoPlayer(int listPositionIndex)
@@ -1202,8 +1139,18 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
         // Here we choose witch List tyle will be shown
         intentListView.putExtra("ListMode", 2);     //ShowListModeEn.SimpleView);
+        intentListView.putStringArrayListExtra("ListItems", ListItemSimple);
 
         intentListView.putExtra("ListItems", bundle);
+
+        ActivitySongList.setOnListSimpleItemClick(new PersonalEvents.OnListViewItemClick()
+        {
+            @Override
+            public void setOnListViewItemPressed(int listPositionIndex, String selectedItemText)
+            {
+                ShowFilesToFolder(selectedItemText);
+            }
+        });
 
         ActivitySongList.ListItemsRecycler = ListItemsRecycler;
         ActivitySongList.ListItemSimple = ListItemSimple;         // TODO: Maybe passe it like this instead of thrue Intent
@@ -1233,21 +1180,44 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
         Intent intentListView = new Intent(ActivityMusic.this, ActivitySongList.class);
 
-        Bundle bundle = new Bundle();
-
-        bundle.putStringArrayList("ListItems", ListItemSimple);       // TODO: Maybe passe it like this instead of thrue Intent
-
         listMode= 1;
+        if (isFirstSongListLoad==false)
+        {
+            isFirstSongListLoad=true;
+        }
 
         // Here we choose witch List tyle will be shown
         intentListView.putExtra("ListMode", listMode);     //ShowListModeEn.RecyclerView);
+        intentListView.putStringArrayListExtra("ListItems", ListItemSimple);
+        intentListView.putExtra("FirstLoad", isFirstSongListLoad);     //ShowListModeEn.RecyclerView);
 
-        intentListView.putExtra("ListItems", bundle);
+        ActivitySongList.ListItemsRecycler = ListItemsRecycler;     // Can't send it thru Intent, so must be static
+        //ActivitySongList.ListItemSimple = ListItemSimple;         // TODO: Maybe passe it like this instead of thrue Intent
 
-        ActivitySongList.ListItemsRecycler = ListItemsRecycler;
-        ActivitySongList.ListItemSimple = ListItemSimple;         // TODO: Maybe passe it like this instead of thrue Intent
-
-        if (listMode==2)
+        if (listMode==1)
+        {
+            ActivitySongList.setOnListRecyclerItemClick(new PersonalEvents.OnRecyclerViewItemClick()
+            {
+                @Override
+                public void setOnRecyclerViewItemPressed(int cardViewPressedResID, int listPositionIndex)
+                {
+                    ListPositionIndex = listPositionIndex;
+                    int resID = ListItemsRecycler.get(listPositionIndex).getResourceID();
+                    LoadSongIntoPlayer(listPositionIndex);
+                }
+            });
+            //            ActivitySongList.ListenerRecycler = new PersonalEvents.OnRecyclerViewItemClick()
+//            {
+//                @Override
+//                public void setOnRecyclerViewItemPressed(int cardViewPressedResID, int listPositionIndex)
+//                {
+//                    ListPositionIndex = listPositionIndex;
+//                    int resID = ListItemsRecycler.get(listPositionIndex).getResourceID();
+//                    LoadSongIntoPlayer(listPositionIndex);
+//                }
+//            };
+        }
+        else if (listMode==2)
         {
             // Assigned it direct because it's Static var
             ActivitySongList.setOnListSimpleItemClick(new PersonalEvents.OnListViewItemClick()
@@ -1259,15 +1229,6 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                     LoadSongIntoPlayer(listPositionIndex);
                 }
             });
-//            ActivitySongList.ListenerSimple = new PersonalEvents.OnListViewItemClick()
-//            {
-//                @Override
-//                public void setOnListViewItemPressed(int listPositionIndex, String selectedItemText)
-//                {
-//                    ListPositionIndex = listPositionIndex;
-//                    LoadSongIntoPlayer(listPositionIndex);
-//                }
-//            };
         }
 
         //startActivity(intentListView);

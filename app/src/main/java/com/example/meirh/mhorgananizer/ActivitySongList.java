@@ -20,20 +20,20 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
 {
 
     private ListView                    listControlSimple;
-    public static ArrayList<String>     ListItemSimple;
-    private AdapterBaseList             adapterListSimple;
+    public  static ArrayList<String>    ListItemSimple;
+    private static AdapterBaseList      adapterListSimple;
 
-    private RecyclerView                listControlRecycler;
-    public static List<ListItemSong>    ListItemsRecycler;    // ArrayList<ListItemSong>
-    private AdapterSong                 adapterListRecycler;  // RecyclerView.Adapter
+    private static RecyclerView         listControlRecycler;
+    public  static List<ListItemSong>   ListItemsRecycler;    // ArrayList<ListItemSong>
+    private static AdapterSong          adapterListRecycler;  // RecyclerView.Adapter
 
     private int  ListMode;
     //private ActivityMusic.ShowListModeEn  ListMode;
-    private Bundle                      extras;
+    private boolean                     isFirstSongListLoad;
+
 
     // The listener must implement the events interface and passes messages up to the parent.
     public static PersonalEvents.OnListViewItemClick        ListenerSimple;
-    //public static PersonalEvents.OnListViewItemClick        ListenerFolder;
 
     // The listener must implement the events interface and passes messages up to the parent.
     public static PersonalEvents.OnRecyclerViewItemClick    ListenerRecycler;
@@ -60,72 +60,13 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
         listControlRecycler = (RecyclerView) findViewById(R.id.listControlRecycler);
         listControlRecycler.setHasFixedSize(true);
         listControlRecycler.setLayoutManager(new LinearLayoutManager(this));
-        // Assigned direct because it's Static var
-        //ListItemsRecycler = new ArrayList<ListItemSong>();                      // TODO: new List<ListItem>  //new List<ListItemSong>[];
-        adapterListRecycler = new AdapterSong(this, ListItemsRecycler);
-
-        // Register the listener for this object
-        adapterListRecycler.setOnSongClick(new PersonalEvents.OnRecyclerViewItemClick()
-        {
-            // Listen to event. wait here when the event invoked in child object.
-            @Override
-            public void setOnRecyclerViewItemPressed(int cardViewPressedResID, int listPositionIndex)
-            {
-                //ReturnedResult(listPositionIndex, selectedItemText);      // TODO: return by Intent object
-                if (ListenerRecycler != null)
-                {
-                    // Now let's fire listener here
-                    ListenerRecycler.setOnRecyclerViewItemPressed(cardViewPressedResID, listPositionIndex);
-                }
-                finish();
-            }
-        });
 
 
         // TODO: Done here, just because we need Initialing 'AdapterBaseList' object for the next line Event 'setOnListViewItemClick'
         listControlSimple = (ListView) findViewById(R.id.listControlSimple);
-        adapterListSimple = new AdapterBaseList(this, ListItemSimple, listControlSimple);
-        adapterListSimple.LayoutCardResourceID = R.layout.list_row;
-        adapterListSimple.LayoutControlToShowResourceID = R.id.lblListRow;
 
-        // Register the listener for this object
-        adapterListSimple.setOnListViewItemClick(new PersonalEvents.OnListViewItemClick()
-        {
-            // Listen to event. wait here when the event invoked in child object.
-            @Override
-            public void setOnListViewItemPressed(int listPositionIndex, String selectedItemText)
-            {
-                //ReturnedResult(listPositionIndex, selectedItemText);      // TODO: return by Intent object
 
-                if (ListenerSimple != null)
-                {
-                    // Now let's fire listener here
-                    ListenerSimple.setOnListViewItemPressed(listPositionIndex, selectedItemText);
-                }
-//                if (ListenerFolder != null)
-//                {
-//                    // Now let's fire listener here
-//                    ListenerFolder.setOnListViewItemPressed(listPositionIndex, selectedItemText);
-//                }
-                finish();
-            }
-        });
-
-        setListMode(ListMode);
-
-        if (ListMode == 1)  //ActivityMusic.ShowListModeEn.RecyclerView)
-        {
-            // Fill Recycler list - Passed by 'Static' var, because cant pass a object thru Intent
-            //adapterListRecycler = new AdapterSong(this, ListItemsRecycler);  // TODO:
-            //adapterListRecycler.setListItems(ListItemsRecycler);
-            listControlRecycler.setAdapter(adapterListRecycler);
-        }
-        else if (ListMode == 2) //ActivityMusic.ShowListModeEn.SimpleView)
-        {
-            System.out.println("List Simple count: "+ListItemSimple.size()+"  ListMode: " + String.valueOf(ListMode));
-            //adapterListSimple.setListItems(`);
-            adapterListSimple.FillList();
-        }
+        setControlsByListMode(ListMode);
 
     }
 
@@ -136,30 +77,21 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
         ListenerSimple = listener;
     }
 
-//    public static void setOnListSimpleFolderClick(PersonalEvents.OnListViewItemClick listener)
-//    {
-//        ListenerFolder = listener;
-//    }
-
     // Assigned it direct because it's Static var
     // Assign the listener implementing events interface that will receive the events
-    public void setOnListRecyclerItemClick(PersonalEvents.OnRecyclerViewItemClick listener)
+    public static void setOnListRecyclerItemClick(PersonalEvents.OnRecyclerViewItemClick listener)
     {
         ListenerRecycler = listener;
     }
 
     private void GetIntent()
     {
-        extras = this.getIntent().getBundleExtra("ListItems");
 
-        ListItemSimple = extras.getStringArrayList("ListItems");
+        ListItemSimple = this.getIntent().getStringArrayListExtra("ListItems");
+
         ListMode = this.getIntent().getIntExtra("ListMode", 2);  //, ActivityMusic.ShowListModeEn.SimpleView.toString());
         //ListMode = ((ActivityMusic.ShowListModeEn) this.getIntent().getStringExtra("ListMode"));  //, ActivityMusic.ShowListModeEn.SimpleView.toString());
-
-        System.out.println("List Mode: "+ListMode);
-        System.out.println("List Simple count: "+ListItemSimple.size());
-        System.out.println("List Recycler count: "+String.valueOf(ListItemsRecycler.size())+"\n\n");
-
+        isFirstSongListLoad = this.getIntent().getBooleanExtra("FirstLoad", true);
     }
 
     // Return from this view by Intent object
@@ -179,17 +111,79 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
         return ListMode;
     }
 
-    public void setListMode(int listMode)   // ActivityMusic.ShowListModeEn
+    public void setControlsByListMode(int listMode)   // ActivityMusic.ShowListModeEn
     {
         this.ListMode = listMode;
 
         if (this.ListMode==1)   //ActivityMusic.ShowListModeEn.RecyclerView)
         {
+            adapterListRecycler = new AdapterSong(this, ListItemsRecycler);
+            listControlRecycler.setAdapter(adapterListRecycler);
+
+            if (adapterListRecycler == null)  // isFirstSongListLoad
+            {
+                //adapterListRecycler = new AdapterSong(this, ListItemsRecycler);
+                //listControlRecycler.setAdapter(adapterListRecycler);
+            }
+            else
+            {
+                //adapterListRecycler.notify();
+                //adapterListRecycler.notifyAll();
+                //listControlRecycler.invalidate();
+                //adapterListRecycler.notifyItemRangeChanged(2, 2);
+                //adapterListRecycler.notifyDataSetChanged();
+                //adapterListRecycler = new AdapterSong(this, ListItemsRecycler);
+                //listControlRecycler.setAdapter(adapterListRecycler);
+                //adapterListRecycler.setListItems(ListItemsRecycler);
+                //adapterListRecycler.notifyAll();
+            }
+
+            // Register the listener for this object
+            adapterListRecycler.setOnSongClick(new PersonalEvents.OnRecyclerViewItemClick()
+            {
+                // Listen to event. wait here when the event invoked in child object.
+                @Override
+                public void setOnRecyclerViewItemPressed(int cardViewPressedResID, int listPositionIndex)
+                {
+                    //ReturnedResult(listPositionIndex, selectedItemText);      // TODO: return by Intent object
+                    if (ListenerRecycler != null)
+                    {
+                        // Now let's fire listener here
+                        ListenerRecycler.setOnRecyclerViewItemPressed(cardViewPressedResID, listPositionIndex);
+                    }
+                    finish();
+                }
+            });
+
             listControlRecycler.setVisibility(View.VISIBLE);
             listControlSimple.setVisibility(View.INVISIBLE);
         }
         else if (this.ListMode==2)  //ActivityMusic.ShowListModeEn.SimpleView)
         {
+            adapterListSimple = new AdapterBaseList(this, ListItemSimple, listControlSimple);
+            adapterListSimple.LayoutCardResourceID = R.layout.list_row;
+            adapterListSimple.LayoutControlToShowResourceID = R.id.lblListRow;
+
+            // Register the listener for this object
+            adapterListSimple.setOnListViewItemClick(new PersonalEvents.OnListViewItemClick()
+            {
+                @Override
+                public void setOnListViewItemPressed(int listPositionIndex, String selectedItemText)
+                {
+                    //ReturnedResult(listPositionIndex, selectedItemText);      // TODO: return by Intent object
+
+                    if (ListenerSimple != null)
+                    {
+                        // Now let's fire listener here
+                        ListenerSimple.setOnListViewItemPressed(listPositionIndex, selectedItemText);
+                    }
+                    finish();
+                }
+            });
+
+            //adapterListSimple.setListItems(ListItemSimple);
+            adapterListSimple.FillList();
+
             listControlRecycler.setVisibility(View.INVISIBLE);
             listControlSimple.setVisibility(View.VISIBLE);
         }

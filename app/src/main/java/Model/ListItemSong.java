@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 public class ListItemSong
 {
+
     private String      SongName;
     private String      Artist;
     private String      Album;
