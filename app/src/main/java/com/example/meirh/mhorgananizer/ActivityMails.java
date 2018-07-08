@@ -2,6 +2,7 @@ package com.example.meirh.mhorgananizer;
 
 import android.app.ProgressDialog;
 import android.graphics.drawable.Drawable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
@@ -336,12 +337,13 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
             item.setContent("Content of message");
             //item.setContent(message.getContent().toString());
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
             item.setDateSent(dateFormat.format(message.getSentDate()));
             item.setDateReceive(dateFormat.format(message.getReceivedDate()));
 
             ImageView imageView = new ImageView(this);
-            imageView.setImageDrawable((Drawable) getDrawable(R.drawable.meir1));
+            imageView.setImageDrawable((Drawable) getDrawable(R.drawable.meir1));       // TODO: put right picture
+
             //imageView.setImageResource(R.drawable.purim_15);
             // Set picture from SD-Card
             // imageView.setImageBitmap(setPicFromSDCard());

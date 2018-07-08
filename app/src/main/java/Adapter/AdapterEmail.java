@@ -62,7 +62,8 @@ public class AdapterEmail extends RecyclerView.Adapter<AdapterEmail.EmailHolder>
         holder.lblDateSent.setText(item.getDateSent());
         holder.lblDateSent.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         //TODO: holder.lblDateReceive.setText(item.getDateReceive());
-        holder.Image.setBackground(item.getImgItem().getDrawable());
+        holder.Image.setImageDrawable(item.getImgItem().getDrawable());
+        //holder.Image.setBackground(item.getImgItem().getDrawable());
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.example.meirh.mhorgananizer;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -25,6 +26,7 @@ public class ActivitySettings extends AppCompatActivity
     private EditText        txtUserName;
     private EditText        txtMailHostAddress;
     private EditText        txtCheckMailInterval;
+    private EditText        txtStorageSDCardName;
     private CheckBox        chkStayOnLine;
 
     private Bundle          extras;
@@ -45,6 +47,7 @@ public class ActivitySettings extends AppCompatActivity
         txtPassword = (EditText) this.findViewById(R.id.txtPassword);
         txtMailHostAddress = (EditText) this.findViewById(R.id.txtMailHostAddress);
         txtCheckMailInterval = (EditText) this.findViewById(R.id.txtCheckMailInterval);
+        txtStorageSDCardName = (EditText) this.findViewById(R.id.txtStorageSDCardName);
         chkStayOnLine = (CheckBox) this.findViewById(R.id.chkStayOnLine);
 
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -114,7 +117,8 @@ public class ActivitySettings extends AppCompatActivity
 
         try
         {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput(MainActivity.PREFS_FILE_NAME, Context.MODE_PRIVATE));
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
+                    openFileOutput(MainActivity.PREFS_FILE_NAME, Context.MODE_PRIVATE));    //Environment.getExternalStorageDirectory().getPath()+"/"+
 
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -123,6 +127,7 @@ public class ActivitySettings extends AppCompatActivity
             stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_PASSWORD + ": " + txtPassword.getText().toString() + "\n");
             stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS + ": " + txtMailHostAddress.getText().toString() + "\n");
             stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL + ": " + txtCheckMailInterval.getText().toString() + "\n");
+            stringBuilder.append(MainActivity.STORAGE_SDCARD_NAME + ": " + txtStorageSDCardName.getText().toString() + "\n");
             stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE + ": " + String.valueOf(chkStayOnLine.isChecked()) + "\n");
 
             textToSave = stringBuilder.toString();
@@ -149,7 +154,7 @@ public class ActivitySettings extends AppCompatActivity
         intent.putExtra("returnedData",  returnedData);
 
         //Toast.makeText(this, "Come Back with ... " + returnedData, Toast.LENGTH_SHORT).show();
-        setResult(RESULT_OK, intent);
+        setResult(RESULT_CANCELED, intent);
         finish();
     }
 }

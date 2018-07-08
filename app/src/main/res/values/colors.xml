@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#413d3f</color>
     <color name="colorPrimaryDark">#232122</color>
-    <color name="colorAccent">#d6537e</color>
+    <color name="colorAccent">#ffffff</color>
     <color name="colorView_background">#0a0a0a</color>
 
     <color name="darkGray">#413d3f</color>
@@ -15,14 +15,14 @@
 
     <color name="titles_card_foreground_main_mail">#ffffff</color>
     <color name="titles_card_foreground_second_mail">#a9a0a0</color>
-    <color name="titles_card_foreground_third_mail">#be4328</color>
+    <color name="titles_card_foreground_third_mail">#ccbc83</color>
 
     <color name="titles_card_foreground_main_song">#0b0b0b</color>
-    <color name="titles_card_foreground_second_song">#484545</color>
-    <color name="titles_card_foreground_third_song">#be4328</color>
+    <color name="titles_card_foreground_second_song">#393737</color>
+    <color name="titles_card_foreground_third_song">#484545</color>
 
     <color name="titles_main_foreground">#ffffff</color>
     <color name="titles_second_foreground">#dcd6d6</color>
-    <color name="titles_third_foreground">#eac807</color>
+    <color name="titles_third_foreground">#ffffff</color>
 
 </resources>

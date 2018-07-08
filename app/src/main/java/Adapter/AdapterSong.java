@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Intent;
 import android.content.SyncResult;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Parcelable;
@@ -66,27 +67,42 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
     }
 
     @Override
-    public void onBindViewHolder(AdapterSong.SongHolder holder, int position)
-    {
+    public void onBindViewHolder(AdapterSong.SongHolder holder, int position) {
         ListItemSong item = listItems.get(position);
 
         holder.lblSongName.setText(item.getSongName());
         holder.lblArtist.setText(item.getArtist());
-        holder.lblAlbum.setText(item.getAlbum());
+        //holder.lblAlbum.setText(item.getAlbum());
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss");
-        holder.lblYear.setText(dateFormat.format(new Date(item.getDuration())));
-        //holder.lblYear.setText(String.valueOf(item.getDuration()/1000));
-        //holder.lblYear.setText(item.getYear());
+        holder.lblLength.setText(dateFormat.format(new Date(item.getDuration())));
+        //holder.lblLength.setText(String.valueOf(item.getDuration()/1000));
+        //holder.lblLength.setText(item.getYear());
 
-        if (item.getPicsToSongResIDsArray().get(0)>0)
+        if (item.getPicsToSongPathsArray().size() > 0)
         {
-            holder.Image.setBackground(context.getDrawable(item.getPicsToSongResIDsArray().get(0)));
+            String picPath = item.getPicsToSongPathsArray().get(0);
+            Bitmap bitmap = ActivityMusic.ConvertPictureFileToDrawable(picPath);
+            holder.Image.setImageBitmap(bitmap);
         }
         else
         {
-            Toast.makeText(context, "No Pictures to Song:  " + item.getSongName(), Toast.LENGTH_LONG).show();
+            holder.Image.setImageDrawable(context.getDrawable(R.drawable.defualt_song_pic2));
         }
+        // Was filled in 'ActivityMusic.FillList()'
+        //holder.Image.setImageDrawable(item.getImageItem().getDrawable());
+        // Done in 'ActivityMusic.FillList()'
+        //if (item.getPicsToSongPathsArray().size()>0)
+        //if (item.getPicsToSongResIDsArray().get(0)>0)
+        {
+            //holder.Image.setImageBitmap(ActivityMusic.ConvertPictureFileToDrawable(item.getPicsToSongPathsArray().get(0)));
+            //holder.Image.setImageDrawable(context.getDrawable(item.getPicsToSongResIDsArray().get(0)));
+            //holder.Image.setBackground(context.getDrawable(item.getPicsToSongResIDsArray().get(0)));
+        }
+        //else
+        //{
+        //    Toast.makeText(context, "No Pictures to Song:  " + item.getSongName(), Toast.LENGTH_LONG).show();
+        //}
 
     }
 
@@ -100,8 +116,8 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
     {
         private TextView  lblSongName;
         private TextView  lblArtist;
-        private TextView  lblAlbum;
-        private TextView  lblYear;
+        //private TextView  lblAlbum;
+        private TextView  lblLength;
         private ImageView Image;
 
         public SongHolder(View cardViewItem)   // Represent the Item in List
@@ -112,10 +128,10 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
 
             lblSongName = (TextView) cardViewItem.findViewById(R.id.lblSongName);
             lblArtist = (TextView) cardViewItem.findViewById(R.id.lblArtist);
-            lblAlbum = (TextView) cardViewItem.findViewById(R.id.lblAlbum);
+            //lblAlbum = (TextView) cardViewItem.findViewById(R.id.lblAlbum);
             //lblAlbum.setVisibility(View.INVISIBLE);
-            lblYear = (TextView) cardViewItem.findViewById(R.id.lblYear);
-            lblYear.setVisibility(View.VISIBLE);
+            lblLength = (TextView) cardViewItem.findViewById(R.id.lblLength);
+            lblLength.setVisibility(View.VISIBLE);
             Image = (ImageView) cardViewItem.findViewById(R.id.imgItem);
         }
 
@@ -156,7 +172,8 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
         }
     }
 
-    public List<ListItemSong> getListItems() {
+    public List<ListItemSong> getListItems()
+    {
         return listItems;
     }
 

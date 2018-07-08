@@ -99,7 +99,7 @@ public class AdapterBaseList
 
 
         // Create ArrayAdapter
-        ListAdapter = new ArrayAdapter<String>(context, LayoutCardResourceID, LayoutControlToShowResourceID, this.ListItems);       // planetList
+        ListAdapter = new ArrayAdapter<String>(context, LayoutCardResourceID, LayoutControlToShowResourceID, this.ListItems);
         //listAdapter = new ArrayAdapter<String>(context, R.layout.list_row, this.ListItems);
 
         // Set the ArrayAdapeter as the ListView's adapter.

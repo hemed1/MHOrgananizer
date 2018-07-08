@@ -12,17 +12,17 @@
         android:id="@+id/lblSongName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Song Name"
+        android:text="Song Name "
         android:textAlignment="center"
         android:textColor="@color/titles_main_foreground"
-        android:textSize="20sp"
+        android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintHorizontal_bias="0.500"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.760" />
+        app:layout_constraintVertical_bias="0.770" />
 
     <TextView
         android:id="@+id/lblSongArtist"
@@ -35,11 +35,12 @@
         android:text="Artist"
         android:textAlignment="center"
         android:textColor="@color/titles_second_foreground"
-        android:textSize="16sp"
+        android:textSize="17sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHorizontal_bias="0.500"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lblSongName"
         app:layout_constraintVertical_bias="0.005" />
 
@@ -54,63 +55,86 @@
         android:text="Album"
         android:textAlignment="center"
         android:textColor="@color/titles_third_foreground"
-        android:textSize="15sp"
+        android:textSize="17sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.500"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.056" />
+        app:layout_constraintVertical_bias="0.026" />
 
-    <SeekBar
-        android:id="@+id/barSeek"
-        style="@android:style/Widget.Material.Light.SeekBar"
-        android:layout_width="307dp"
-        android:layout_height="33dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.500"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.910" />
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/layoutRel"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintVertical_bias="0.934">-->
 
-    <TextView
-        android:id="@+id/lblPosNow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="0.00"
-        android:textColor="@color/titles_second_foreground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.960" />
 
-    <TextView
-        android:id="@+id/lblPosLeft"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="0.00"
-        android:textColor="@color/titles_second_foreground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.030"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.960" />
+        <!--<android.support.v7.widget.AppCompatSeekBar-->
+        <SeekBar
+            android:id="@+id/barSeek"
+            android:layout_width="309dp"
+            android:layout_height="33dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:elevation="@dimen/cardview_compat_inset_shadow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.523"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.910" />
+            <!--android:elevation="@android:dimen/dialog_min_width_major"-->
+
+        <TextView
+            android:id="@+id/lblPosLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="0.00"
+            android:textStyle="bold"
+            android:textColor="@color/titles_second_foreground"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.010"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.958" />
+
+        <TextView
+            android:id="@+id/lblPosNow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/titles_second_foreground"
+            android:text="0.00"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.899" />
+
+    <!--</RelativeLayout>-->
+
 
     <ImageView
         android:id="@+id/imgLine"
@@ -184,15 +208,15 @@
     <Button
         android:id="@+id/btnList"
         style="@android:style/Widget.DeviceDefault.Light.Button.Inset"
-        android:layout_width="40dp"
-        android:layout_height="20dp"
+        android:layout_width="50dp"
+        android:layout_height="25dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/transparent"
         android:elevation="0dp"
-        android:text="..."
+        android:text="...."
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
@@ -206,6 +230,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.965" />
 
+    <Button
+        android:id="@+id/btnFolders"
+        style="@android:style/Widget.Material.Button.Inset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Folder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.940"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.965" />
+
+
 
     <!--<LinearLayout-->
         <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
@@ -216,68 +255,69 @@
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
+        tools:layout_editor_absoluteX="252dp"
+        tools:layout_editor_absoluteY="462dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="1dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="1dp">
 
             <!--<TableLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_margin="@dimen/cardview_compat_inset_shadow"-->
-                <!--android:padding="0dp">-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_margin="@dimen/cardview_compat_inset_shadow"-->
+            <!--android:padding="0dp">-->
 
-                <!--<TableRow-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:background="@color/colorAccent"-->
-                    <!--android:padding="0dp">-->
+            <!--<TableRow-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="@color/colorAccent"-->
+            <!--android:padding="0dp">-->
 
             <!--android:background="@drawable/meir1"-->
-                <!--app:srcCompat="@drawable/meir1" />-->
-                <!--android:src="@drawable/meir1" />-->
-                <!--app:srcCompat="@drawable/oval"/>-->
-                <!--android:src="@drawable/oval"-->
+            <!--app:srcCompat="@drawable/meir1" />-->
+            <!--android:src="@drawable/meir1" />-->
+            <!--app:srcCompat="@drawable/oval"/>-->
+            <!--android:src="@drawable/oval"-->
+
 
             <ImageView
                 android:id="@+id/imgSongArtist1"
-                android:layout_width="405dp"
+                android:layout_width="433dp"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="1dp"
                 android:layout_marginEnd="1dp"
                 android:layout_marginStart="1dp"
                 android:layout_marginTop="1dp"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/meir1" />
-                <!--android:scrollX="100dp"-->
-                <!--android:scrollY="200dp"-->
+                android:scaleType="centerCrop" />
+            <!--app:srcCompat="@drawable/meir1"-->
+            <!--android:scrollX="100dp"-->
+            <!--android:scrollY="200dp"-->
 
             <ImageView
                 android:id="@+id/imgSongArtist2"
-                android:layout_width="405dp"
+                android:layout_width="433dp"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="1dp"
                 android:layout_marginEnd="1dp"
                 android:layout_marginStart="1dp"
                 android:layout_marginTop="1dp"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/meir1" />
+                android:scaleType="centerCrop" />
+            <!--app:srcCompat="@drawable/meir1"-->
 
             <ImageView
                 android:id="@+id/imgSongArtist3"
-                android:layout_width="405dp"
+                android:layout_width="433dp"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="1dp"
                 android:layout_marginEnd="1dp"
                 android:layout_marginStart="1dp"
                 android:layout_marginTop="1dp"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/meir1" />
-                <!--</TableRow>-->
+                android:scaleType="centerCrop" />
+            <!--app:srcCompat="@drawable/meir1"-->
+            <!--</TableRow>-->
             <!--</TableLayout>-->
 
         </LinearLayout>

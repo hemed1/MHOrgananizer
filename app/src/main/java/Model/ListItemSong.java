@@ -1,5 +1,6 @@
 package Model;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
@@ -19,7 +20,9 @@ public class ListItemSong
     private String      Year;
     private int         Duration;
     private int         ResourceID;
+    private String      SongPath;
     private ArrayList<Integer> picsToSongResourcesIDs;
+    private ArrayList<String>  picsToSongPathsArray;
 
     private ImageView   ImageItem;
 
@@ -32,11 +35,18 @@ public class ListItemSong
         this.Album=album;
         //ImageItem = new ImageView(ActivityMusic.this);
         picsToSongResourcesIDs = new ArrayList<Integer>();
+        picsToSongPathsArray = new ArrayList<String>();
+        //ImageItem = new ImageView(this);
     }
 
     public ArrayList<Integer> getPicsToSongResIDsArray()
     {
         return picsToSongResourcesIDs;
+    }
+
+    public ArrayList<String> getPicsToSongPathsArray()
+    {
+        return picsToSongPathsArray;
     }
 
     public int getDuration()
@@ -47,6 +57,16 @@ public class ListItemSong
     public void setDuration(int duration)
     {
         Duration = duration;
+    }
+
+    public String getSongPath()
+    {
+        return SongPath;
+    }
+
+    public void setSongPath(String songPath)
+    {
+        SongPath = songPath;
     }
 
     public int getResourceID()
@@ -103,7 +123,8 @@ public class ListItemSong
 
     public void setImagePicture(Drawable drawable)
     {
-        ImageItem.setBackground(drawable);
+        ImageItem.setImageDrawable(drawable);
+        //ImageItem.setBackground(drawable);
     }
 
 

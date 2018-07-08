@@ -27,11 +27,13 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
     public static List<ListItemSong>    ListItemsRecycler;    // ArrayList<ListItemSong>
     private AdapterSong                 adapterListRecycler;  // RecyclerView.Adapter
 
-    private int                         ListMode;
+    private int  ListMode;
+    //private ActivityMusic.ShowListModeEn  ListMode;
     private Bundle                      extras;
 
     // The listener must implement the events interface and passes messages up to the parent.
     public static PersonalEvents.OnListViewItemClick        ListenerSimple;
+    //public static PersonalEvents.OnListViewItemClick        ListenerFolder;
 
     // The listener must implement the events interface and passes messages up to the parent.
     public static PersonalEvents.OnRecyclerViewItemClick    ListenerRecycler;
@@ -100,20 +102,25 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
                     // Now let's fire listener here
                     ListenerSimple.setOnListViewItemPressed(listPositionIndex, selectedItemText);
                 }
+//                if (ListenerFolder != null)
+//                {
+//                    // Now let's fire listener here
+//                    ListenerFolder.setOnListViewItemPressed(listPositionIndex, selectedItemText);
+//                }
                 finish();
             }
         });
 
         setListMode(ListMode);
 
-        if (ListMode == 1)
+        if (ListMode == 1)  //ActivityMusic.ShowListModeEn.RecyclerView)
         {
             // Fill Recycler list - Passed by 'Static' var, because cant pass a object thru Intent
             //adapterListRecycler = new AdapterSong(this, ListItemsRecycler);  // TODO:
             //adapterListRecycler.setListItems(ListItemsRecycler);
             listControlRecycler.setAdapter(adapterListRecycler);
         }
-        else
+        else if (ListMode == 2) //ActivityMusic.ShowListModeEn.SimpleView)
         {
             System.out.println("List Simple count: "+ListItemSimple.size()+"  ListMode: " + String.valueOf(ListMode));
             //adapterListSimple.setListItems(`);
@@ -124,10 +131,15 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
 
     // Assigned it direct because it's Static var
     // Assign the listener implementing events interface that will receive the events
-    public void setOnListSimpleItemClick(PersonalEvents.OnListViewItemClick listener)
+    public static void setOnListSimpleItemClick(PersonalEvents.OnListViewItemClick listener)
     {
         ListenerSimple = listener;
     }
+
+//    public static void setOnListSimpleFolderClick(PersonalEvents.OnListViewItemClick listener)
+//    {
+//        ListenerFolder = listener;
+//    }
 
     // Assigned it direct because it's Static var
     // Assign the listener implementing events interface that will receive the events
@@ -141,11 +153,12 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
         extras = this.getIntent().getBundleExtra("ListItems");
 
         ListItemSimple = extras.getStringArrayList("ListItems");
-        ListMode = this.getIntent().getIntExtra("ListMode", 2);
+        ListMode = this.getIntent().getIntExtra("ListMode", 2);  //, ActivityMusic.ShowListModeEn.SimpleView.toString());
+        //ListMode = ((ActivityMusic.ShowListModeEn) this.getIntent().getStringExtra("ListMode"));  //, ActivityMusic.ShowListModeEn.SimpleView.toString());
 
         System.out.println("List Mode: "+ListMode);
         System.out.println("List Simple count: "+ListItemSimple.size());
-        System.out.println("List Recycler count: "+String.valueOf(ListItemsRecycler.size())+"/n/n");
+        System.out.println("List Recycler count: "+String.valueOf(ListItemsRecycler.size())+"\n\n");
 
     }
 
@@ -166,16 +179,16 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
         return ListMode;
     }
 
-    public void setListMode(int listMode)
+    public void setListMode(int listMode)   // ActivityMusic.ShowListModeEn
     {
         this.ListMode = listMode;
 
-        if (this.ListMode==1)
+        if (this.ListMode==1)   //ActivityMusic.ShowListModeEn.RecyclerView)
         {
             listControlRecycler.setVisibility(View.VISIBLE);
             listControlSimple.setVisibility(View.INVISIBLE);
         }
-        else
+        else if (this.ListMode==2)  //ActivityMusic.ShowListModeEn.SimpleView)
         {
             listControlRecycler.setVisibility(View.INVISIBLE);
             listControlSimple.setVisibility(View.VISIBLE);
