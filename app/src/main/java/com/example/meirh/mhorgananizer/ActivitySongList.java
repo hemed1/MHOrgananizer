@@ -21,15 +21,16 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
 
     private ListView                    listControlSimple;
     public  static ArrayList<String>    ListItemSimple;
-    private static AdapterBaseList      adapterListSimple;
+    private AdapterBaseList             adapterListSimple;
 
-    private static RecyclerView         listControlRecycler;
+    private RecyclerView                listControlRecycler;
     public  static List<ListItemSong>   ListItemsRecycler;    // ArrayList<ListItemSong>
-    private static AdapterSong          adapterListRecycler;  // RecyclerView.Adapter
+    private AdapterSong                 adapterListRecycler;  // RecyclerView.Adapter
 
     private int  ListMode;
     //private ActivityMusic.ShowListModeEn  ListMode;
     private boolean                     isFirstSongListLoad;
+    private static int                  keepLastItemIndexPressed;
 
 
     // The listener must implement the events interface and passes messages up to the parent.
@@ -148,6 +149,7 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
                     //ReturnedResult(listPositionIndex, selectedItemText);      // TODO: return by Intent object
                     if (ListenerRecycler != null)
                     {
+                        keepLastItemIndexPressed = listPositionIndex;
                         // Now let's fire listener here
                         ListenerRecycler.setOnRecyclerViewItemPressed(cardViewPressedResID, listPositionIndex);
                     }
@@ -155,6 +157,10 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
                 }
             });
 
+            if (keepLastItemIndexPressed>0)
+            {
+                listControlRecycler.scrollToPosition(keepLastItemIndexPressed);
+            }
             listControlRecycler.setVisibility(View.VISIBLE);
             listControlSimple.setVisibility(View.INVISIBLE);
         }

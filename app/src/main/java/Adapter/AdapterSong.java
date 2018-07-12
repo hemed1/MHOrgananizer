@@ -73,8 +73,24 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
 
         ListItemSong item = listItems.get(position);
 
-        holder.lblSongName.setText(item.getSongName());
-        holder.lblArtist.setText(item.getArtist());
+        if (item.getSongName().length()>30)
+        {
+            holder.lblSongName.setText(item.getSongName().substring(0, 30));
+        }
+        else
+        {
+            holder.lblSongName.setText(item.getSongName());
+        }
+
+        if (item.getArtist().length()>30)
+        {
+            holder.lblArtist.setText(item.getArtist().substring(0, 30));
+        }
+        else
+            {
+            holder.lblArtist.setText(item.getArtist());
+        }
+
         //holder.lblAlbum.setText(item.getAlbum());
 
         if (item.getDuration()==0)
@@ -83,7 +99,8 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
             {
                 Uri uri = Uri.parse(item.getSongPath());
                 ActivityMusic.mediaPlayer = MediaPlayer.create(context, uri);
-                if (ActivityMusic.mediaPlayer != null) {
+                if (ActivityMusic.mediaPlayer != null)
+                {
                     item.setDuration(ActivityMusic.mediaPlayer.getDuration());
                 }
             }
@@ -91,22 +108,25 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
             {
                 System.out.println("Get song duration - " + e.getMessage());
             }
+            //item.setDuration(ActivityMusic.LoadMusicMediaWithSong(item.getSongPath()));
         }
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss");
         holder.lblLength.setText(dateFormat.format(new Date(item.getDuration())));
 
-        item.setImageItem(new ImageView(context));
-        if (item.getPicsToSongPathsArray().size() > 0)
-        {
-            String picPath = item.getPicsToSongPathsArray().get(0);
-            Bitmap bitmap = ActivityMusic.ConvertPictureFileToDrawable(picPath);
-            holder.Image.setImageBitmap(bitmap);
-        }
-        else
-        {
-            holder.Image.setImageDrawable(context.getDrawable(R.drawable.defualt_song_pic2));
-        }
+        holder.Image.setImageDrawable(item.getImageItem().getDrawable());
+
+//        item.setImageItem(new ImageView(context));
+//        if (item.getPicsToSongPathsArray().size() > 0)
+//        {
+//            String picPath = item.getPicsToSongPathsArray().get(0);
+//            Bitmap bitmap = ActivityMusic.ConvertPictureFileToDrawable(picPath);
+//            holder.Image.setImageBitmap(bitmap);
+//        }
+//        else
+//        {
+//            holder.Image.setImageDrawable(context.getDrawable(R.drawable.defualt_song_pic2));
+//        }
 
         //holder.Image.setImageDrawable(context.getDrawable(item.getPicsToSongResIDsArray().get(0)));
         //holder.Image.setBackground(context.getDrawable(item.getPicsToSongResIDsArray().get(0)));
