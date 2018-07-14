@@ -109,7 +109,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
     // The result files & folders (without the full folder path - just the folder name) that shown when peress 'Folder' button
     private ArrayList<String>           ListItemSimpleFolders;
-    // Keep the result files & folders. Key: Folder name - without the full folder path, Value: full path - that shown when peress 'Folder' button
+    // Allways add LowerCase - Keep the result files & folders. Key: Folder name - without the full folder path, Value: full path - that shown when peress 'Folder' button
     private ArrayMap                    ListItemSimpleFoldersFullPath;
 
     // Keep the Full path file or folder was press when press the 'Folders' button
@@ -129,13 +129,19 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         String pathToSearch;
 
         //pathToSearch = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath();
-        pathToSearch = "/sdcard/";      //Environment.getExternalStorageDirectory().getAbsolutePath();         //"/sdcard/Music/Genesis";  //"/sdcard/Music/Genesis";  //Environment.getExternalStorageDirectory().getAbsolutePath()   // /storage/3437-3532/
+        pathToSearch = Environment.getExternalStorageDirectory().getAbsolutePath();     //"/sdcard/";    //"/sdcard/Music/Genesis";  //"/sdcard/Music/Genesis";  //Environment.getExternalStorageDirectory().getAbsolutePath()   // /storage/3437-3532/
 
-        ReadSongs(pathToSearch);
+        ArrayList<Pair<Pair<String, String>, ArrayList<String>>> listSongsAll = new ArrayList<Pair<Pair<String, String>, ArrayList<String>>>();
+
+        listSongs = ReadSongs(pathToSearch);
 
         if (isExternalStorageAvailable())
         {
-
+            listSongsAll = listSongs;
+            pathToSearch = "/storage/3437-3532/";
+            listSongs = ReadSongs(pathToSearch);
+            listSongsAll.addAll(listSongs);
+            listSongs = listSongsAll;
         }
 
         FillList();
@@ -208,35 +214,6 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                 picIndex = songsPicsFoundedMap.indexOfKey(songPath);
             }
 
-//            if (picsToSong.size()>0 && picIndex>-1)
-//            {
-//                for (int i=0; i<picsToSong.size(); i++)
-//                {
-//                    picPath = picsToSong.get(i);       //(String)songsPicsFoundedMap.valueAt(i);
-//                    picName = picPath.substring(((String)songsPicsFoundedMap.keyAt(picIndex)).length());
-//                    // If picture name (without song path) exist in Files names of fies array. Example: 'Genesis.jpg' from 'songsPicsFoundedMap' exist in key (song name) of 'songsFilesFoundedMap'
-//                    if (songsFilesFoundedMap.containsKey(picName))
-//                    {
-//                        picsToSong.add((String)songsFilesFoundedMap.get(picName));
-//                    }
-//                }
-//            }
-
-//            // Attach pictures files to specific song
-//            for (int picsIndex = 0; picsIndex < songsPicsFounded.size(); picsIndex++)
-//            {
-//                File picFile = songsPicsFounded.get(picsIndex);
-//                picName = picFile.getName();     //.substring(0, picFile.getName().toUpperCase().indexOf(".JPG"));
-//                picPath = picFile.getAbsolutePath();
-//                picPath = picPath.substring(0, picPath.indexOf(picName));
-//
-//                if (picName.toUpperCase().contains(songName.toUpperCase()) || picPath.equals(songPath))
-//                {
-//                    picsToSong.add(picFile.getAbsolutePath());
-//                    break;
-//                }
-//            }
-
             // No pics files was found. set the default pic from disk;
 //            if (picsToSong.size() == 0)
 //            {
@@ -286,7 +263,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
     // songsMap - Key: Song name (without path), Value: Song path & name
     // picsMap  - Key: Song Path (without song name), Value: ArrayList of all pics names (with full path) for a song in same folder of the song file
-    private File[] GetFolderFilesSongPictsMap(String path, String fileExtantionToSearch, boolean searchInFolders)
+    private File[] GetFolderFilesSongPictsMap(String path, String fileExtentionToSearch, boolean searchInFolders)
     {
         File file;
         File[] files = new File[0];
@@ -295,9 +272,10 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         String[]   multiSearchValuse = new String[0];
         String  filePath;
         String fileName;
+        ArrayList<File>  filesToFolder = new ArrayList<File>();
 
 
-        fileExtantionToSearch = fileExtantionToSearch.toLowerCase();
+        fileExtentionToSearch = fileExtentionToSearch.toLowerCase();
 
         directory = new File(path);
 
@@ -314,10 +292,10 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         }
 
 
-//        if (fileExtantionToSearch.contains(";"))
+//        if (fileExtentionToSearch.contains(";"))
 //        {
-//            multiSearchValuse = fileExtantionToSearch.split(";");
-//            fileExtantionToSearch = multiSearchValuse[0];
+//            multiSearchValuse = fileExtentionToSearch.split(";");
+//            fileExtentionToSearch = multiSearchValuse[0];
 //        }
 
         for (int i = 0; i < files.length; i++)
@@ -326,35 +304,35 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
             if (searchInFolders && file.isDirectory())
             {
-                GetFolderFilesSongPictsMap(file.getPath(), fileExtantionToSearch, searchInFolders);
+                GetFolderFilesSongPictsMap(file.getPath(), fileExtentionToSearch, searchInFolders);
             }
             else
             {
                 filePath = file.getAbsolutePath().toLowerCase();
                 fileName = file.getName().toLowerCase();
-                if (fileName.endsWith(fileExtantionToSearch))
+                if (fileName.endsWith(fileExtentionToSearch))
                 {
-                    fileName = fileName.substring(0, fileName.indexOf(fileExtantionToSearch));
-                    int posName = filePath.indexOf(fileName);
+                    // Erase the extension '.mp3'
+                    fileName = fileName.substring(0, fileName.lastIndexOf(fileExtentionToSearch));
 
                     // Key: Song name (without path), Value: Song path & name
-                    songsMap.put(fileName, filePath);       // TODO: maybe songsMap.put(filePath ,file);
+                    songsMap.put(fileName, filePath);
 
-                    // Song Path (without song name)
-                    filePath = filePath.substring(0, posName);
+                    // Song Path only - Erase song name
+                    filePath = filePath.substring(0, filePath.lastIndexOf(fileName));
 
                     // All Files/Folders that contain 'mp3' files - Key: Full path, Value: ArraList of all Files in folder
                     if (!pathMap.containsKey(filePath))
                     {
                         // Create the array of files
-                        ArrayList<File>  filesToFolder = new ArrayList<File>();
+                        filesToFolder = new ArrayList<File>();
                         filesToFolder.add(file);
                         pathMap.put(filePath, filesToFolder);
                     }
                     else
                     {
                         // Update exist array with 1 more file
-                        ArrayList<File>  filesToFolder = (ArrayList<File>) pathMap.get(filePath);
+                        filesToFolder = (ArrayList<File>) pathMap.get(filePath);
                         filesToFolder.add(file);
                         pathMap.setValueAt(pathMap.indexOfKey(filePath), filesToFolder);
                     }
@@ -383,7 +361,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         return files;
     }
 
-    private File[] GetFolderFiles(String path, String fileExtantionToSearch, boolean searchInFolders)
+    private File[] GetFolderFiles(String path, String fileExtentionToSearch, boolean searchInFolders)
     {
         File file;
         File[] files;
@@ -392,7 +370,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         String[]   multiSearchValuse = new String[0];
 
 
-        fileExtantionToSearch = fileExtantionToSearch.toLowerCase();
+        fileExtentionToSearch = fileExtentionToSearch.toLowerCase();
 
         directory = new File(path);
 
@@ -403,10 +381,10 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             return files;
         }
 
-//        if (fileExtantionToSearch.contains(";"))
+//        if (fileExtentionToSearch.contains(";"))
 //        {
-//            multiSearchValuse = fileExtantionToSearch.split(";");
-//            fileExtantionToSearch = multiSearchValuse[0];
+//            multiSearchValuse = fileExtentionToSearch.split(";");
+//            fileExtentionToSearch = multiSearchValuse[0];
 //        }
 
         for (int i = 0; i < files.length; i++)
@@ -415,9 +393,9 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
             if (searchInFolders && file.isDirectory())
             {
-                GetFolderFiles(file.getPath(), fileExtantionToSearch, searchInFolders);
+                GetFolderFiles(file.getPath(), fileExtentionToSearch, searchInFolders);
             }
-            else if (file.getName().toLowerCase().endsWith(fileExtantionToSearch))
+            else if (file.getName().toLowerCase().endsWith(fileExtentionToSearch))
             {
                 songsFiles.add(file);
             }
@@ -456,7 +434,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         return files;
     }
 
-    private File[] GetFolderFilesMap(String path, String fileExtantionToSearch, boolean searchInFolders)
+    private File[] GetFolderFilesMap(String path, String fileExtentionToSearch, boolean searchInFolders)
     {
         File file;
         File[] files;
@@ -466,7 +444,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         String  fileName;
 
 
-        fileExtantionToSearch = fileExtantionToSearch.toUpperCase();
+        fileExtentionToSearch = fileExtentionToSearch.toUpperCase();
 
         directory = new File(path);
 
@@ -477,10 +455,10 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             return files;
         }
 
-//        if (fileExtantionToSearch.contains(";"))
+//        if (fileExtentionToSearch.contains(";"))
 //        {
-//            multiSearchValuse = fileExtantionToSearch.split(";");
-//            fileExtantionToSearch = multiSearchValuse[0];
+//            multiSearchValuse = fileExtentionToSearch.split(";");
+//            fileExtentionToSearch = multiSearchValuse[0];
 //        }
 
         for (int i = 0; i < files.length; i++)
@@ -489,9 +467,9 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
             if (searchInFolders && file.isDirectory())
             {
-                GetFolderFilesMap(file.getPath(), fileExtantionToSearch, searchInFolders);
+                GetFolderFilesMap(file.getPath(), fileExtentionToSearch, searchInFolders);
             }
-            else if (file.getName().toUpperCase().endsWith(fileExtantionToSearch))
+            else if (file.getName().toUpperCase().endsWith(fileExtentionToSearch))
             {
                 fileName = file.getName();
                 // Key: Song name (without path), Value: Song path & name
@@ -606,19 +584,12 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
             picsPathsToSong = listSongs.get(i).second;
 
-            if (chars.contains(songName.substring(0, 1)))
-            {
-                songName = songName.substring(0, 1).toUpperCase() + songName.substring(1);
-            }
-            if (songName.contains("- "))
-            {
-                int pos = songName.indexOf("- ");
-                songName = songName.substring(0, pos+2) + songName.substring(pos+2, pos+3).toUpperCase() + songName.substring(pos+3);
-            }
+            songName = FixSongName(songName);
 
-            ListItemSong item = new ListItemSong(songName, "Artist of Item " + (i + 1), "Album of Item " + (i + 1));  // TODO: add album
+            ListItemSong item = new ListItemSong(songName, "Artist of song " + (i + 1), "All Songs");  // TODO: add album
 
             // Done in bind items in adaptor
+//            LoadMusicMediaWithSong(songPath);
 //            try
 //            {
 //                Uri uri = Uri.parse(songPath);
@@ -657,7 +628,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             }
             else
             {
-                item.getImageItem().setImageDrawable(this.getDrawable(R.drawable.defualt_song_pic2));
+                item.getImageItem().setImageDrawable(this.getDrawable(R.drawable.defualt_song_pic));
                 //imageView.setImageDrawable(drawable);
                 //imageView.setBackground(drawable);
             }
@@ -701,11 +672,13 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
 
 
-        ListItemsRecycler = new ArrayList<ListItemSong>();   // List<E>
+        ListItemsRecycler = new ArrayList<ListItemSong>();
         ListItemSimple = new ArrayList<String>();
 
-        item = new ListItemSong("....", "", "");
+        item = new ListItemSong("...", "", "");
         item.setImageItem(new ImageView(this));
+        ListItemsRecycler.add(item);
+        ListItemSimple.add("....");
 
 
         for (int i = 0; i < ListItemSimpleFoldersFullPath.size(); i++)
@@ -721,19 +694,21 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                 picsPathsToSong = files;
             }
 
-            String filesCount="";
+            String filesCount="Artist of song " + String.valueOf(i + 1);
             isDirectory = false;
-            if (pathMap.containsKey(songPath))
+            if (pathMap.containsKey(songPath.toLowerCase()))    // +"/"
             {
                 File file = new File(songPath);
                 if (file.exists() && file.isDirectory())
                 {
                     isDirectory=true;
-                    filesCount = String.valueOf(((ArrayList<File>)pathMap.get(songPath)).size());
+                    filesCount = String.valueOf(((ArrayList<File>)pathMap.get(songPath)).size()) + " Items";
                 }
             }
 
-            item = new ListItemSong(songName, filesCount, "Album of Item " + (i + 1));  // TODO: add album
+            songName = FixSongName(songName);
+
+            item = new ListItemSong(songName, filesCount, "Folders Mode");
 
             item.setSongPath(songPath);
             //item.setResourceID(resourceId);
@@ -742,7 +717,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
             // Just for the small pic in list items
             item.setImageItem(new ImageView(this));
-            if (picsPathsToSong.size()>0)
+            if (picsPathsToSong.size()>0)   // && !isDirectory)
             {
                 picPath = picsPathsToSong.get(0);
                 item.getPicsToSongPathsArray().add(picPath);
@@ -757,7 +732,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                 }
                 else
                 {
-                    item.getImageItem().setImageDrawable(this.getDrawable(R.drawable.defualt_song_pic2));
+                    item.getImageItem().setImageDrawable(this.getDrawable(R.drawable.defualt_song_pic));
                 }
             }
 
@@ -1065,6 +1040,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         try
         {
             MusicPause();
+
             Uri uri = Uri.parse(songPath);
             mediaPlayer = MediaPlayer.create(this, uri);
             if (mediaPlayer != null)
@@ -1082,7 +1058,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                     }
                 });
 
-                lblSongName.setText(ListItemSimpleFolders.get(ListPositionIndex));
+                setSongControls(ListPositionIndex);
 
                 MusicPlay();
 
@@ -1090,7 +1066,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         }
         catch (Exception e)
         {
-            System.out.println("Get song duration - " + e.getMessage());
+            System.out.println("Error while load a song into Media player.. \n" + e.getMessage());
         }
 
         return result;
@@ -1101,39 +1077,40 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         int resourceID;
 
 
-        MusicPause();
 
 
-        //Toast.makeText(this, "List Count: "+String.valueOf(ListItemsRecycler.size()), Toast.LENGTH_SHORT);
-        //Toast.makeText(this, "List Count: "+String.valueOf(listPositionIndex), Toast.LENGTH_SHORT);
-        //System.out.println("List Count: "+String.valueOf(listPositionIndex));
-        //System.out.println("Index: "+String.valueOf(listPositionIndex));
-
-         Uri uri = Uri.parse(ListItemsRecycler.get(listPositionIndex).getSongPath());
-         mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-
-        if (mediaPlayer!=null)
+        try
         {
-            //resourceID = ListItemsRecycler.get(listPositionIndex).getResourceID();
-            //mediaPlayer = MediaPlayer.create(getApplicationContext(), resourceID);  //listItems.get(listPositionIndex).getResourceID()
-            //mediaPlayer = MediaPlayer.create(new Uri("/0/Music/one.mp3");         //TODO: load from smartphone disk
-            //MusicPause();
-            mediaPlayer.seekTo(0);
-            barSeek.setMax(mediaPlayer.getDuration());
-            barSeek.setProgress(0);
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer)
-                {
-                    PlaySongNext();
-                }
-            });
+            MusicPause();
 
+            Uri uri = Uri.parse(ListItemsRecycler.get(listPositionIndex).getSongPath());
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+
+            if (mediaPlayer != null)
+            {
+                //resourceID = ListItemsRecycler.get(listPositionIndex).getResourceID();
+                //mediaPlayer = MediaPlayer.create(getApplicationContext(), resourceID);  //listItems.get(listPositionIndex).getResourceID()
+                mediaPlayer.seekTo(0);
+                barSeek.setMax(mediaPlayer.getDuration());
+                barSeek.setProgress(0);
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        PlaySongNext();
+                    }
+                });
+
+            }
+            // Set the Song props - Name, Artist, Album, Duration
+            setSongControls(listPositionIndex);
+
+            MusicPlay();
         }
-        // Set the Song props - Name, Artist, Album, Duration
-        setSongControls(listPositionIndex);
+        catch (Exception e)
+        {
+            System.out.println("Error while load a song into Media player.. \n" + e.getMessage());
+        }
 
-        MusicPlay();
     }
 
     // Set the Song props - Name, Artist, Album, Duration
@@ -1305,6 +1282,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             @Override
             public void setOnRecyclerViewItemPressed(int cardViewPressedResID, int listPositionIndex)
             {
+                ListPositionIndex = listPositionIndex;
                 String selectedItemText = ListItemsRecycler.get(listPositionIndex).getSongName();
                 ShowFilesToFolder(selectedItemText);
                 return;
@@ -1315,6 +1293,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             @Override
             public void setOnListViewItemPressed(int listPositionIndex, String selectedItemText)
             {
+                ListPositionIndex = listPositionIndex;
                 ShowFilesToFolder(selectedItemText);
                 return;
             }
@@ -1341,6 +1320,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         if (folderName.equals("...")==false)
         {
             // Keep the result files & folders. Key: Folder name - without the full folder path, Value: full path - that shown when peress 'Folder' button
+            folderName = folderName.toLowerCase();
             if (ListItemSimpleFoldersFullPath.containsKey(folderName))
             {
                 // It's a folder
@@ -1367,8 +1347,8 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             if (!path.isDirectory())
             {
                 // Play the song
-                ListPositionIndex = ListItemSimpleFolders.indexOf(folderName) + 0;
-                LoadMusicMediaWithSong(pathFull);
+                LoadSongIntoPlayer(ListPositionIndex);
+                //LoadMusicMediaWithSong(pathFull);
                 return;
             }
         }
@@ -1378,7 +1358,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
         keepLastFolderWasChoosen = path.getParentFile().getAbsolutePath();
 
-        // The result files & folders (without the full folder path - just the folder name) that shown when peress 'Folder' button
+        // Allways add LowerCase - The result files & folders (without the full folder path - just the folder name) that shown when peress 'Folder' button
         ListItemSimpleFoldersFullPath.clear();
         ListItemSimpleFolders = new ArrayList<String>();
         ListItemSimpleFolders.add("...");
@@ -1387,22 +1367,23 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         {
             File file = files[i];
             songFile = file.getName();
-            pathFull = file.getAbsolutePath();
+            pathFull = file.getAbsolutePath().toLowerCase();
 
             if (file.isFile())
             {
                 if (songFile.toLowerCase().endsWith(".mp3"))
                 {
-                    //pathFull = pathFull.substring(0, pathFull.indexOf(songFile));
                     songFile = songFile.substring(0, songFile.toLowerCase().lastIndexOf(".mp3"));
                     ListItemSimpleFolders.add(songFile);
-                    ListItemSimpleFoldersFullPath.put(songFile, pathFull);
+                    ListItemSimpleFoldersFullPath.put(songFile.toLowerCase(), pathFull);
                 }
             }
             else
             {
+                // It's a Folder
+                pathFull +=  "/";
                 ListItemSimpleFolders.add(songFile);
-                ListItemSimpleFoldersFullPath.put(songFile, pathFull);
+                ListItemSimpleFoldersFullPath.put(songFile.toLowerCase(), pathFull);
             }
         }
 
@@ -1412,16 +1393,16 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         intentListView.putExtra("ListMode", 1);     //ShowListModeEn.SimpleView);
         intentListView.putStringArrayListExtra("ListItems", ListItemSimpleFolders);
 
-        // Fill songs files
+        // Fill songs files into 'ListItemsRecycler'
         FillListFolderMode();
 
         ActivitySongList.ListItemsRecycler = ListItemsRecycler;
-        //ActivitySongList.ListItemSimple = ListItemSimpleFolders;         // TODO: Maybe passe it like this instead of thrue Intent
+        //ActivitySongList.ListItemSimple = ListItemSimpleFolders;
 
         startActivityForResult(intentListView, REQUEST_CODE_SONGLIST_RECYCLER);
     }
 
-    // Fill the main Folders names without full path, just the file/folder name
+    // Fill just 1 time the main Folders names without full path, just the file/folder name
     private void FillListWithFolderNames()
     {
         String path;
@@ -1445,12 +1426,9 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             {
                 pathShort = pathShort.substring(0, pathShort.length()-1);
             }
-            //pathShort = pathShort.substring(pathShort.indexOf(defaultPath) + defaultPath.length());
+            // Take just the Name, without full path
             pathShort = pathShort.substring(pathShort.lastIndexOf("/")+1);
-            if (chars.contains(pathShort.substring(0, 1)))
-            {
-                pathShort = pathShort.substring(0, 1).toUpperCase() + pathShort.substring(1);
-            }
+
             ListItemSimpleFoldersFullPath.put(pathShort, pathFull);
             ListItemSimpleFolders.add(pathShort);
         }
@@ -1668,6 +1646,24 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
     }
 
+    // Set Upper case Letters in begining
+    private String FixSongName(String songName)
+    {
+        if (chars.contains(songName.substring(0, 1)))
+        {
+            songName = songName.substring(0, 1).toUpperCase() + songName.substring(1);
+        }
+        if (songName.contains("- "))
+        {
+            int pos = songName.indexOf("- ");
+            if (pos+3<songName.length()-1)
+            {
+                songName = songName.substring(0, pos + 2) + songName.substring(pos + 2, pos + 3).toUpperCase() + songName.substring(pos + 3);
+            }
+        }
+
+        return songName;
+    }
 
 }
 

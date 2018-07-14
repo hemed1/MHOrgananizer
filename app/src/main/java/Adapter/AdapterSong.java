@@ -26,6 +26,7 @@ import com.example.meirh.mhorgananizer.ActivityMusic;
 import com.example.meirh.mhorgananizer.MainActivity;
 import com.example.meirh.mhorgananizer.R;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -93,26 +94,34 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
 
         //holder.lblAlbum.setText(item.getAlbum());
 
-        if (item.getDuration()==0)
+        if (item.getDuration()==0 && item.getSongPath()!=null)
         {
-            try
+            File file = new File(item.getSongPath());
+            if (file.exists() && !file.isDirectory())
             {
-                Uri uri = Uri.parse(item.getSongPath());
-                ActivityMusic.mediaPlayer = MediaPlayer.create(context, uri);
-                if (ActivityMusic.mediaPlayer != null)
-                {
-                    item.setDuration(ActivityMusic.mediaPlayer.getDuration());
+                try {
+                    Uri uri = Uri.parse(item.getSongPath());
+                    ActivityMusic.mediaPlayer = MediaPlayer.create(context, uri);
+                    if (ActivityMusic.mediaPlayer != null) {
+                        item.setDuration(ActivityMusic.mediaPlayer.getDuration());
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss");
+                        holder.lblLength.setText(dateFormat.format(new Date(item.getDuration())));
+                    }
+                } catch (Exception e) {
+                    System.out.println("Get song duration - " + e.getMessage());
                 }
+                //item.setDuration(ActivityMusic.LoadMusicMediaWithSong(item.getSongPath()));
             }
-            catch (Exception e)
+            else
             {
-                System.out.println("Get song duration - " + e.getMessage());
+                holder.lblLength.setText("");
             }
-            //item.setDuration(ActivityMusic.LoadMusicMediaWithSong(item.getSongPath()));
         }
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss");
-        holder.lblLength.setText(dateFormat.format(new Date(item.getDuration())));
+        else
+        {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss");
+            holder.lblLength.setText(dateFormat.format(new Date(item.getDuration())));
+        }
 
         holder.Image.setImageDrawable(item.getImageItem().getDrawable());
 

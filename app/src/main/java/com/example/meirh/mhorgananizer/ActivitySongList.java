@@ -52,6 +52,7 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
 
         setUpUIControls();
 
+        setControlsByListMode(ListMode);
     }
 
 
@@ -65,9 +66,6 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
 
         // TODO: Done here, just because we need Initialing 'AdapterBaseList' object for the next line Event 'setOnListViewItemClick'
         listControlSimple = (ListView) findViewById(R.id.listControlSimple);
-
-
-        setControlsByListMode(ListMode);
 
     }
 
