@@ -55,8 +55,8 @@
                     android:text="Song Name"
                     android:textAlignment="textStart"
                     android:textColor="@color/titles_card_foreground_main_song"
+                    android:textStyle="bold"
                     android:textSize="15sp" />
-                    <!--android:textStyle="bold"-->
                     <!--android:shadowColor="@color/colorAccent"-->
 
                 <TextView

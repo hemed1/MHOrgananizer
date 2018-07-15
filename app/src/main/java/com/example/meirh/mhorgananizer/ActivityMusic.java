@@ -83,7 +83,8 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
 
     private ArrayList<String>           ListItemSimple;
-    private List<ListItemSong>          ListItemsRecycler;  // List<ListItemSong>
+    private List<ListItemSong>          ListItemsRecycler;
+    private List<ListItemSong>          ListItemsRecyclerAllSongs;
 
     public final int REQUEST_CODE_SONGLIST_SIMPLE = 2;
     public final int REQUEST_CODE_SONGLIST_RECYCLER = 3;
@@ -135,10 +136,11 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
         listSongs = ReadSongs(pathToSearch);
 
+        listSongsAll = listSongs;
+
         if (isExternalStorageAvailable())
         {
-            listSongsAll = listSongs;
-            pathToSearch = "/storage/3437-3532/";
+            pathToSearch = MainActivity.StorageSDCardName;  //"/storage/3437-3532/";
             listSongs = ReadSongs(pathToSearch);
             listSongsAll.addAll(listSongs);
             listSongs = listSongsAll;
@@ -146,14 +148,16 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
         FillList();
 
-        ListPositionIndex=0;
-
         //ReadAllResources();
-//        if (ListItemsRecycler.size()>0)
-//        {
-//            ListPositionIndex = 1;
-//            LoadSongIntoPlayer(ListPositionIndex);
-//        }
+
+        ListPositionIndex=0;
+        if (ListItemsRecycler.size()>0)
+        {
+            //LoadSongIntoPlayer(ListPositionIndex);
+            // Set the Song props - Name, Artist, Album, Duration
+            setSongControls(ListPositionIndex);
+
+        }
     }
 
 
@@ -650,12 +654,8 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             ListItemSimple.add(songName);
         }
 
-//        if (mediaPlayer!=null)
-//        {
-//            mediaPlayer.stop();
-//            mediaPlayer.release();
-//            mediaPlayer = null;
-//        }
+        ListItemsRecyclerAllSongs = ListItemsRecycler;
+
     }
 
     private void FillListFolderMode()
@@ -693,10 +693,20 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                 ArrayList<String>  files = (ArrayList<String>) picsMap.get(songPath);
                 picsPathsToSong = files;
             }
+            else
+            {
+                // Not found specific song picture, try it's parent folder
+                String filePath = songPath.substring(0, songPath.lastIndexOf(songName));
+                if (picsMap.containsKey(filePath))
+                {
+                    ArrayList<String>  files = (ArrayList<String>) picsMap.get(filePath);
+                    picsPathsToSong = files;
+                }
+            }
 
             String filesCount="Artist of song " + String.valueOf(i + 1);
             isDirectory = false;
-            if (pathMap.containsKey(songPath.toLowerCase()))    // +"/"
+            if (pathMap.containsKey(songPath.toLowerCase()))
             {
                 File file = new File(songPath);
                 if (file.exists() && file.isDirectory())
@@ -717,7 +727,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
             // Just for the small pic in list items
             item.setImageItem(new ImageView(this));
-            if (picsPathsToSong.size()>0)   // && !isDirectory)
+            if (picsPathsToSong.size()>0 && !isDirectory)
             {
                 picPath = picsPathsToSong.get(0);
                 item.getPicsToSongPathsArray().add(picPath);
@@ -1043,6 +1053,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
             Uri uri = Uri.parse(songPath);
             mediaPlayer = MediaPlayer.create(this, uri);
+
             if (mediaPlayer != null)
             {
                 result = ActivityMusic.mediaPlayer.getDuration();
@@ -1347,7 +1358,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             if (!path.isDirectory())
             {
                 // Play the song
-                LoadSongIntoPlayer(ListPositionIndex);
+                LoadSongIntoPlayer(ListPositionIndex + 1);
                 //LoadMusicMediaWithSong(pathFull);
                 return;
             }
@@ -1439,6 +1450,8 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
     {
         int listMode;
 
+        ListItemsRecycler = ListItemsRecyclerAllSongs;
+
         Intent intentListView = new Intent(ActivityMusic.this, ActivitySongList.class);
 
         listMode= 1;
@@ -1454,7 +1467,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         intentListView.putExtra("FirstLoad", isFirstSongListLoad);     //ShowListModeEn.RecyclerView);
 
         ActivitySongList.ListItemsRecycler = ListItemsRecycler;     // Can't send it thru Intent, so must be static
-        //ActivitySongList.ListItemSimple = ListItemSimple;         // TODO: Maybe passe it like this instead of thrue Intent
+        //ActivitySongList.ListItemSimple = ListItemSimple;                 // TODO: Maybe passe it like this instead of thrue Intent
 
         if (listMode==1)
         {
@@ -1584,10 +1597,10 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
     {
         if (mediaPlayer != null)
         {
-            Toast.makeText(ActivityMusic.this, "Destroing Media Player control", Toast.LENGTH_SHORT).show();
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
+            Toast.makeText(ActivityMusic.this, "Destroing Media Player control", Toast.LENGTH_SHORT).show();
         }
         super.onDestroy();
     }

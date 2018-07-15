@@ -2,6 +2,7 @@ package com.example.meirh.mhorgananizer;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String       StorageSDCardName;
 
     public static final String  PREFS_NAME = "MHOrganaizerPrefsFile";
-    public static final String  PREFS_FILE_NAME = "MeirHemed DoList.txt";
+    public static final String  PREFS_FILE_NAME = "MHOrganaizer-Config.txt";    // Environment.getExternalStorageDirectory().getPath()+"/"+
     public static final String  SETTING_MAIL_USER_NAME = "UserName";
     public static final String  SETTING_MAIL_EMAIL_ADDRESS = "EmailAddress";
     public static final String  SETTING_MAIL_EMAIL_PASSWORD = "EmailPassword";
