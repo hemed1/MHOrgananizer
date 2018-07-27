@@ -45,22 +45,22 @@ import Utills.*;
 
 public class ActivityMails extends AppCompatActivity implements View.OnClickListener
 {
-    private Button                  btnBack;
-    private Button                  btnAddItem;
+    private Button                  btnOpenMail;
+    private Button                  btnNewMail;
     private Button                  btnRefresh;
-    private Button                  btnSetFolder;
-    private RecyclerView            recyclerView;
+    private RecyclerView            recyclerMain;
     private AdapterEmail            adapterEmail;    // RecyclerView.Adapter
     private List<ListItemEmail>     listItems;
     private TextView                lblFolderName;
     private TextView                lblEmailAddress;
+    private TextView                lblEmailTitle;
     private ListView                listFolders;
 
     private Bundle                  extras;
 
     MailReader                      mailReader;
     Message[]                       Messages = null;
-    TimerTask                       MailCheckTimerTask;    //Timer
+    TimerTask                       MailCheckTimerTask;
     Timer                           MailCheckTimer;
     public Thread                   CheckMailThread;
     private PersonalEvents.OnMessageLoaded      listener;
@@ -94,24 +94,24 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
     private void SetIOControls()
     {
-        btnBack = (Button)findViewById(R.id.btnBack);
-        btnAddItem = (Button)findViewById(R.id.btnAddItem);
+        btnOpenMail = (Button)findViewById(R.id.btnOpenMail);
+        btnNewMail = (Button)findViewById(R.id.btnNewMail);
         btnRefresh = (Button)findViewById(R.id.btnRefresh);
-        btnSetFolder = (Button) findViewById(R.id.btnSetFolder);
         listFolders = (ListView) findViewById(R.id.listFolders);
         lblEmailAddress = (TextView) findViewById(R.id.lblEmailAddress);
+        lblEmailTitle = (TextView) findViewById(R.id.lblEmailTitle);
         lblFolderName = (TextView) findViewById(R.id.lblFolderName);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerMain);
+        recyclerMain = (RecyclerView) findViewById(R.id.recyclerMain);
 
-
+        lblEmailTitle.setText("Hello " + MainActivity.MainUserName);
         lblEmailAddress.setText(MainActivity.MailAdresss);
-        lblFolderName.setText("INBOX");
+        lblFolderName.setText("Inbox");
 
         listFolders.bringToFront();
         listFolders.setVisibility(View.INVISIBLE);
 
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerMain.setHasFixedSize(true);
+        recyclerMain.setLayoutManager(new LinearLayoutManager(this));
         listItems = new ArrayList<>();  //new List<ListItemEmail>
         adapterEmail = new AdapterEmail(this, listItems);
 
@@ -128,14 +128,14 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         IsTimerWork = false;
 
         // Create the Child observer object that will fire the event
-        mailReader = new MailReader(ActivityMails.this,"imap.gmail.com", MainActivity.MailAdresss, MainActivity.MailPassword);
-        mailReader.IsHaveToCheckNewEmails = true;      //TODO:MainActivity.MailStayOnLine;
+        mailReader = new MailReader(ActivityMails.this, MainActivity.MailHostAdress, MainActivity.MailAdresss, MainActivity.MailPassword);
+        mailReader.IsHaveToCheckNewEmails = MainActivity.MailStayOnLine;
 
         // Events
-        btnBack.setOnClickListener(this);
-        btnAddItem.setOnClickListener(this);
+        btnOpenMail.setOnClickListener(this);
+        btnNewMail.setOnClickListener(this);
         btnRefresh.setOnClickListener(this);
-        btnSetFolder.setOnClickListener(this);
+        lblFolderName.setOnClickListener(this);
 
         // Register the listener for this object
         mailReader.setOnMessagesLoaded(new PersonalEvents.OnMessageLoaded()
@@ -167,7 +167,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
     private void mailReader_RecivedMessages(Message[] messages)
     {
-        System.out.println("Reach the event was fired with " + String.valueOf(messages.length) + " Messages/n");
+        //System.out.println("Reach the event was fired with " + String.valueOf(messages.length) + " Messages/n");
 
         CheckMailThread = null;
 
@@ -296,11 +296,11 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
         Messages = messages;
 
-        System.out.println("Items count: " + String.valueOf(listItems.size()));
-        //Toast.makeText(this,"Mails count: " + String.valueOf(recyclerView.getAdapter().getItemCount()), Toast.LENGTH_SHORT).show();
-
         adapterEmail = new AdapterEmail(this, listItems);
-        recyclerView.setAdapter(adapterEmail);
+        recyclerMain.setAdapter(adapterEmail);
+
+        System.out.println("Items count: " + String.valueOf(listItems.size()));
+        //Toast.makeText(this,"Mails count: " + String.valueOf(recyclerMain.getAdapter().getItemCount()), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -314,7 +314,10 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
             addressesFrom = message.getFrom();
             addressesTo = message.getRecipients(Message.RecipientType.TO);
 
-            item = new ListItemEmail(addressesFrom[0].toString(), message.getSubject());
+            String from = addressesFrom[0].toString();
+            from = extractFromAddress(from);
+
+            item = new ListItemEmail(from, message.getSubject());
 
 //            Multipart multipart = (Multipart) message.getContent();
 //            BodyPart bodyPart = null;
@@ -364,9 +367,20 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 //            //System.exit(2);
 //        }
 
-        //recyclerView.setAdapter(adapterEmail);
+        //recyclerMain.setAdapter(adapterEmail);
 
         return item;
+    }
+
+    private String extractFromAddress(String from)
+    {
+        int pos = from.lastIndexOf("<");
+        if (from.length()>30 && pos>-1)
+        {
+            from = from.substring(pos+1, from.lastIndexOf(">")-0);
+        }
+
+        return from;
     }
 
 
@@ -411,7 +425,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
         IsTimerWork = true;
         // Run the Timer
-        MailCheckTimer.schedule(MailCheckTimerTask, 100, 6000);
+        MailCheckTimer.schedule(MailCheckTimerTask, 100, 9000); // MainActivity.MailCheckMailInterval
     }
 
     private void TimerStop()
@@ -427,26 +441,27 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
     {
         switch (view.getId())
         {
-            case R.id.btnBack:
+            case R.id.btnOpenMail:
                 goBack();
                 break;
 
             case R.id.btnRefresh:
                 TimerStop();
                 mailReader.LastMessageIndexWasRead = 0;
-                mailReader.FetchMails();
+                Messages = mailReader.FetchMails();
+                FillList(Messages);
                 TimerRun();
                 break;
 
-            case R.id.btnAddItem:
+            case R.id.btnNewMail:
                 //TimerStop();
                 //ListItemEmail item = AddItem(Messages[0]);
                 //listItems.add(1, item);   // TODO: Insert
-                //recyclerView.setAdapter(adapterEmail);
+                //recyclerMain.setAdapter(adapterEmail);
                 //TimerRun();
                 break;
 
-            case R.id.btnSetFolder:
+            case R.id.lblFolderName:
                 TimerStop();
                 listFolders.setVisibility(View.VISIBLE);
                  //TimerRun();
@@ -457,7 +472,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
     private void FillFoldersListView()
     {
         String[]  items = new String[3];
-        items[0]="INBOX";
+        items[0]="Inbox";
         items[1]="Drafts";
         items[2]="Sent Items";
 

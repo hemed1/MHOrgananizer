@@ -12,8 +12,12 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 public class ActivitySettings extends AppCompatActivity
@@ -27,6 +31,7 @@ public class ActivitySettings extends AppCompatActivity
     private EditText        txtMailHostAddress;
     private EditText        txtCheckMailInterval;
     private EditText        txtStorageSDCardName;
+    private EditText        txtStorageLoadMode;
     private CheckBox        chkStayOnLine;
 
     private Bundle          extras;
@@ -48,6 +53,7 @@ public class ActivitySettings extends AppCompatActivity
         txtMailHostAddress = (EditText) this.findViewById(R.id.txtMailHostAddress);
         txtCheckMailInterval = (EditText) this.findViewById(R.id.txtCheckMailInterval);
         txtStorageSDCardName = (EditText) this.findViewById(R.id.txtStorageSDCardName);
+        txtStorageLoadMode = (EditText) this.findViewById(R.id.txtStorageLoadMode);
         chkStayOnLine = (CheckBox) this.findViewById(R.id.chkStayOnLine);
 
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -78,17 +84,30 @@ public class ActivitySettings extends AppCompatActivity
             return;
         }
 
-        txtUserName.setText(extras.getString(MainActivity.SETTING_MAIL_USER_NAME));
-        txtEmailAddress.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_ADDRESS));
-        txtPassword.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_PASSWORD));
-        txtMailHostAddress.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS));
-        txtCheckMailInterval.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL));
-        chkStayOnLine.setChecked(extras.getBoolean(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE));
+        LoadByFileOnDisk();
+
+        txtUserName.setText(MainActivity.MainUserName);
+        txtEmailAddress.setText(MainActivity.MailAdresss);
+        txtPassword.setText(MainActivity.MailPassword);
+        txtMailHostAddress.setText(MainActivity.MailHostAdress);
+        txtCheckMailInterval.setText(MainActivity.MailCheckMailInterval);
+        chkStayOnLine.setChecked(MainActivity.MailStayOnLine);
+        txtStorageSDCardName.setText(MainActivity.StorageSDCardName);
+        txtStorageLoadMode.setText(String.valueOf(MainActivity.StorageLoadMode));
+
+//        txtUserName.setText(extras.getString(MainActivity.SETTING_MAIL_USER_NAME));
+//        txtEmailAddress.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_ADDRESS));
+//        txtPassword.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_PASSWORD));
+//        txtMailHostAddress.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS));
+//        txtCheckMailInterval.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL));
+//        chkStayOnLine.setChecked(extras.getBoolean(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE));
+//        txtStorageSDCardName.setText(extras.getString(MainActivity.STORAGE_SDCARD_NAME));
+//        txtStorageLoadMode.setText(String.valueOf(extras.getInt(MainActivity.STORAGE_LOAD_MODE)));
     }
 
     private void SaveSetting()
     {
-        SaveByPrefsFile();
+        //SaveByPrefsFile();
 
         SaveByFileOnDisk();
 
@@ -111,6 +130,88 @@ public class ActivitySettings extends AppCompatActivity
         editor.commit();
     }
 
+    public String LoadByFileOnDisk()
+    {
+        String result ="";
+        int    pos;
+
+        try
+        {
+            //FileInputStream fileInputStream = openFileInput(PREFS_FILE_NAME);
+            InputStream inputStream = openFileInput(MainActivity.PREFS_FILE_NAME);
+            String path = new File(MainActivity.PREFS_FILE_NAME).getAbsolutePath();
+
+            if (inputStream!=null)
+            {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                String  tmpLine;
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ((tmpLine = bufferedReader.readLine()) != null)
+                {
+                    stringBuilder.append(tmpLine + "\n");
+
+                    //MainUserName = GetWordValue(SETTING_MAIL_USER_NAME);
+                    pos = tmpLine.indexOf(MainActivity.SETTING_MAIL_USER_NAME);
+                    if (pos>-1 && (pos + MainActivity.SETTING_MAIL_USER_NAME.length() + 1 < tmpLine.length()))
+                    {
+                        MainActivity.MainUserName = tmpLine.substring(pos + MainActivity.SETTING_MAIL_USER_NAME.length() + 2);
+                    }
+                    pos = tmpLine.indexOf(MainActivity.SETTING_MAIL_EMAIL_ADDRESS);
+                    if (pos>-1 && (pos + MainActivity.SETTING_MAIL_EMAIL_ADDRESS.length() + 1 < tmpLine.length()))
+                    {
+                        MainActivity.MailAdresss = tmpLine.substring(pos + MainActivity.SETTING_MAIL_EMAIL_ADDRESS.length() + 2);
+                    }
+                    pos = tmpLine.indexOf(MainActivity.SETTING_MAIL_EMAIL_PASSWORD);
+                    if (pos>-1 && (pos + MainActivity.SETTING_MAIL_EMAIL_PASSWORD.length() + 1 < tmpLine.length()))
+                    {
+                        MainActivity.MailPassword = tmpLine.substring(pos + MainActivity.SETTING_MAIL_EMAIL_PASSWORD.length() + 2);
+                    }
+                    pos = tmpLine.indexOf(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS);
+                    if (pos>-1 && (pos + MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS.length() + 1 < tmpLine.length()))
+                    {
+                        MainActivity.MailHostAdress = tmpLine.substring(pos + MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS.length() + 2);
+                    }
+                    pos = tmpLine.indexOf(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL);
+                    if (pos>-1 && (pos + MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL.length() + 1 < tmpLine.length()))
+                    {
+                        MainActivity.MailCheckMailInterval = tmpLine.substring(pos + MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL.length() + 2);
+                    }
+                    pos = tmpLine.indexOf(MainActivity.STORAGE_SDCARD_NAME);
+                    if (pos>-1 && (pos + MainActivity.STORAGE_SDCARD_NAME.length() + 1 < tmpLine.length()))
+                    {
+                        MainActivity.StorageSDCardName = tmpLine.substring(pos + MainActivity.STORAGE_SDCARD_NAME.length() + 2);
+                    }
+                    pos = tmpLine.indexOf(MainActivity.STORAGE_LOAD_MODE);
+                    if (pos>-1 && (pos + MainActivity.STORAGE_LOAD_MODE.length() + 1 < tmpLine.length()))
+                    {
+                        MainActivity.StorageLoadMode = Integer.valueOf(tmpLine.substring(pos + MainActivity.STORAGE_LOAD_MODE.length() + 2));
+                    }
+                    pos = tmpLine.indexOf(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE);
+                    if (pos>-1 && (pos + MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE.length() + 1 < tmpLine.length()))
+                    {
+                        MainActivity.MailStayOnLine = Boolean.valueOf(tmpLine.substring(pos + MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE.length() + 2));
+                    }
+                }
+
+                inputStream.close();
+                result = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
     private void SaveByFileOnDisk()
     {
         String textToSave = "";
@@ -128,6 +229,7 @@ public class ActivitySettings extends AppCompatActivity
             stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS + ": " + txtMailHostAddress.getText().toString() + "\n");
             stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL + ": " + txtCheckMailInterval.getText().toString() + "\n");
             stringBuilder.append(MainActivity.STORAGE_SDCARD_NAME + ": " + txtStorageSDCardName.getText().toString() + "\n");
+            stringBuilder.append(MainActivity.STORAGE_LOAD_MODE + ": " + txtStorageLoadMode.getText().toString() + "\n");
             stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE + ": " + String.valueOf(chkStayOnLine.isChecked()) + "\n");
 
             textToSave = stringBuilder.toString();

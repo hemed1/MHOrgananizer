@@ -20,7 +20,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.LinearLayoutManager;
+
+//import android.support.v4.util.ArrayMap;
 import android.util.ArrayMap;
+
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -41,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +53,7 @@ import java.util.TreeMap;
 
 import Model.ListItemSong;
 import Utills.PersonalEvents;
+import Utills.SortFiles;
 
 
 public class ActivityMusic extends AppCompatActivity implements View.OnClickListener
@@ -79,44 +84,44 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
     private ImageView           imgSongArtist3;
     private ImageView           imgLine;
     private Thread              thread;
-    private ArrayList<String>   AllSongsImages;
-
-
-    private ArrayList<String>           ListItemSimple;
-    private List<ListItemSong>          ListItemsRecycler;
-    private List<ListItemSong>          ListItemsRecyclerAllSongs;
 
     public final int REQUEST_CODE_SONGLIST_SIMPLE = 2;
     public final int REQUEST_CODE_SONGLIST_RECYCLER = 3;
+    public final int REQUEST_CODE_FOLDERLIST_RECYCLER = 4;
     private final int PERMISSIONS_REQUEST_READ_STORAGE = 111;
 
+
     private int                 ListPositionIndex;
+    private String              ListFolderName;
+
+    private ArrayList<String>           AllSongsImages;
+    private ArrayList<String>           ListItemSimple;
+    private List<ListItemSong>          ListItemsRecycler;
+    private List<ListItemSong>          keepListItemsRecyclerAllSongs;
 
     //Song Name, Song SourceID // pictures SourcesIDs for specific song
     private List<Pair<Pair<String, Integer>, ArrayList<Integer>>>   listResources;
-
-    // First Pair - Song name (without path) , Ful song path (with path), Array of all pictures to specific song (in same folder)
-    private ArrayList<Pair<Pair<String, String>, ArrayList<String>>> listSongs;
-
-    // Keep all files recorsive from starting folder - Used in func 'GetFolderFiles()'
-    private ArrayList<File>     songsFiles;
+    // For All song list - First Pair - Song name (without path) , Full song path (with path), Array of all pictures to specific song (in same folder)
+    private ArrayList<Pair<Pair<String, String>, ArrayList<String>>> listAllSongs;
+    // Keep all files recorsive from starting folder - Used just in func 'GetFolderFiles()' as Output
+    private ArrayList<File>                     songsFiles;
 
     // Key: Song name (without path), Value: Full Song path & name
-    private ArrayMap            songsMap;
+    private ArrayMap<String, String>            songsMap;
+    // All Files/Folders that contain 'mp3' files - Key: Full path, Value: ArraList of all Files (File object) in folder
+    private ArrayMap<String, ArrayList<File>>   pathMap;
     // Key: Song Path (without song name), Value: ArrayList of all pics files names (with full path) for a song - in same folder of the song file
-    private ArrayMap            picsMap;
-    // All Files/Folders that contain 'mp3' files - Key: Full path, Value: ArraList of all Files in folder
-    private ArrayMap            pathMap;
+    private ArrayMap<String, ArrayList<String>> picsMap;
 
     // The result files & folders (without the full folder path - just the folder name) that shown when peress 'Folder' button
-    private ArrayList<String>           ListItemSimpleFolders;
-    // Allways add LowerCase - Keep the result files & folders. Key: Folder name - without the full folder path, Value: full path - that shown when peress 'Folder' button
-    private ArrayMap                    ListItemSimpleFoldersFullPath;
+    private ArrayList<String>                  ListItemSimpleFolders;
+    // Allways add LowerCase - Keep the result files & folders. Key: Folder name - without the full folder path, Value: full path - that shown when press 'Folder' button
+    private ArrayMap<String, String>           ListItemSimpleFoldersFullPath;
 
     // Keep the Full path file or folder was press when press the 'Folders' button
-    private String              keepLastFolderWasChoosen;
-    private boolean             isFirstSongListLoad;
-    private String              chars ="abcdefghijklmnopqrstuvwxyz";
+    private String                              keepLastFolderWasChoosen;
+    private boolean                             isFirstSongListLoad;
+    private final String                        chars ="abcdefghijklmnopqrstuvwxyz";
 
 
     @Override
@@ -127,26 +132,43 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
         setUpUIControls();
 
+        LoadSongs();
+
+    }
+
+    private void LoadSongs()
+    {
         String pathToSearch;
+        ArrayList<Pair<Pair<String, String>, ArrayList<String>>> listSongsMerged = new ArrayList<Pair<Pair<String, String>, ArrayList<String>>>();
+
 
         //pathToSearch = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath();
-        pathToSearch = Environment.getExternalStorageDirectory().getAbsolutePath();     //"/sdcard/";    //"/sdcard/Music/Genesis";  //"/sdcard/Music/Genesis";  //Environment.getExternalStorageDirectory().getAbsolutePath()   // /storage/3437-3532/
+        //pathToSearch = this.getExternalFilesDir(null).getAbsolutePath();
+        //pathToSearch = this.getFilesDir().getAbsolutePath();
 
-        ArrayList<Pair<Pair<String, String>, ArrayList<String>>> listSongsAll = new ArrayList<Pair<Pair<String, String>, ArrayList<String>>>();
+        Toast.makeText(this, "Search songs on phone disk ...", Toast.LENGTH_LONG).show();
 
-        listSongs = ReadSongs(pathToSearch);
-
-        listSongsAll = listSongs;
-
-        if (isExternalStorageAvailable())
+        if (MainActivity.StorageLoadMode.equals(0) || MainActivity.StorageLoadMode.equals(1) || MainActivity.StorageLoadMode.equals(3))
         {
-            pathToSearch = MainActivity.StorageSDCardName;  //"/storage/3437-3532/";
-            listSongs = ReadSongs(pathToSearch);
-            listSongsAll.addAll(listSongs);
-            listSongs = listSongsAll;
+            //Toast.makeText(this, "enter 1 ", Toast.LENGTH_SHORT).show();
+            pathToSearch = "/sdcard/";  //Environment.getExternalStorageDirectory().getAbsolutePath();     //"/sdcard/";    //"/sdcard/Music/Genesis";  //"/sdcard/Music/Genesis";  //Environment.getExternalStorageDirectory().getAbsolutePath()   // /storage/3437-3532/
+            listAllSongs = ReadSongs(pathToSearch);
+            listSongsMerged = listAllSongs;
         }
 
-        FillList();
+        if (isExternalStorageAvailable() && !MainActivity.StorageSDCardName.equals("") &&
+           (MainActivity.StorageLoadMode.equals(0) || MainActivity.StorageLoadMode.equals(2) || MainActivity.StorageLoadMode.equals(3)))
+        {
+            //Toast.makeText(this, "enter 2 ", Toast.LENGTH_SHORT).show();
+            pathToSearch = MainActivity.StorageSDCardName;  //"/storage/3437-3532/";
+            listAllSongs = ReadSongs(pathToSearch);
+            listSongsMerged.addAll(listAllSongs);
+            listAllSongs = listSongsMerged;
+        }
+
+        FillListAllSongs();
+
+        Toast.makeText(this, "Found " + String.valueOf(listAllSongs.size()) + " Songs", Toast.LENGTH_SHORT).show();
 
         //ReadAllResources();
 
@@ -160,48 +182,48 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         }
     }
 
-
+    // Read All Song in phone disk
+    // Return: Key: Song name (without path), Value: Song path & name
+    // Key: Song Path (without song name), Value: ArrayList of all pics names (with full path) for a song in same folder of the song file
     private ArrayList<Pair<Pair<String, String>, ArrayList<String>>> ReadSongs(String startReadFromFolder)
     {
-        File[] files;
         ArrayList<String>   picsToSong;
-        // Key: Song name (without path), Value: Song path & name
-        ArrayMap            songsFilesFoundedMap;
-        // Key: Song Path (without song name), Value: ArrayList of all pics names (with full path) for a song in same folder of the song file
-        ArrayMap            songsPicsFoundedMap;
         String              songName;
         String              songPath;
         File                songFile;
         String              picName;
         String              picPath;
-
-
-
+        List<ArrayMap<String, String>> sortedList;
+        ArrayMap<String, String> sortedArray;
 
 
 
         RequestPermissions();
 
-        listSongs = new ArrayList<Pair<Pair<String, String>, ArrayList<String>>>();
+        listAllSongs = new ArrayList<Pair<Pair<String, String>, ArrayList<String>>>();
 
         songsFiles = new ArrayList<File>();
-        songsMap = new ArrayMap();
-        picsMap = new ArrayMap();
-        // All Files/Folders that contain 'mp3' files - Key: Full path, Value: ArraList of all Files in folder
-        pathMap = new ArrayMap();
+        songsMap = new ArrayMap<String, String>();
+        picsMap = new ArrayMap<String, ArrayList<String>>();
+        pathMap = new ArrayMap<String, ArrayList<File>>();
 
-        files = GetFolderFilesSongPictsMap(startReadFromFolder, ".mp3", true);
-        songsFilesFoundedMap   = songsMap;
-        songsPicsFoundedMap = picsMap;
+        // Collect all files from started folder name (recursive) with specific extention
+        GetFolderFilesSongPictsMap(startReadFromFolder, ".mp3", true);
 
-        //Map<String, String> songMapSorted = SortFiles(songsMap);
+        SortFiles sortFiles = new SortFiles();
+        sortedList = sortFiles.Sort(songsMap);
 
-        Toast.makeText(this, "Found " + String.valueOf(songsFilesFoundedMap.size()) + " Songs", Toast.LENGTH_SHORT).show();
+        // Just put the result into Final pair arrays 'listAllSongs'
 
-        for (int songsIndex = 0; songsIndex < songsFilesFoundedMap.size(); songsIndex++)
+        for (int songsIndex = 0; songsIndex < sortedList.size(); songsIndex++)    //songsMap.size()
         {
-            songName = (String)songsFilesFoundedMap.keyAt(songsIndex);
-            songPath = (String)songsFilesFoundedMap.valueAt(songsIndex);
+            sortedArray = (ArrayMap<String, String>)sortedList.get(songsIndex);
+
+            songName = (String)sortedArray.keyAt(0);
+            songPath = (String)sortedArray.valueAt(0);
+
+            //songName = (String)songsMap.keyAt(songsIndex);
+            //songPath = (String)songsMap.valueAt(songsIndex);
 
             Pair<String, String> pairSongPath = new Pair<String, String>(songName, songPath);
 
@@ -210,61 +232,233 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
             picsToSong = new ArrayList<String>();
             int picIndex=-1;
-            picName = "";
 
-            if (songsPicsFoundedMap.containsKey(songPath))
+            if (picsMap.containsKey(songPath))
             {
-                picsToSong = (ArrayList<String>) songsPicsFoundedMap.get(songPath);
-                picIndex = songsPicsFoundedMap.indexOfKey(songPath);
+                picsToSong = (ArrayList<String>) picsMap.get(songPath);
+                picIndex = picsMap.indexOfKey(songPath);
             }
-
-            // No pics files was found. set the default pic from disk;
-//            if (picsToSong.size() == 0)
-//            {
-//            }
 
             Pair<Pair<String, String>, ArrayList<String>> songPair = new Pair<Pair<String, String>, ArrayList<String>>(pairSongPath, picsToSong);
-            listSongs.add(songPair);
+            listAllSongs.add(songPair);
         }
 
-        return listSongs;
+        return listAllSongs;
     }
 
-
-    private static Map<String, String> SortFiles(Map<String, String> unsortMap)
+    // Fill by Disk files
+    private void FillListAllSongs()
     {
+        ArrayList<String>   picsPathsToSong = new ArrayList<String>();
+        ImageView           imageView;
+        String              songName;
+        String              songPath;
+        String              picPath;
+        int                 duration;
 
-        // 1. Convert Map to List of Map
-        List<Map.Entry<String, String>> list = new LinkedList<Map.Entry<String, String>>(unsortMap.entrySet());
 
-        // 2. Sort list with Collections.sort(), provide a custom Comparator
-        //    Try switch the o1 o2 position for a different order
-        Collections.sort(list, new Comparator<Map.Entry<String, String>>()
+
+
+
+        ListItemsRecycler = new ArrayList<ListItemSong>();   // List<E>
+        ListItemSimple = new ArrayList<String>();
+
+
+        for (int i = 0; i < listAllSongs.size(); i++)
         {
-            public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2)
+            Pair<String, String>  songProps = listAllSongs.get(i).first;
+
+            songName = songProps.first;
+            songPath = songProps.second;
+
+            picsPathsToSong = listAllSongs.get(i).second;
+
+            songName = FixSongName(songName);
+
+            ListItemSong item = new ListItemSong(songName, "Artist of song " + (i + 1), "All Songs");  // TODO: add album
+
+            // Done in bind items in adaptor
+//            LoadMusicMediaWithSong(songPath);
+//            try
+//            {
+//                Uri uri = Uri.parse(songPath);
+//                mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+//                if (mediaPlayer!=null)
+//                {
+//                    duration = mediaPlayer.getDuration();
+//                    item.setDuration(duration);
+//                }
+//                //mediaPlayer.stop();
+//                //mediaPlayer.release();
+//                //mediaPlayer = null;
+//            }
+//            catch (Exception e)
+//            {
+//                Log.e("FillListAllSongs - ", e.getMessage());
+//            }
+
+            item.setSongPath(songPath);
+            //item.setResourceID(resourceId);
+            item.setYear("Year " + String.valueOf(2000 + i + 1));   // TODO: get year
+
+
+            // Just for the small pic in list items
+            item.setImageItem(new ImageView(this));
+            if (picsPathsToSong.size()>0)
             {
-                return (o1.getValue()).compareTo(o2.getValue());
+                picPath = picsPathsToSong.get(0);
+                item.getPicsToSongPathsArray().add(picPath);
+                Bitmap bitmap = ConvertPictureFileToDrawable(picPath);
+                item.getImageItem().setImageBitmap(bitmap);
             }
-        });
+            else
+            {
+                item.getImageItem().setImageDrawable(this.getDrawable(R.drawable.music1));
+            }
 
-        // 3. Loop the sorted list and put it into a new insertion order Map LinkedHashMap
-        Map<String, String> sortedMap = new LinkedHashMap<String, String>();
-        for (Map.Entry<String, String> entry : list)
-        {
-            sortedMap.put(entry.getKey(), entry.getValue());
+
+            if (picsPathsToSong.size()>1)
+            {
+                picPath = picsPathsToSong.get(1);
+                item.getPicsToSongPathsArray().add(picPath);
+            }
+            if (picsPathsToSong.size()>2)
+            {
+                picPath = picsPathsToSong.get(2);
+                item.getPicsToSongPathsArray().add(picPath);
+            }
+
+            ListItemsRecycler.add(item);
+            ListItemSimple.add(songName);
         }
 
-        /*
-        //classic iterator example
-        for (Iterator<Map.Entry<String, Integer>> it = list.iterator(); it.hasNext(); ) {
-            Map.Entry<String, Integer> entry = it.next();
-            sortedMap.put(entry.getKey(), entry.getValue());
-        }*/
+        keepListItemsRecyclerAllSongs = ListItemsRecycler;
 
-
-        return sortedMap;
     }
 
+    private void FillListFolderMode()
+    {
+        ArrayList<String>   picsPathsToSong = new ArrayList<String>();
+        ImageView           imageView;
+        String              songName;
+        String              songPath;
+        String              picPath;
+        int                 duration;
+        boolean             isDirectory;
+        ListItemSong        item;
+        List<ArrayMap<String, String>> sortedList;
+        ArrayMap<String, String> sortedArray;
+
+
+
+        ListItemsRecycler = new ArrayList<ListItemSong>();
+        ListItemSimple = new ArrayList<String>();
+
+        item = new ListItemSong("...", "", "");
+        item.setImageItem(new ImageView(this));
+        ListItemsRecycler.add(item);
+        ListItemSimple.add("...");
+
+        SortFiles sortFiles = new SortFiles();
+        sortedList = sortFiles.Sort(ListItemSimpleFoldersFullPath);
+
+
+        for (int i = 0; i < sortedList.size(); i++)
+        {
+            sortedArray = (ArrayMap<String, String>)sortedList.get(i);
+
+            songName = (String)sortedArray.keyAt(0);
+            songPath = (String)sortedArray.valueAt(0);
+
+            //songName = (String)ListItemSimpleFoldersFullPath.keyAt(i);
+            //songPath = (String)ListItemSimpleFoldersFullPath.valueAt(i);
+
+            picsPathsToSong = new ArrayList<String>();
+
+            if (picsMap.containsKey(songPath))
+            {
+                ArrayList<String>  files = (ArrayList<String>) picsMap.get(songPath);
+                picsPathsToSong = files;
+            }
+            else
+            {
+                // Not found specific song picture, try it's parent folder
+                String filePath = songPath.substring(0, songPath.lastIndexOf(songName));
+                if (picsMap.containsKey(filePath))
+                {
+                    ArrayList<String>  files = (ArrayList<String>) picsMap.get(filePath);
+                    picsPathsToSong = files;
+                }
+            }
+
+            String filesCount="Artist of song " + String.valueOf(i + 1);
+            isDirectory = false;
+            if (pathMap.containsKey(songPath.toLowerCase()))
+            {
+                File file = new File(songPath);
+                if (file.exists() && file.isDirectory())
+                {
+                    isDirectory=true;
+                    filesCount = String.valueOf(((ArrayList<File>)pathMap.get(songPath)).size()) + " Items";
+                }
+            }
+
+            songName = FixSongName(songName);
+
+            if (ListFolderName==null)
+            {
+                ListFolderName = "Folders Mode";
+            }
+
+            // Add the item
+            item = new ListItemSong(songName, filesCount, ListFolderName);
+
+            item.setSongPath(songPath);
+            //item.setResourceID(resourceId);
+            item.setYear("Year " + String.valueOf(2000 + i + 1));   // TODO: get year
+
+
+            // Just for the small pic in list items
+            item.setImageItem(new ImageView(this));
+            if (picsPathsToSong.size()>0 && !isDirectory)
+            {
+                picPath = picsPathsToSong.get(0);
+                item.getPicsToSongPathsArray().add(picPath);
+                Bitmap bitmap = ConvertPictureFileToDrawable(picPath);
+                item.getImageItem().setImageBitmap(bitmap);
+            }
+            else
+            {
+                if (isDirectory)
+                {
+                    item.getImageItem().setImageDrawable(getDrawable(R.drawable.pic_folder));
+                }
+                else
+                {
+                    item.getImageItem().setImageDrawable(this.getDrawable(R.drawable.defualt_song_pic));
+                }
+            }
+
+
+            if (picsPathsToSong.size()>1)
+            {
+                picPath = picsPathsToSong.get(1);
+                item.getPicsToSongPathsArray().add(picPath);
+            }
+            if (picsPathsToSong.size()>2)
+            {
+                picPath = picsPathsToSong.get(2);
+                item.getPicsToSongPathsArray().add(picPath);
+            }
+
+            ListItemsRecycler.add(item);
+            ListItemSimple.add(songName);
+        }
+
+    }
+
+
+    // Collect all files from started folder name (recursive) with specific extention
     // songsMap - Key: Song name (without path), Value: Song path & name
     // picsMap  - Key: Song Path (without song name), Value: ArrayList of all pics names (with full path) for a song in same folder of the song file
     private File[] GetFolderFilesSongPictsMap(String path, String fileExtentionToSearch, boolean searchInFolders)
@@ -440,15 +634,16 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
     private File[] GetFolderFilesMap(String path, String fileExtentionToSearch, boolean searchInFolders)
     {
-        File file;
-        File[] files;
-        File directory;
+        File        file;
+        File[]      files;
+        File        directory;
         //static ArrayList<File>  foundfiles
         String[]   multiSearchValuse = new String[0];
-        String  fileName;
+        String      fileName;
+        String      filePath;
 
 
-        fileExtentionToSearch = fileExtentionToSearch.toUpperCase();
+        fileExtentionToSearch = fileExtentionToSearch.toLowerCase();
 
         directory = new File(path);
 
@@ -469,15 +664,17 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         {
             file = files[i];
 
+            filePath = file.getAbsolutePath().toLowerCase();
+            fileName = file.getName().toLowerCase();
+
             if (searchInFolders && file.isDirectory())
             {
-                GetFolderFilesMap(file.getPath(), fileExtentionToSearch, searchInFolders);
+                GetFolderFilesMap(filePath, fileExtentionToSearch, searchInFolders);
             }
-            else if (file.getName().toUpperCase().endsWith(fileExtentionToSearch))
+            else if (fileName.endsWith(fileExtentionToSearch))
             {
-                fileName = file.getName();
                 // Key: Song name (without path), Value: Song path & name
-                songsMap.put(fileName, file);
+                songsMap.put(fileName, filePath);
             }
         }
 
@@ -561,211 +758,8 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    // Fill by Disk files
-    private void FillList()
-    {
-        ArrayList<String>   picsPathsToSong = new ArrayList<String>();
-        ImageView           imageView;
-        String              songName;
-        String              songPath;
-        String              picPath;
-        int                 duration;
-
-
-
-
-
-        ListItemsRecycler = new ArrayList<ListItemSong>();   // List<E>
-        ListItemSimple = new ArrayList<String>();
-
-
-        for (int i = 0; i < listSongs.size(); i++)
-        {
-            Pair<String, String>  songProps = listSongs.get(i).first;
-
-            songName = songProps.first;
-            songPath = songProps.second;
-
-            picsPathsToSong = listSongs.get(i).second;
-
-            songName = FixSongName(songName);
-
-            ListItemSong item = new ListItemSong(songName, "Artist of song " + (i + 1), "All Songs");  // TODO: add album
-
-            // Done in bind items in adaptor
-//            LoadMusicMediaWithSong(songPath);
-//            try
-//            {
-//                Uri uri = Uri.parse(songPath);
-//                mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-//                if (mediaPlayer!=null)
-//                {
-//                    duration = mediaPlayer.getDuration();
-//                    item.setDuration(duration);
-//                }
-//                //mediaPlayer.stop();
-//                //mediaPlayer.release();
-//                //mediaPlayer = null;
-//            }
-//            catch (Exception e)
-//            {
-//                Log.e("FillList - ", e.getMessage());
-//            }
-
-            item.setSongPath(songPath);
-            //item.setResourceID(resourceId);
-            item.setYear("Year " + String.valueOf(2000 + i + 1));   // TODO: get year
-
-
-            // Just for the small pic in list items
-            item.setImageItem(new ImageView(this));
-            if (picsPathsToSong.size()>0)
-            {
-                picPath = picsPathsToSong.get(0);
-                item.getPicsToSongPathsArray().add(picPath);
-                Bitmap bitmap = ConvertPictureFileToDrawable(picPath);
-                item.getImageItem().setImageBitmap(bitmap);
-                //item.getImageItem().setImageBitmap(bitmap);
-                //imageView.setBackground(getDrawable(resourceId));
-                //item.setImagePicture(getDrawable(resourceId));
-                //item.setImageItem(imageView);
-            }
-            else
-            {
-                item.getImageItem().setImageDrawable(this.getDrawable(R.drawable.defualt_song_pic));
-                //imageView.setImageDrawable(drawable);
-                //imageView.setBackground(drawable);
-            }
-
-
-
-            if (picsPathsToSong.size()>1)
-            {
-                picPath = picsPathsToSong.get(1);
-                item.getPicsToSongPathsArray().add(picPath);
-            }
-            if (picsPathsToSong.size()>2)
-            {
-                picPath = picsPathsToSong.get(2);
-                item.getPicsToSongPathsArray().add(picPath);
-            }
-
-            ListItemsRecycler.add(item);
-            ListItemSimple.add(songName);
-        }
-
-        ListItemsRecyclerAllSongs = ListItemsRecycler;
-
-    }
-
-    private void FillListFolderMode()
-    {
-        ArrayList<String>   picsPathsToSong = new ArrayList<String>();
-        ImageView           imageView;
-        String              songName;
-        String              songPath;
-        String              picPath;
-        int                 duration;
-        boolean             isDirectory;
-        ListItemSong item;
-
-
-
-
-        ListItemsRecycler = new ArrayList<ListItemSong>();
-        ListItemSimple = new ArrayList<String>();
-
-        item = new ListItemSong("...", "", "");
-        item.setImageItem(new ImageView(this));
-        ListItemsRecycler.add(item);
-        ListItemSimple.add("....");
-
-
-        for (int i = 0; i < ListItemSimpleFoldersFullPath.size(); i++)
-        {
-            songName = (String)ListItemSimpleFoldersFullPath.keyAt(i);
-            songPath = (String)ListItemSimpleFoldersFullPath.valueAt(i);
-
-            picsPathsToSong = new ArrayList<String>();
-
-            if (picsMap.containsKey(songPath))
-            {
-                ArrayList<String>  files = (ArrayList<String>) picsMap.get(songPath);
-                picsPathsToSong = files;
-            }
-            else
-            {
-                // Not found specific song picture, try it's parent folder
-                String filePath = songPath.substring(0, songPath.lastIndexOf(songName));
-                if (picsMap.containsKey(filePath))
-                {
-                    ArrayList<String>  files = (ArrayList<String>) picsMap.get(filePath);
-                    picsPathsToSong = files;
-                }
-            }
-
-            String filesCount="Artist of song " + String.valueOf(i + 1);
-            isDirectory = false;
-            if (pathMap.containsKey(songPath.toLowerCase()))
-            {
-                File file = new File(songPath);
-                if (file.exists() && file.isDirectory())
-                {
-                    isDirectory=true;
-                    filesCount = String.valueOf(((ArrayList<File>)pathMap.get(songPath)).size()) + " Items";
-                }
-            }
-
-            songName = FixSongName(songName);
-
-            item = new ListItemSong(songName, filesCount, "Folders Mode");
-
-            item.setSongPath(songPath);
-            //item.setResourceID(resourceId);
-            item.setYear("Year " + String.valueOf(2000 + i + 1));   // TODO: get year
-
-
-            // Just for the small pic in list items
-            item.setImageItem(new ImageView(this));
-            if (picsPathsToSong.size()>0 && !isDirectory)
-            {
-                picPath = picsPathsToSong.get(0);
-                item.getPicsToSongPathsArray().add(picPath);
-                Bitmap bitmap = ConvertPictureFileToDrawable(picPath);
-                item.getImageItem().setImageBitmap(bitmap);
-            }
-            else
-            {
-                if (isDirectory)
-                {
-                    item.getImageItem().setImageDrawable(getDrawable(R.drawable.pic_folder));
-                }
-                else
-                {
-                    item.getImageItem().setImageDrawable(this.getDrawable(R.drawable.defualt_song_pic));
-                }
-            }
-
-
-            if (picsPathsToSong.size()>1)
-            {
-                picPath = picsPathsToSong.get(1);
-                item.getPicsToSongPathsArray().add(picPath);
-            }
-            if (picsPathsToSong.size()>2)
-            {
-                picPath = picsPathsToSong.get(2);
-                item.getPicsToSongPathsArray().add(picPath);
-            }
-
-            ListItemsRecycler.add(item);
-            ListItemSimple.add(songName);
-        }
-
-    }
-
     // Fill by Resources files
-    private void FillList2()
+    private void FillListAllSongByResources()
     {
         ArrayList<Integer>  picsResIDs = new ArrayList<Integer>();
         ImageView           imageView;
@@ -804,11 +798,11 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                 //imageView.setBackground(getDrawable(resourceId));
                 item.setImageItem(imageView);
                 //item.setImagePicture(getDrawable(resourceId));
-                //Toast.makeText(ActivityMusic.this, "FillList - Pictures to Song:  " + getDrawable(resourceId).toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(ActivityMusic.this, "FillListAllSongs - Pictures to Song:  " + getDrawable(resourceId).toString(), Toast.LENGTH_LONG).show();
             }
             else
             {
-                Toast.makeText(ActivityMusic.this, "FillList - No Pictures to Song:  " + fileName, Toast.LENGTH_LONG).show();
+                Toast.makeText(ActivityMusic.this, "FillListAllSongs - No Pictures to Song:  " + fileName, Toast.LENGTH_LONG).show();
             }
 
 
@@ -1316,7 +1310,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         ActivitySongList.ListItemsRecycler = ListItemsRecycler;
         ActivitySongList.ListItemSimple = ListItemSimpleFolders;
 
-        startActivityForResult(intentListView, REQUEST_CODE_SONGLIST_RECYCLER);
+        startActivityForResult(intentListView, REQUEST_CODE_FOLDERLIST_RECYCLER);
     }
 
     private void ShowFilesToFolder(String folderName)
@@ -1331,16 +1325,17 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         if (folderName.equals("...")==false)
         {
             // Keep the result files & folders. Key: Folder name - without the full folder path, Value: full path - that shown when peress 'Folder' button
+            ListFolderName = folderName;
             folderName = folderName.toLowerCase();
             if (ListItemSimpleFoldersFullPath.containsKey(folderName))
             {
                 // It's a folder
                 pathFull = (String) ListItemSimpleFoldersFullPath.get(folderName);
-                ListPositionIndex = ListItemSimpleFoldersFullPath.indexOfKey(folderName);
+                //ListPositionIndex = ListItemSimpleFoldersFullPath.indexOfKey(folderName);
             }
             else
             {
-                pathFull = keepLastFolderWasChoosen + folderName + ".mp3";
+                pathFull = keepLastFolderWasChoosen + "/" + folderName;
             }
         }
         else
@@ -1358,14 +1353,24 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
             if (!path.isDirectory())
             {
                 // Play the song
-                LoadSongIntoPlayer(ListPositionIndex + 1);
+                //ListPositionIndex++;
+                LoadSongIntoPlayer(ListPositionIndex);
                 //LoadMusicMediaWithSong(pathFull);
                 return;
             }
         }
 
 
-        File[] files = path.listFiles();   //(ArrayList<File>)pathMap.get(pathFull);
+        File[] files = path.listFiles();
+
+//        ArrayList<File>  arrayFiles = (ArrayList<File>)pathMap.get(pathFull);
+//        if (arrayFiles!=null && arrayFiles.size()>0)
+//        {
+//            File[] files = new File[arrayFiles.size()];
+//            for (int i = 0; i < files.length; i++) {
+//                files[i] = arrayFiles.get(i);
+//            }
+//        }
 
         keepLastFolderWasChoosen = path.getParentFile().getAbsolutePath();
 
@@ -1374,27 +1379,26 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         ListItemSimpleFolders = new ArrayList<String>();
         ListItemSimpleFolders.add("...");
 
-        for (int i=0; i<files.length; i++)
+        if (files!=null)
         {
-            File file = files[i];
-            songFile = file.getName();
-            pathFull = file.getAbsolutePath().toLowerCase();
+            for (int i = 0; i < files.length; i++) {
+                File file = files[i];
+                songFile = file.getName();
+                pathFull = file.getAbsolutePath().toLowerCase();
 
-            if (file.isFile())
-            {
-                if (songFile.toLowerCase().endsWith(".mp3"))
-                {
-                    songFile = songFile.substring(0, songFile.toLowerCase().lastIndexOf(".mp3"));
+                if (file.isFile()) {
+                    if (songFile.toLowerCase().endsWith(".mp3")) {
+                        // Erase the '.mp3' extention
+                        songFile = songFile.substring(0, songFile.toLowerCase().lastIndexOf(".mp3"));
+                        ListItemSimpleFolders.add(songFile);
+                        ListItemSimpleFoldersFullPath.put(songFile.toLowerCase(), pathFull);
+                    }
+                } else {
+                    // It's a Folder
+                    pathFull += "/";
                     ListItemSimpleFolders.add(songFile);
                     ListItemSimpleFoldersFullPath.put(songFile.toLowerCase(), pathFull);
                 }
-            }
-            else
-            {
-                // It's a Folder
-                pathFull +=  "/";
-                ListItemSimpleFolders.add(songFile);
-                ListItemSimpleFoldersFullPath.put(songFile.toLowerCase(), pathFull);
             }
         }
 
@@ -1408,9 +1412,9 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         FillListFolderMode();
 
         ActivitySongList.ListItemsRecycler = ListItemsRecycler;
-        //ActivitySongList.ListItemSimple = ListItemSimpleFolders;
+        ActivitySongList.ListItemSimple = ListItemSimpleFolders;
 
-        startActivityForResult(intentListView, REQUEST_CODE_SONGLIST_RECYCLER);
+        startActivityForResult(intentListView, REQUEST_CODE_FOLDERLIST_RECYCLER);
     }
 
     // Fill just 1 time the main Folders names without full path, just the file/folder name
@@ -1419,12 +1423,11 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         String path;
         String pathShort;
         String pathFull;
-        String defaultPath = "/sdcard/";      //Environment.getExternalStorageDirectory().getAbsolutePath();
 
 
 
         // Keep the result files & folders. Key: Folder name - without the full folder path, Value: full path - that shown when peress 'Folder' button
-        ListItemSimpleFoldersFullPath = new ArrayMap();
+        ListItemSimpleFoldersFullPath = new ArrayMap<String, String>();
         // The result files & folders (without the full folder path - just the folder name) - that shown when peress 'Folder' button
         ListItemSimpleFolders = new ArrayList<String>();
 
@@ -1450,7 +1453,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
     {
         int listMode;
 
-        ListItemsRecycler = ListItemsRecyclerAllSongs;
+        ListItemsRecycler = keepListItemsRecyclerAllSongs;
 
         Intent intentListView = new Intent(ActivityMusic.this, ActivitySongList.class);
 
@@ -1481,16 +1484,6 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                     LoadSongIntoPlayer(listPositionIndex);
                 }
             });
-            //            ActivitySongList.ListenerRecycler = new PersonalEvents.OnRecyclerViewItemClick()
-//            {
-//                @Override
-//                public void setOnRecyclerViewItemPressed(int cardViewPressedResID, int listPositionIndex)
-//                {
-//                    ListPositionIndex = listPositionIndex;
-//                    int resID = ListItemsRecycler.get(listPositionIndex).getResourceID();
-//                    LoadSongIntoPlayer(listPositionIndex);
-//                }
-//            };
         }
         else if (listMode==2)
         {
@@ -1508,26 +1501,6 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
 
         //startActivity(intentListView);
         startActivityForResult(intentListView, REQUEST_CODE_SONGLIST_RECYCLER);
-
-
-        //String[] listItemArray = new String[ListItemSimple.size()];
-        //ArrayList<String> ArrayListItem = new ArrayList<String>();
-        //for (int i=0; i<ListItemsRecycler.size(); i++)
-        //{
-        //   ArrayListItem.add(ListItemsRecycler.get(i).getSongName());
-        //    listItemArray[i] = ListItemsRecycler.get(i).getSongName();
-        //}
-        //ArrayListItem.addAll(Arrays.asList(listItemArray));
-        //data.putParcelable("ActivitySongList", activitySongList);
-        //data.putStringArray("ListItems", listItemArray);
-        //data.putParcelableArrayList("search.resultSet", listArray);
-        //ArrayList<ListItem>  listArray = new ArrayList<ListItem>();
-        //listArray.add(new ListItem("Meir", "abc", "def"));
-        //listArray.add(new ListItem("Amit", "abc", "def"));
-        //listArray.add(new ListItem("Ronen", "abc", "def"));
-        //intentMusic.putParcelableArrayListExtra("ListItems", listItemArray);
-        //intentMusic.putExtra("ListItems", listItemArray);
-        //intentMusic.putExtra("ListItems", listItemArray);
 
     }
 
@@ -1560,8 +1533,10 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    public void updateThread() {
-        thread = new Thread() {
+    public void updateThread()
+    {
+        thread = new Thread()
+        {
             @Override
             public void run()
             {
@@ -1569,14 +1544,12 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                 {
                     while (mediaPlayer != null && mediaPlayer.isPlaying())
                     {
-                        Thread.sleep(50);
+                        Thread.sleep(500);
                         runOnUiThread(new Runnable()
                         {
                             @Override
                             public void run()
                             {
-                                //barSeek.setMax(newMax);
-                                //int newMax = mediaPlayer.getDuration();
                                 int newPosition = mediaPlayer.getCurrentPosition();
                                 barSeek.setProgress(newPosition);
                             }
@@ -1589,6 +1562,7 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                 }
             }
         };
+
         thread.start();
     }
 
@@ -1649,12 +1623,21 @@ public class ActivityMusic extends AppCompatActivity implements View.OnClickList
                     resID = ListItemsRecycler.get(listPositionIndex2).getResourceID();
                     LoadSongIntoPlayer(listPositionIndex2);
                     break;
+
+                case REQUEST_CODE_FOLDERLIST_RECYCLER:
+                    String dataReturned = data.getStringExtra("returnedData");
+                    ShowFilesToFolder(ListFolderName);
+                    break;
             }
         }
         else
         {
-            //Toast.makeText(MainActivity.this, "No Data", Toast.LENGTH_LONG).show();
-            return;
+//            if (requestCode==REQUEST_CODE_FOLDERLIST_RECYCLER)
+//            {
+//                ShowFilesToFolder(ListFolderName);
+//            }
+//            //Toast.makeText(MainActivity.this, "No Data", Toast.LENGTH_LONG).show();
+//            return;
         }
 
     }

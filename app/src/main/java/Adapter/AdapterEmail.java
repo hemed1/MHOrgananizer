@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 //import com.gohool.meirh.recyclerviewapp.DetailsActivity;
@@ -26,27 +27,29 @@ public class AdapterEmail extends RecyclerView.Adapter<AdapterEmail.EmailHolder>
 {
     private Context context;
     private List<ListItemEmail> listItems;
+    private EmailHolder currentHolder;
+
 
     // The listener must implement the events interface and passes messages up to the parent.
-    private PersonalEvents.OnRecyclerViewItemClick      listener;
+    private PersonalEvents.OnRecyclerViewItemClick listener;
 
-    public AdapterEmail(Context context, List listItems)
-    {
+    public AdapterEmail(Context context, List listItems) {
         this.context = context;
         this.listItems = listItems;
     }
 
     // Assign the listener implementing events interface that will receive the events
-    public void setOnSongClick(PersonalEvents.OnRecyclerViewItemClick  listener)
-    {
+    public void setOnSongClick(PersonalEvents.OnRecyclerViewItemClick listener) {
         this.listener = listener;
     }
 
     @Override
     public AdapterEmail.EmailHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        View  cardViewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_email, parent, false);
+        View cardViewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_email, parent, false);
         EmailHolder emailHolder = new EmailHolder(cardViewItem);
+
+        currentHolder = emailHolder;
 
         return emailHolder;
     }
@@ -64,6 +67,10 @@ public class AdapterEmail extends RecyclerView.Adapter<AdapterEmail.EmailHolder>
         //TODO: holder.lblDateReceive.setText(item.getDateReceive());
         holder.Image.setImageDrawable(item.getImgItem().getDrawable());
         //holder.Image.setBackground(item.getImgItem().getDrawable());
+
+        currentHolder.Position = position;
+        SetCardBackColor(currentHolder.CardViewItem, currentHolder.Position);
+
     }
 
     @Override
@@ -74,18 +81,23 @@ public class AdapterEmail extends RecyclerView.Adapter<AdapterEmail.EmailHolder>
 
     public class EmailHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
-        private TextView  lblSender;
-        private TextView  lblSubject;
-        private TextView  lblContent;
-        private TextView  lblDateSent;
-        private TextView  lblDateReceive;
+        private TextView lblSender;
+        private TextView lblSubject;
+        private TextView lblContent;
+        private TextView lblDateSent;
+        private TextView lblDateReceive;
         private ImageView Image;
+        public int       Position;
+        public View      CardViewItem;
+
 
         public EmailHolder(View cardViewItem)   // Represent the Item in List
         {
             super(cardViewItem);
 
             cardViewItem.setOnClickListener(this);
+
+            this.CardViewItem = cardViewItem;
 
             lblSender = (TextView) cardViewItem.findViewById(R.id.lblSender);
             lblSubject = (TextView) cardViewItem.findViewById(R.id.lblSubject);
@@ -96,9 +108,9 @@ public class AdapterEmail extends RecyclerView.Adapter<AdapterEmail.EmailHolder>
             Image = (ImageView) cardViewItem.findViewById(R.id.imgItem);
         }
 
+
         @Override
-        public void onClick(View view)
-        {
+        public void onClick(View view) {
             ListItemEmail item = listItems.get(getAdapterPosition());
 
             Toast.makeText(context, item.getSender(), Toast.LENGTH_SHORT).show();
@@ -119,5 +131,26 @@ public class AdapterEmail extends RecyclerView.Adapter<AdapterEmail.EmailHolder>
 //            context.startActivity(intent);
 
         }
+
+
+    }
+
+    public void SetCardBackColor(View view, int position)
+    {
+        TableRow tableRow = (TableRow)view.findViewById(R.id.tableRowMail);
+
+        if ((position % 2) == 0)
+        {
+            //System.out.println("0");
+            //view.setBackgroundColor(context.getResources().getColor(R.color.card_view_background_mail));
+            tableRow.setBackgroundColor(context.getResources().getColor(R.color.card_view_background_mail));
+        }
+        else
+        {
+            //System.out.println("1");
+            //view.setBackgroundColor(context.getResources().getColor(R.color.card_view_background_second_mail));
+            tableRow.setBackgroundColor(context.getResources().getColor(R.color.card_view_background_second_mail));
+        }
+
     }
 }

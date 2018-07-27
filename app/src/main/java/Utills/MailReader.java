@@ -122,7 +122,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     {
         super.onPostExecute(messages);
 
-        //progressDialog.dismiss();
+        progressDialog.dismiss();
 
         if (listener != null)
         {
@@ -140,7 +140,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 
         messages = ReadMailImap();
 
-        progressDialog.dismiss();
+        //progressDialog.dismiss();
 
         // TODO:  Meybe Yes
 //        if (listener != null)
@@ -258,7 +258,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         return messages;
     }
 
-    public Object[] ConnectServer()        // Folder
+    public Object[] ConnectServer()
     {
         Properties  properties = null;
         Session     session;
@@ -269,6 +269,12 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 
 
         //Toast.makeText(context,"Connecting to mails server", Toast.LENGTH_SHORT).show();
+
+        if (HostAddress==null || HostAddress.isEmpty() || UserAddress==null || UserAddress.isEmpty() || Password==null || Password.isEmpty())
+        {
+            //Toast.makeText(context,"Email address or password are empty", Toast.LENGTH_LONG).show();
+            return mailObjects;
+        }
 
         // TODO: Maybe to delete
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -314,7 +320,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         }
         catch (MessagingException e)
         {
-            Toast.makeText(context,"Can't connect to Mail server: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context,"Can't connect to Mail server: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
             //System.exit(2);
         }
@@ -360,9 +366,9 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         {
             //Toast.makeText(context,"Checking new mails ...", Toast.LENGTH_SHORT).show();
 
-            while (IsHaveToCheckNewEmails)
-            {
-                Thread.sleep(6000);     //Long.valueOf(MainActivity.MailCheckMailInterval) * 3600 * 1000);
+            //while (IsHaveToCheckNewEmails)
+            //{
+                //Thread.sleep(6000);     //Long.valueOf(MainActivity.MailCheckMailInterval) * 3600 * 1000);
 
                 System.out.println("'CheckNewMails' check new mails In loop  " + (new Date()).toString() + "/n");
 
@@ -377,13 +383,13 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                 folder = (Folder) mailObjects[0];
                 store = (Store) mailObjects[1];
 
-                LastMessageIndexWasRead = folder.getMessageCount() - 2;  // TODO: Delete
+                //LastMessageIndexWasRead = folder.getMessageCount() - 2;  // TODO: Delete
 
                 if (folder.getMessageCount() > LastMessageIndexWasRead)
                 {
                     System.out.println("'CheckNewMail()' found new mails" + new Date().toString()+"/n");
                     isFoundNewMessages = true;
-                    break;
+                    //break;
                 }
 
                 //if (folder.hasNewMessages()) // TODO: this instead
@@ -392,7 +398,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                 //    isFoundNewMessages = true;
                 //    break;
                 //}
-            }
+            //}
 
             if (folder != null)
             {

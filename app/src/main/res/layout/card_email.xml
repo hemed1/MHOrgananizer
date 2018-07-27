@@ -9,7 +9,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:paddingTop="7dp"
+    android:paddingTop="5dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -19,28 +19,27 @@
         android:layout_height="60dp"
         android:layout_margin="@dimen/cardview_compat_inset_shadow"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="4dp">
-        <!--android:layout_marginTop="205dp">-->
+        android:layout_alignParentTop="true">
 
         <TableRow
             android:id="@+id/tableRowMail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/card_view_background_mail"
-            android:layout_marginStart="3dp">
+            android:layout_marginStart="1dp">
+            <!--android:background="@color/card_view_background_mail"-->
 
             <ImageView
                 android:id="@+id/imgItem"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:src="@drawable/meir1"
-                app:srcCompat="@drawable/oval" />
+                android:layout_marginStart="0dp"
+                android:paddingTop="0dp"
+                android:src="@drawable/mail_read4"
+                app:srcCompat="@drawable/mail_read4" />
 
 
             <LinearLayout
-                android:layout_width="215dp"
+                android:layout_width="230dp"
                 android:layout_height="match_parent"
                 android:paddingStart="14dp"
                 android:paddingTop="1dp"
@@ -79,12 +78,12 @@
 
             <TextView
                 android:id="@+id/lblDateSent"
-                android:layout_width="118dp"
-                android:layout_height="31dp"
-                android:layout_marginStart="12dp"
+                android:layout_width="110dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="2dp"
                 android:text="Sent date"
                 android:textColor="@color/titles_card_foreground_second_mail"
-                android:textSize="13sp"
+                android:textSize="12sp"
                 android:visibility="visible" />
 
         </TableRow>

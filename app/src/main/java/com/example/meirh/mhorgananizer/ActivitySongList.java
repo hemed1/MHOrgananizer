@@ -5,8 +5,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 import Adapter.AdapterBaseList;
@@ -25,7 +33,12 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
 
     private RecyclerView                listControlRecycler;
     public  static List<ListItemSong>   ListItemsRecycler;    // ArrayList<ListItemSong>
+    private List<ListItemSong>          keepListItemsRecycler;
     private AdapterSong                 adapterListRecycler;  // RecyclerView.Adapter
+
+    private ImageView                   imgSearch;
+    private EditText                    txtSearch;
+    private TableRow                    tblSearch;
 
     private int  ListMode;
     //private ActivityMusic.ShowListModeEn  ListMode;
@@ -53,6 +66,8 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
         setUpUIControls();
 
         setControlsByListMode(ListMode);
+
+        keepListItemsRecycler = ListItemsRecycler;
     }
 
 
@@ -67,6 +82,99 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
         // TODO: Done here, just because we need Initialing 'AdapterBaseList' object for the next line Event 'setOnListViewItemClick'
         listControlSimple = (ListView) findViewById(R.id.listControlSimple);
 
+        txtSearch = (EditText)findViewById(R.id.txtSearch);
+        txtSearch.setOnHoverListener(new View.OnHoverListener() {
+            @Override
+            public boolean onHover(View view, MotionEvent motionEvent)
+            {
+                return false;
+            }
+        });
+        txtSearch.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent)
+            {
+                return false;
+            }
+        });
+        txtSearch.setOnKeyListener(new View.OnKeyListener()
+        {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                SearchWord(txtSearch.getText().toString()); //, keyCode);
+                return false;
+            }
+        });
+
+        imgSearch = (ImageView)findViewById(R.id.imgSearch);
+        imgSearch.bringToFront();
+        tblSearch = (TableRow) findViewById(R.id.tblSearch);
+
+        imgSearch.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                SearchMode((tblSearch.getVisibility()==View.VISIBLE));
+            }
+        });
+
+    }
+
+    private void SearchMode(boolean mode)
+    {
+        if (mode)
+        {
+            adapterListRecycler = new AdapterSong(this, keepListItemsRecycler);
+            listControlRecycler.setAdapter(adapterListRecycler);
+            tblSearch.setVisibility(View.INVISIBLE);
+        }
+        else
+        {
+            tblSearch.setVisibility(View.VISIBLE);
+            txtSearch.setText("");
+            //txtSearch.setFocusable(View.FOCUSABLE);
+        }
+    }
+
+    private void SearchWord(String wordToSearch)    //, int keyCode)
+    {
+        boolean found;
+        ListItemSong listItemSong;
+        List<ListItemSong> addListItemsRecycler = new ArrayList<ListItemSong>();
+
+        //wordToSearch += String.valueOf((char)keyCode);
+
+        if (wordToSearch.trim().equals(""))
+        {
+            return;
+        }
+
+        wordToSearch = wordToSearch.toLowerCase();
+
+        for (int i=0; i<ListItemsRecycler.size(); i++)
+        {
+            listItemSong = ListItemsRecycler.get(i);
+            found = listItemSong.getSongName().toLowerCase().contains(wordToSearch);
+            if (found)
+            {
+                addListItemsRecycler.add(listItemSong);
+            }
+
+            if (found && listItemSong.getArtist().toLowerCase().contains(wordToSearch))
+            {
+                found = listItemSong.getArtist().toLowerCase().contains(wordToSearch);
+                if (found)
+                {
+                    addListItemsRecycler.add(listItemSong);
+                }
+            }
+        }
+
+        adapterListRecycler = new AdapterSong(this, addListItemsRecycler);
+        listControlRecycler.setAdapter(adapterListRecycler);
     }
 
     // Assigned it direct because it's Static var
@@ -94,11 +202,16 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
     }
 
     // Return from this view by Intent object
-    private void ReturnedResult(int listPositionIndex, String selectedItemText)
+    private void goBack(int listPositionIndex, String selectedItemText)
     {
+        String returnedData;
+
         Intent intent = getIntent();
         intent.putExtra("listPositionIndex",  listPositionIndex);
         intent.putExtra("selectedItemText", selectedItemText);
+
+        returnedData = "Go back from list";
+        intent.putExtra("returnedData",  returnedData);
 
         //Toast.makeText(this, "Come Back with ... " + returnedData, Toast.LENGTH_SHORT).show();
         setResult(RESULT_OK, intent);
@@ -124,18 +237,6 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
                 //adapterListRecycler = new AdapterSong(this, ListItemsRecycler);
                 //listControlRecycler.setAdapter(adapterListRecycler);
             }
-            else
-            {
-                //adapterListRecycler.notify();
-                //adapterListRecycler.notifyAll();
-                //listControlRecycler.invalidate();
-                //adapterListRecycler.notifyItemRangeChanged(2, 2);
-                //adapterListRecycler.notifyDataSetChanged();
-                //adapterListRecycler = new AdapterSong(this, ListItemsRecycler);
-                //listControlRecycler.setAdapter(adapterListRecycler);
-                //adapterListRecycler.setListItems(ListItemsRecycler);
-                //adapterListRecycler.notifyAll();
-            }
 
             // Register the listener for this object
             adapterListRecycler.setOnSongClick(new PersonalEvents.OnRecyclerViewItemClick()
@@ -144,7 +245,7 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
                 @Override
                 public void setOnRecyclerViewItemPressed(int cardViewPressedResID, int listPositionIndex)
                 {
-                    //ReturnedResult(listPositionIndex, selectedItemText);      // TODO: return by Intent object
+                    //goBack(listPositionIndex, selectedItemText);      // TODO: return by Intent object
                     if (ListenerRecycler != null)
                     {
                         keepLastItemIndexPressed = listPositionIndex;
@@ -174,10 +275,11 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
                 @Override
                 public void setOnListViewItemPressed(int listPositionIndex, String selectedItemText)
                 {
-                    //ReturnedResult(listPositionIndex, selectedItemText);      // TODO: return by Intent object
+                    //goBack(listPositionIndex, selectedItemText);      // TODO: return by Intent object
 
                     if (ListenerSimple != null)
                     {
+                        keepLastItemIndexPressed = listPositionIndex;
                         // Now let's fire listener here
                         ListenerSimple.setOnListViewItemPressed(listPositionIndex, selectedItemText);
                     }
@@ -193,5 +295,15 @@ public class ActivitySongList extends AppCompatActivity //implements Parcelable
         }
 
     }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+
+        //goBack();
+    }
+
+
 
 }

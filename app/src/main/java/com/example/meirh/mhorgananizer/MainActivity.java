@@ -8,9 +8,12 @@ import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,10 +26,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String       MainUserName;
     public static String       MailAdresss;
     public static String       MailPassword;
-    public static String       MailHostAdress;
+    public static String       MailHostAdress;      // "imap.gmail.com"
     public static String       MailCheckMailInterval;
     public static boolean      MailStayOnLine;
     public static String       StorageSDCardName;
+    // 1: Internal, 2: External, 3: Internal, External
+    public static Integer      StorageLoadMode;
 
     public static final String  PREFS_NAME = "MHOrganaizerPrefsFile";
     public static final String  PREFS_FILE_NAME = "MHOrganaizer-Config.txt";    // Environment.getExternalStorageDirectory().getPath()+"/"+
@@ -37,13 +42,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String  SETTING_MAIL_EMAIL_CHECK_INTERVAL = "EmailCheckMailInterval";
     public static final String  SETTING_MAIL_EMAIL_STAY_ONLINE = "MailStayOnLine";
     public static final String  STORAGE_SDCARD_NAME = "StorageSDCardName";
+    public static final String  STORAGE_LOAD_MODE = "StorageLoadMode";
 
     public static final int     DEFUALT_MESSAGES_TO_READ = 30;
 
-    private Button      btnMails;
-    private Button      btnMusic;
-    private Button      btnMeetings;
-    private Button      btnSetting;
+    private TextView    lblMainTitle;
+    private ImageView   imageMails;
+    private ImageView   imageMusic;
+    private ImageView   imageMeetings;
+    private ImageView   imageSetting;
 
     public final int    REQUEST_CODE_MAILS = 2;
     public final int    REQUEST_CODE_MUSIC = 3;
@@ -61,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SetIOControls();
 
         LoadSettings();
+
+        lblMainTitle.setText("Hello "+MainUserName);
+        lblMainTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
     }
 
     @Override
@@ -68,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         switch (view.getId())
         {
-            case R.id.btnMails:
+            case R.id.imageMail:
                 Intent intentMail = new Intent(MainActivity.this, ActivityMails.class);
                 intentMail.putExtra(MainActivity.SETTING_MAIL_USER_NAME, MainUserName);
                 intentMail.putExtra(MainActivity.SETTING_MAIL_EMAIL_ADDRESS, MailAdresss);
@@ -78,12 +88,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivityForResult(intentMail, REQUEST_CODE_MAILS);
                 break;
 
-            case R.id.btnMusic:
+            case R.id.imageMusic:
                 Intent intentMusic = new Intent(MainActivity.this, ActivityMusic.class);
                 startActivity(intentMusic);
                 break;
 
-            case R.id.btnMeetings:
+            case R.id.imageMeeting:
                 Intent intentMeeting = new Intent(MainActivity.this, ActivityMeetings.class);
                 intentMeeting.putExtra("email_address", MailAdresss);
                 intentMeeting.putExtra("email_password", MailPassword);
@@ -91,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivityForResult(intentMeeting, REQUEST_CODE_MEETINGS);
                 break;
 
-            case R.id.btnSetting:
+            case R.id.imageSetting:
                 Intent intentSetting = new Intent(MainActivity.this, ActivitySettings.class);
                 intentSetting.putExtra(MainActivity.SETTING_MAIL_USER_NAME, MainUserName);
                 intentSetting.putExtra(MainActivity.SETTING_MAIL_EMAIL_ADDRESS, MailAdresss);
@@ -108,6 +118,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void LoadSettings()
     {
         //LoadByPrefsFile();
+
+        StorageLoadMode=1;
+        StorageSDCardName="";
+        MailHostAdress = "imap.gmail.com";
 
         LoadByFileOnDisk();
     }
@@ -142,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private String LoadByFileOnDisk()
+    public String LoadByFileOnDisk()
     {
         String result ="";
         int    pos;
@@ -151,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             //FileInputStream fileInputStream = openFileInput(PREFS_FILE_NAME);
             InputStream inputStream = openFileInput(PREFS_FILE_NAME);
+            String path = new File(PREFS_FILE_NAME).getAbsolutePath();
 
             if (inputStream!=null)
             {
@@ -195,6 +210,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     {
                         StorageSDCardName = tmpLine.substring(pos + STORAGE_SDCARD_NAME.length() + 2);
                     }
+                    pos = tmpLine.indexOf(MainActivity.STORAGE_LOAD_MODE);
+                    if (pos>-1 && (pos + MainActivity.STORAGE_LOAD_MODE.length() + 1 < tmpLine.length()))
+                    {
+                        MainActivity.StorageLoadMode = Integer.valueOf(tmpLine.substring(pos + MainActivity.STORAGE_LOAD_MODE.length() + 2));
+                    }
                     pos = tmpLine.indexOf(SETTING_MAIL_EMAIL_STAY_ONLINE);
                     if (pos>-1 && (pos + SETTING_MAIL_EMAIL_STAY_ONLINE.length() + 1 < tmpLine.length()))
                     {
@@ -233,15 +253,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void SetIOControls()
     {
-        btnMails = (Button)findViewById(R.id.btnMails);
-        btnMusic = (Button)findViewById(R.id.btnMusic);
-        btnMeetings = (Button)findViewById(R.id.btnMeetings);
-        btnSetting = (Button)findViewById(R.id.btnSetting);
+        lblMainTitle = (TextView)findViewById(R.id.lblMainTitle);
+        imageMails = (ImageView)findViewById(R.id.imageMail);
+        imageMusic = (ImageView)findViewById(R.id.imageMusic);
+        imageMeetings = (ImageView)findViewById(R.id.imageMeeting);
+        imageSetting = (ImageView)findViewById(R.id.imageSetting);
 
-        btnMails.setOnClickListener(this);
-        btnMusic.setOnClickListener(this);
-        btnMeetings.setOnClickListener(this);
-        btnSetting.setOnClickListener(this);
+        imageMails.setOnClickListener(this);
+        imageMusic.setOnClickListener(this);
+        imageMeetings.setOnClickListener(this);
+        imageSetting.setOnClickListener(this);
     }
 
     /**

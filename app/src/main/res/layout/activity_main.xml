@@ -4,77 +4,201 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorView_background"
     tools:context="com.example.meirh.mhorgananizer.MainActivity">
 
-    <Button
-        android:id="@+id/btnMeetings"
-        android:layout_width="99dp"
-        android:layout_height="83dp"
+    <!--<ScrollView-->
+        <!--android:id="@+id/scrollView"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="450dp"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintVertical_bias="0.511">-->
+
+
+        <!--<LinearLayout-->
+            <!--android:id="@+id/linearLayout"-->
+            <!--android:layout_width="318dp"-->
+            <!--android:layout_height="380dp"-->
+            <!--android:layout_marginBottom="1dp"-->
+            <!--android:layout_marginEnd="1dp"-->
+            <!--android:layout_marginStart="1dp"-->
+            <!--android:layout_marginTop="1dp"-->
+            <!--android:background="@android:color/black"-->
+            <!--android:orientation="vertical"-->
+            <!--android:paddingStart="1dp"-->
+            <!--android:paddingTop="0dp">-->
+
+    <!--</LinearLayout>-->
+    <!--</ScrollView>-->
+
+    <TextView
+        android:id="@+id/lblMainTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/colorAccent"
-        android:text="Meetings"
-        android:textColor="@android:color/white"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="11dp"
+        android:text="Good morning Meir"
+        android:textColor="@color/titles_main_foreground"
+        android:textSize="21sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.228"
+        app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.288" />
+        app:layout_constraintVertical_bias="0.0" />
 
-    <Button
-        android:id="@+id/btnMusic"
-        android:layout_width="99dp"
-        android:layout_height="83dp"
+    <ImageView
+        android:id="@+id/imageMusic"
+        android:layout_width="170dp"
+        android:layout_height="153dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/holo_red_dark"
-        android:text="Music"
-        android:textColor="@android:color/white"
+        android:layout_marginTop="135dp"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.224"
+        app:layout_constraintHorizontal_bias="0.959"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.643" />
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/default2" />
 
-    <Button
-        android:id="@+id/btnMails"
-        android:layout_width="99dp"
-        android:layout_height="83dp"
+    <TextView
+        android:id="@+id/lblMusic"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="@android:color/holo_orange_dark"
-        android:text="Mails"
-        android:textColor="@android:color/white"
+        android:text="Music - Hear your music"
+        android:textAlignment="textStart"
+        android:textColor="@color/titles_main_foreground"
+        android:textSize="14sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.817"
+        app:layout_constraintHorizontal_bias="0.959"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageMusic"
+        app:layout_constraintVertical_bias="0.008" />
+
+    <ImageView
+        android:id="@+id/imageMail"
+        android:layout_width="170dp"
+        android:layout_height="153dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="135dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.643" />
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/mail_read3" />
 
-    <Button
-        android:id="@+id/btnSetting"
-        android:layout_width="99dp"
-        android:layout_height="83dp"
+    <TextView
+        android:id="@+id/lblMail"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="@android:color/holo_blue_dark"
+        android:text="Mail - Read your mails"
+        android:textColor="@color/titles_main_foreground"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageMail"
+        app:layout_constraintVertical_bias="0.008" />
+
+    <ImageView
+        android:id="@+id/imageSetting"
+        android:layout_width="170dp"
+        android:layout_height="155dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="50dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.824"
+        app:srcCompat="@drawable/setting" />
+
+    <TextView
+        android:id="@+id/lblSetting"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="Setting"
-        android:textColor="@android:color/white"
+        android:textColor="@color/titles_main_foreground"
+        android:textSize="14sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.817"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageSetting"
+        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintVertical_bias="0.000" />
+
+    <ImageView
+        android:id="@+id/imageMeeting"
+        android:layout_width="170dp"
+        android:layout_height="153dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.959"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.288" />
+        app:layout_constraintVertical_bias="0.840"
+        app:srcCompat="@drawable/meeting1" />
+
+    <TextView
+        android:id="@+id/lblMeeting"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Meeting"
+        android:textColor="@color/titles_main_foreground"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageMeeting"
+        app:layout_constraintHorizontal_bias="0.959"
+        app:layout_constraintVertical_bias="0.000"/>
+
+
 </android.support.constraint.ConstraintLayout>

@@ -8,145 +8,138 @@
     tools:context="com.example.meirh.mhorgananizer.ActivityMails">
 
 
+
+    <TableRow
+        android:id="@+id/tableHeader"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="1dp"
+        android:background="@android:color/holo_red_dark"
+        android:paddingBottom="0dp"
+        android:paddingStart="0dp"
+        android:paddingTop="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingStart="0dp"
+            android:paddingTop="0dp">
+
+            <TextView
+                android:id="@+id/lblEmailTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:layout_marginStart="149dp"
+                android:text="Hello Meir"
+                android:textAlignment="center"
+                android:textColor="@color/titles_main_foreground"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/lblEmailAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:layout_marginStart="2dp"
+                android:text="Email Address"
+                android:textAlignment="center"
+                android:textColor="@color/titles_second_foreground"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/lblFolderName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:layout_marginStart="2dp"
+                android:text="Inbox"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </TableRow>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerMain"
-        android:layout_width="390dp"
-        android:layout_height="341dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginStart="1dp"
         android:background="@color/list_background_mail"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.75"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblEmailAddress"
-        app:layout_constraintVertical_bias="0.298" />
-
-    <Button
-        android:id="@+id/btnBack"
-        style="@style/Button_Back"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Back"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.925"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.982" />
-
-    <Button
-        android:id="@+id/btnAddItem"
-        style="@style/Button_Back"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Write Mail"
-        android:background="@android:color/holo_orange_dark"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.113"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.982" />
-
-    <Button
-        android:id="@+id/btnRefresh"
-        style="@style/Button_Save"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="156dp"
-        android:layout_marginTop="8dp"
-        android:text="Refresh"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.982" />
-
-    <Button
-        android:id="@+id/btnSetFolder"
-        style="@style/Button_Save"
-        android:layout_width="50dp"
-        android:layout_height="20dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Folder"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.08"
-        app:layout_constraintStart_toEndOf="@+id/lblFolderName"
-        app:layout_constraintTop_toBottomOf="@+id/lblEmailAddress"
-        app:layout_constraintVertical_bias="0.007" />
-
-    <TextView
-        android:id="@+id/lblFolderName"
-        android:layout_width="118dp"
-        android:layout_height="23dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="INBOX"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerMain"
+        app:layout_constraintBottom_toTopOf="@+id/tableButtons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblEmailAddress"
-        app:layout_constraintVertical_bias="0.272" />
+        app:layout_constraintTop_toBottomOf="@+id/tableHeader"
+        app:layout_constraintVertical_bias="0.075" />
 
-    <TextView
-        android:id="@+id/lblEmailTitle"
-        android:layout_width="187dp"
-        android:layout_height="31dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Mail List"
-        android:textAlignment="center"
-        android:textColor="@color/titles_main_foreground"
-        android:textSize="24sp"
-        android:textStyle="bold"
+
+    <TableRow
+        android:id="@+id/tableButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="520dp"
+        android:layout_marginBottom="0dp"
+        android:paddingBottom="0dp"
+        android:paddingStart="0dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.451"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.006" />
+        app:layout_constraintVertical_bias="1.020">
 
-    <TextView
-        android:id="@+id/lblEmailAddress"
-        android:layout_width="193dp"
-        android:layout_height="26dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Email Address"
-        android:textAlignment="center"
-        android:textColor="@color/titles_second_foreground"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.451"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblEmailTitle"
-        app:layout_constraintVertical_bias="0.002" />
+
+        <Button
+            android:id="@+id/btnNewMail"
+            style="@android:style/Widget.Material.Button.Inset"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="1dp"
+            android:text="New mail" />
+
+        <Button
+            android:id="@+id/btnRefresh"
+            style="@android:style/Widget.Material.Button.Inset"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="1dp"
+            android:text="Refresh" />
+
+        <Button
+            android:id="@+id/btnOpenMail"
+            style="@android:style/Widget.Material.Button.Inset"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="1dp"
+            android:text="Open mail" />
+
+    </TableRow>
 
     <ListView
         android:id="@+id/listFolders"
         android:layout_width="193dp"
-        android:layout_height="109dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="145dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
         android:background="@android:color/holo_orange_dark"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
