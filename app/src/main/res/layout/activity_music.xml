@@ -36,13 +36,13 @@
         android:textAlignment="center"
         android:textColor="@color/titles_second_foreground"
         android:textSize="17sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.500"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lblSongName"
         app:layout_constraintVertical_bias="0.005" />
+        <!--android:textStyle="bold"-->
 
     <TextView
         android:id="@+id/lblAlbum"
@@ -65,73 +65,73 @@
         app:layout_constraintVertical_bias="0.026" />
 
     <!--<RelativeLayout-->
-        <!--android:id="@+id/layoutRel"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginBottom="8dp"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--android:layout_marginStart="8dp"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent"-->
-        <!--app:layout_constraintVertical_bias="0.934">-->
+    <!--android:id="@+id/layoutRel"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginBottom="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent"-->
+    <!--app:layout_constraintVertical_bias="0.934">-->
 
 
-        <!--<android.support.v7.widget.AppCompatSeekBar-->
-        <SeekBar
-            android:id="@+id/barSeek"
-            android:layout_width="309dp"
-            android:layout_height="33dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:elevation="@dimen/cardview_compat_inset_shadow"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.523"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.910" />
-            <!--android:elevation="@android:dimen/dialog_min_width_major"-->
+    <!--<android.support.v7.widget.AppCompatSeekBar-->
+    <SeekBar
+        android:id="@+id/barSeek"
+        android:layout_width="309dp"
+        android:layout_height="33dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:elevation="@dimen/cardview_compat_inset_shadow"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.523"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.910" />
+    <!--android:elevation="@android:dimen/dialog_min_width_major"-->
 
-        <TextView
-            android:id="@+id/lblPosLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="0.00"
-            android:textStyle="bold"
-            android:textColor="@color/titles_main_foreground"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.010"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.950" />
+    <TextView
+        android:id="@+id/lblPosLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="0.00"
+        android:textStyle="bold"
+        android:textColor="@color/titles_main_foreground"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.010"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.950" />
 
-        <TextView
-            android:id="@+id/lblPosNow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/titles_main_foreground"
-            android:text="0.00"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.899" />
+    <TextView
+        android:id="@+id/lblPosNow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/titles_main_foreground"
+        android:text="0.00"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.899" />
 
     <!--</RelativeLayout>-->
 
@@ -258,40 +258,40 @@
 
 
     <!--<LinearLayout-->
-        <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-        <!--android:orientation="vertical"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="fill_parent">-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="fill_parent">-->
+
+    <!--<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:duration="1000"-->
+        <!--android:repeatCount="1"-->
+        <!--android:repeatMode="reverse">-->
+        <!--<propertyValuesHolder android:propertyName="x" android:valueTo="400"/>-->
+        <!--<propertyValuesHolder android:propertyName="y" android:valueTo="200"/>-->
+    <!--</objectAnimator>-->
 
     <HorizontalScrollView
+        android:id="@+id/scrHorizon"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="252dp"
-        tools:layout_editor_absoluteY="462dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.00"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <!--tools:layout_editor_absoluteX="252dp"-->
+        <!--tools:layout_editor_absoluteY="462dp"-->
+        <!--tools:layout_editor_absoluteX="252dp"-->
+        <!--tools:layout_editor_absoluteY="462dp"-->
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:padding="1dp">
-
-            <!--<TableLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_margin="@dimen/cardview_compat_inset_shadow"-->
-            <!--android:padding="0dp">-->
-
-            <!--<TableRow-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:background="@color/colorAccent"-->
-            <!--android:padding="0dp">-->
-
-            <!--android:background="@drawable/meir1"-->
-            <!--app:srcCompat="@drawable/meir1" />-->
-            <!--android:src="@drawable/meir1" />-->
-            <!--app:srcCompat="@drawable/oval"/>-->
-            <!--android:src="@drawable/oval"-->
 
 
             <ImageView
@@ -303,7 +303,8 @@
                 android:layout_marginStart="1dp"
                 android:layout_marginTop="1dp"
                 android:scaleType="centerCrop" />
-            <!--app:srcCompat="@drawable/meir1"-->
+            <!--android:src="@drawable/default1"-->
+            <!--android:background="@drawable/meeting"-->
             <!--android:scrollX="100dp"-->
             <!--android:scrollY="200dp"-->
 
@@ -327,12 +328,8 @@
                 android:layout_marginStart="1dp"
                 android:layout_marginTop="1dp"
                 android:scaleType="centerCrop" />
-            <!--app:srcCompat="@drawable/meir1"-->
-            <!--</TableRow>-->
-            <!--</TableLayout>-->
-
         </LinearLayout>
 
     </HorizontalScrollView>
-    <!--</LinearLayout>-->
+
 </android.support.constraint.ConstraintLayout>

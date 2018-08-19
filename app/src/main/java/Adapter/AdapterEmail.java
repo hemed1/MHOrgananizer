@@ -59,9 +59,27 @@ public class AdapterEmail extends RecyclerView.Adapter<AdapterEmail.EmailHolder>
     {
         ListItemEmail item = listItems.get(position);
 
+        if (item.getSubject()!=null && item.getSubject().length()>30)
+        {
+            holder.lblSubject.setText(item.getSubject().substring(0, 30));
+        }
+        else
+        {
+            holder.lblSubject.setText(item.getSubject());
+        }
+
+        if (item.getContent()!=null && item.getContent().length()>30)
+        {
+            holder.lblContent.setText(item.getContent().substring(0, 30));
+        }
+        else
+        {
+            holder.lblContent.setText(item.getContent());
+        }
+
         holder.lblSender.setText(item.getSender());
-        holder.lblSubject.setText(item.getSubject());
-        holder.lblContent.setText(item.getContent());
+        //holder.lblSubject.setText(item.getSubject());
+        //holder.lblContent.setText(item.getContent());
         holder.lblDateSent.setText(item.getDateSent());
         holder.lblDateSent.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         //TODO: holder.lblDateReceive.setText(item.getDateReceive());
@@ -110,7 +128,8 @@ public class AdapterEmail extends RecyclerView.Adapter<AdapterEmail.EmailHolder>
 
 
         @Override
-        public void onClick(View view) {
+        public void onClick(View view)
+        {
             ListItemEmail item = listItems.get(getAdapterPosition());
 
             Toast.makeText(context, item.getSender(), Toast.LENGTH_SHORT).show();

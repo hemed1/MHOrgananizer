@@ -41,7 +41,9 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
 {
     private Context                 context;
     private List<ListItemSong>      listItems;
+    public  MediaPlayer             mediaPlayer;
 
+    private final int               LENGTH_TO_SHOW = 34;
 
     // The listener must implement the events interface and passes messages up to the parent.
     private PersonalEvents.OnRecyclerViewItemClick      listener;
@@ -74,18 +76,18 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
 
         ListItemSong item = listItems.get(position);
 
-        if (item.getSongName().length()>30)
+        if (item.getSongName().length()>LENGTH_TO_SHOW)
         {
-            holder.lblSongName.setText(item.getSongName().substring(0, 30));
+            holder.lblSongName.setText(item.getSongName().substring(0, LENGTH_TO_SHOW));
         }
         else
         {
             holder.lblSongName.setText(item.getSongName());
         }
 
-        if (item.getArtist().length()>30)
+        if (item.getArtist().length()>LENGTH_TO_SHOW)
         {
-            holder.lblArtist.setText(item.getArtist().substring(0, 30));
+            holder.lblArtist.setText(item.getArtist().substring(0, LENGTH_TO_SHOW));
         }
         else
             {
@@ -99,15 +101,22 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
             File file = new File(item.getSongPath());
             if (file.exists() && !file.isDirectory())
             {
-                try {
+                try
+                {
                     Uri uri = Uri.parse(item.getSongPath());
-                    ActivityMusic.mediaPlayer = MediaPlayer.create(context, uri);
-                    if (ActivityMusic.mediaPlayer != null) {
-                        item.setDuration(ActivityMusic.mediaPlayer.getDuration());
+                    mediaPlayer = MediaPlayer.create(context, uri);
+                    //ActivityMusic.mediaPlayer = MediaPlayer.create(context, uri);
+                    //if (ActivityMusic.mediaPlayer != null)
+                    if (mediaPlayer != null)
+                    {
+                        item.setDuration(mediaPlayer.getDuration());
+                        //item.setDuration(ActivityMusic.mediaPlayer.getDuration());
                         SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss");
                         holder.lblLength.setText(dateFormat.format(new Date(item.getDuration())));
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     System.out.println("Get song duration - " + e.getMessage());
                 }
                 //item.setDuration(ActivityMusic.LoadMusicMediaWithSong(item.getSongPath()));
@@ -180,6 +189,13 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
 
             returnedData = item.getSongName();
 
+            if (mediaPlayer!=null)
+            {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
+
             Toast.makeText(context, returnedData, Toast.LENGTH_SHORT).show();
 
             if (listener != null)
@@ -187,22 +203,6 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongHolder>
                 // Now let's fire listener here
                 listener.setOnRecyclerViewItemPressed(item.getResourceID(), getAdapterPosition());
             }
-
-//            Intent intent = getIntent();
-//            intent.putExtra("returnedData",  returnedData);
-//
-//            Toast.makeText(this, "Come Back with ... " + returnedData, Toast.LENGTH_SHORT).show();
-//            context.setResult(RESULT_OK, intent);
-
-              //((ActivityMusic)context).SongResourceID = item.getResourceID();
-              //((ActivityMusic)context).mediaPlayer.create(((ActivityMusic)context).getApplicationContext(), item.getResourceID());
-
-//            Intent intent = new Intent(context, DetailsActivity.class);
-//            intent.putExtra("Name", item.getName());
-//            intent.putExtra("Description", item.getDescription());
-//            intent.putExtra("Rating", item.getRating());
-//
-//            context.startActivity(intent);
 
         }
     }

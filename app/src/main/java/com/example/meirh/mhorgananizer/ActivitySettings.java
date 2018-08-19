@@ -32,7 +32,7 @@ public class ActivitySettings extends AppCompatActivity
     private EditText        txtCheckMailInterval;
     private EditText        txtStorageSDCardName;
     private EditText        txtStorageLoadMode;
-    private CheckBox        chkStayOnLine;
+
 
     private Bundle          extras;
     private SharedPreferences myPrefs;
@@ -54,7 +54,6 @@ public class ActivitySettings extends AppCompatActivity
         txtCheckMailInterval = (EditText) this.findViewById(R.id.txtCheckMailInterval);
         txtStorageSDCardName = (EditText) this.findViewById(R.id.txtStorageSDCardName);
         txtStorageLoadMode = (EditText) this.findViewById(R.id.txtStorageLoadMode);
-        chkStayOnLine = (CheckBox) this.findViewById(R.id.chkStayOnLine);
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,8 +89,7 @@ public class ActivitySettings extends AppCompatActivity
         txtEmailAddress.setText(MainActivity.MailAdresss);
         txtPassword.setText(MainActivity.MailPassword);
         txtMailHostAddress.setText(MainActivity.MailHostAdress);
-        txtCheckMailInterval.setText(MainActivity.MailCheckMailInterval);
-        chkStayOnLine.setChecked(MainActivity.MailStayOnLine);
+        txtCheckMailInterval.setText(String.valueOf(MainActivity.MailCheckMailInterval));
         txtStorageSDCardName.setText(MainActivity.StorageSDCardName);
         txtStorageLoadMode.setText(String.valueOf(MainActivity.StorageLoadMode));
 
@@ -100,7 +98,6 @@ public class ActivitySettings extends AppCompatActivity
 //        txtPassword.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_PASSWORD));
 //        txtMailHostAddress.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS));
 //        txtCheckMailInterval.setText(extras.getString(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL));
-//        chkStayOnLine.setChecked(extras.getBoolean(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE));
 //        txtStorageSDCardName.setText(extras.getString(MainActivity.STORAGE_SDCARD_NAME));
 //        txtStorageLoadMode.setText(String.valueOf(extras.getInt(MainActivity.STORAGE_LOAD_MODE)));
     }
@@ -125,7 +122,6 @@ public class ActivitySettings extends AppCompatActivity
         editor.putString(MainActivity.SETTING_MAIL_EMAIL_PASSWORD, txtPassword.getText().toString());
         editor.putString(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS, txtMailHostAddress.getText().toString());  //TODO:
         editor.putString(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL, txtCheckMailInterval.getText().toString());
-        editor.putBoolean(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE, chkStayOnLine.isChecked());
 
         editor.commit();
     }
@@ -134,12 +130,23 @@ public class ActivitySettings extends AppCompatActivity
     {
         String result ="";
         int    pos;
+        InputStream inputStream;
+
+
 
         try
         {
-            //FileInputStream fileInputStream = openFileInput(PREFS_FILE_NAME);
-            InputStream inputStream = openFileInput(MainActivity.PREFS_FILE_NAME);
-            String path = new File(MainActivity.PREFS_FILE_NAME).getAbsolutePath();
+            File file = new File( "/" + MainActivity.PREFS_FILE_NAME);  // TODO: this.getExternalFilesDir(null).getAbsolutePath() +
+//            if (file.exists())
+//            {
+                inputStream = openFileInput(MainActivity.PREFS_FILE_NAME);      // TODO: file.getAbsolutePath()
+//            }
+//            else
+//            {
+//                return result;
+//            }
+            //FileInputStream fileInputStream = openFileInput(MainActivity.PREFS_FILE_NAME);
+            //String path = new File(MainActivity.PREFS_FILE_NAME).getAbsolutePath();
 
             if (inputStream!=null)
             {
@@ -177,7 +184,7 @@ public class ActivitySettings extends AppCompatActivity
                     pos = tmpLine.indexOf(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL);
                     if (pos>-1 && (pos + MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL.length() + 1 < tmpLine.length()))
                     {
-                        MainActivity.MailCheckMailInterval = tmpLine.substring(pos + MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL.length() + 2);
+                        MainActivity.MailCheckMailInterval = Integer.valueOf(tmpLine.substring(pos + MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL.length() + 2));
                     }
                     pos = tmpLine.indexOf(MainActivity.STORAGE_SDCARD_NAME);
                     if (pos>-1 && (pos + MainActivity.STORAGE_SDCARD_NAME.length() + 1 < tmpLine.length()))
@@ -188,11 +195,6 @@ public class ActivitySettings extends AppCompatActivity
                     if (pos>-1 && (pos + MainActivity.STORAGE_LOAD_MODE.length() + 1 < tmpLine.length()))
                     {
                         MainActivity.StorageLoadMode = Integer.valueOf(tmpLine.substring(pos + MainActivity.STORAGE_LOAD_MODE.length() + 2));
-                    }
-                    pos = tmpLine.indexOf(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE);
-                    if (pos>-1 && (pos + MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE.length() + 1 < tmpLine.length()))
-                    {
-                        MainActivity.MailStayOnLine = Boolean.valueOf(tmpLine.substring(pos + MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE.length() + 2));
                     }
                 }
 
@@ -215,11 +217,13 @@ public class ActivitySettings extends AppCompatActivity
     private void SaveByFileOnDisk()
     {
         String textToSave = "";
+        OutputStreamWriter outputStreamWriter;
+
 
         try
         {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
-                    openFileOutput(MainActivity.PREFS_FILE_NAME, Context.MODE_PRIVATE));    //Environment.getExternalStorageDirectory().getPath()+"/"+
+            File file = new File( "/" + MainActivity.PREFS_FILE_NAME);  // TODO: this.getExternalFilesDir(null).getAbsolutePath() +
+            outputStreamWriter = new OutputStreamWriter(openFileOutput(MainActivity.PREFS_FILE_NAME, Context.MODE_PRIVATE));    // TODO: file.getAbsolutePath()
 
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -230,7 +234,6 @@ public class ActivitySettings extends AppCompatActivity
             stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL + ": " + txtCheckMailInterval.getText().toString() + "\n");
             stringBuilder.append(MainActivity.STORAGE_SDCARD_NAME + ": " + txtStorageSDCardName.getText().toString() + "\n");
             stringBuilder.append(MainActivity.STORAGE_LOAD_MODE + ": " + txtStorageLoadMode.getText().toString() + "\n");
-            stringBuilder.append(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE + ": " + String.valueOf(chkStayOnLine.isChecked()) + "\n");
 
             textToSave = stringBuilder.toString();
             outputStreamWriter.write(textToSave);

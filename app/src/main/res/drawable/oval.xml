@@ -11,7 +11,11 @@
         <!--/>-->
 
     <stroke
-        android:color="#e6aa05"
+        android:color="@android:color/white"
         android:dashWidth="2dp"
-        android:width="2dp"/>
+        android:dashGap="@dimen/cardview_default_radius"
+        android:width="3dp"/>
+
+    <!--<solid-->
+        <!--android:color="@android:color/white"/>-->
 </shape>

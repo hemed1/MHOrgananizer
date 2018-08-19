@@ -59,7 +59,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
     private Bundle                  extras;
 
     MailReader                      mailReader;
-    Message[]                       Messages = null;
+    Message[]                       MessagesAll = null;
     TimerTask                       MailCheckTimerTask;
     Timer                           MailCheckTimer;
     public Thread                   CheckMailThread;
@@ -79,228 +79,71 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
         FillFoldersListView();
 
+        FetchMails();
+
         // Execute Asyncronic
-        mailReader.execute();
+        //mailReader.execute();
 
-        //Messages = mailReader.ReadMailImap();
-        //Messages = mailReader.ReadMailImap2();
-        //Messages = mailReader.ReadMailPop3();
         //SendEmail();
-
         //extras = getIntent().getExtras();
     }
 
 
-
-    private void SetIOControls()
+    private Message[] FetchMails()
     {
-        btnOpenMail = (Button)findViewById(R.id.btnOpenMail);
-        btnNewMail = (Button)findViewById(R.id.btnNewMail);
-        btnRefresh = (Button)findViewById(R.id.btnRefresh);
-        listFolders = (ListView) findViewById(R.id.listFolders);
-        lblEmailAddress = (TextView) findViewById(R.id.lblEmailAddress);
-        lblEmailTitle = (TextView) findViewById(R.id.lblEmailTitle);
-        lblFolderName = (TextView) findViewById(R.id.lblFolderName);
-        recyclerMain = (RecyclerView) findViewById(R.id.recyclerMain);
-
-        lblEmailTitle.setText("Hello " + MainActivity.MainUserName);
-        lblEmailAddress.setText(MainActivity.MailAdresss);
-        lblFolderName.setText("Inbox");
-
-        listFolders.bringToFront();
-        listFolders.setVisibility(View.INVISIBLE);
-
-        recyclerMain.setHasFixedSize(true);
-        recyclerMain.setLayoutManager(new LinearLayoutManager(this));
-        listItems = new ArrayList<>();  //new List<ListItemEmail>
-        adapterEmail = new AdapterEmail(this, listItems);
-
-        MailCheckTimerTask = new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                MailCheckTimer_onTick();
-            }
-        };
-
-        MailCheckTimer = new Timer();
-        IsTimerWork = false;
-
-        // Create the Child observer object that will fire the event
-        mailReader = new MailReader(ActivityMails.this, MainActivity.MailHostAdress, MainActivity.MailAdresss, MainActivity.MailPassword);
-        mailReader.IsHaveToCheckNewEmails = MainActivity.MailStayOnLine;
-
-        // Events
-        btnOpenMail.setOnClickListener(this);
-        btnNewMail.setOnClickListener(this);
-        btnRefresh.setOnClickListener(this);
-        lblFolderName.setOnClickListener(this);
-
-        // Register the listener for this object
-        mailReader.setOnMessagesLoaded(new PersonalEvents.OnMessageLoaded()
-        {
-            // Listen to event. wait here when the event invoked in child object.
-            @Override
-            public void onDataLoaded(Message[] messages)
-            {
-                mailReader_RecivedMessages(messages);
-            }
-        });
-
+        return FetchMails(false);
     }
 
-    // Fired from AdapterBaseList class (not from 'listFolder' control)
-    private void OnListClick(int listPositionIndex, String selectedItemText)          //AdapterView<?> adapterView, View view, int position, long arg3)
+    private Message[] FetchMails(boolean insertItem)
     {
-        listFolders.setVisibility(View.INVISIBLE);
 
-        System.out.println("Item index: " + listPositionIndex + "  Item value: " + selectedItemText);
+        MessagesAll = mailReader.FetchMails();
 
-        lblFolderName.setText(selectedItemText);
-        mailReader.FolderName = selectedItemText;
-
-        Message[] messages = mailReader.FetchMails();
-
-        FillList(messages);
-    }
-
-    private void mailReader_RecivedMessages(Message[] messages)
-    {
-        //System.out.println("Reach the event was fired with " + String.valueOf(messages.length) + " Messages/n");
-
-        CheckMailThread = null;
-
-        if (messages.length > 0)
-        {
-            FillList(messages);
-        }
+        FillList(MessagesAll, insertItem);
 
         if (mailReader.IsHaveToCheckNewEmails && !IsTimerWork)
         {
             TimerRun();
-         }
-
-        //mailReader.CheckMailThread = null;
-        //if (mailReader.IsHaveToCheckNewEmails)
-        //{
-        //    mailReader.CheckNewMailsAsyncThread();
-        //}
-    }
-
-    /// Not in Use
-    public boolean CheckNewMails()
-    {
-        boolean  isFoundNewMessages = false;
-        final Message[]  messages = new Message[0];
-        Store   store = null;
-        Folder  folder = null;
-        Object[]    mailObjects;
-
-
-        try
-        {
-            //Toast.makeText(context,"Checking from new mails ...", Toast.LENGTH_SHORT).show();
-
-            while (mailReader.IsHaveToCheckNewEmails)
-            {
-                Thread.sleep(4000);
-
-                System.out.println("'CheckNewMails' check new mails In loop/n/n" + (new Date()).toString());
-
-                // Connect to email server
-                mailObjects = mailReader.ConnectServer();     // folder / store
-
-                folder = (Folder) mailObjects[0];
-                store = (Store) mailObjects[1];
-
-                mailReader.LastMessageIndexWasRead = folder.getMessageCount()- 2;  // TODO: Delete
-
-                if (folder.getMessageCount() > mailReader.LastMessageIndexWasRead)
-                {
-                    System.out.println("'CheckNewMail()' found new mails: " + new Date().toString()+"/n");
-                    isFoundNewMessages = true;
-                    break;
-                }
-            }
-
-            if (folder != null)
-            {
-                folder.close(true);
-                store.close();
-            }
-
-            if (isFoundNewMessages)
-            {
-                Messages = mailReader.FetchMails();
-
-                FillList(Messages);
-
-                //TryFunc();
-
-                CheckMailThread = null;
-                //stopThread(this);
-            }
-        }
-        catch (Exception ex)
-        {
-            //System.out.println("Exception rise at 'CheckNewMails': " + ex.getMessage());
-            ex.printStackTrace();
         }
 
-        //folder = null;
-        //store = null;
+        // Execute Asyncronic
+        //mailReader.execute();
 
-        return isFoundNewMessages;
+        return MessagesAll;
     }
 
-    /// Not in Use
-    public void CheckNewMailsAsyncThread()
+    private void FillList(Message[]  messages, boolean insertItem)
     {
-
-        CheckMailThread = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                if (mailReader.CheckNewMails())
-                {
-                    //Message[] messages = mailReader.FetchMails();
-                    //FillList(messages);
-                }
-            }
-        };
-
-        CheckMailThread.start();
-
-    }
-
-    private void TryFunc()
-    {
-        for (int i=1; i<100; i++)
-        {
-            System.out.println("Loop in " + String.valueOf(i));
-        }
-    }
-
-    private void FillList(Message[]  messages) //throws IOException
-    {
-
-        //listItems = new ArrayList<>();  //new List<ListItemEmail>
 
         for (int i=messages.length-1; i>=0; i--)
         {
             ListItemEmail item = AddItem(messages[i]);
-            //listItems.add(item);
+            if (!insertItem)
+            {
+                listItems.add(item);
+            }
+            else
+            {
+                listItems.add(0, item);
+            }
         }
 
-        Messages = messages;
+        MessagesAll = messages;
 
         adapterEmail = new AdapterEmail(this, listItems);
-        recyclerMain.setAdapter(adapterEmail);
+
+        // set thread in background
+        runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                recyclerMain.setAdapter(adapterEmail);
+            }
+        });
 
         System.out.println("Items count: " + String.valueOf(listItems.size()));
-        //Toast.makeText(this,"Mails count: " + String.valueOf(recyclerMain.getAdapter().getItemCount()), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Mails count: " + String.valueOf(recyclerMain.getAdapter().getItemCount()), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -337,39 +180,204 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 //            {
 //                item.setContent(message.getContent().toString());
 //            }
-
             item.setContent("Content of message");
             //item.setContent(message.getContent().toString());
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
             item.setDateSent(dateFormat.format(message.getSentDate()));
             item.setDateReceive(dateFormat.format(message.getReceivedDate()));
 
             ImageView imageView = new ImageView(this);
-            imageView.setImageDrawable((Drawable) getDrawable(R.drawable.meir1));       // TODO: put right picture
-
-            //imageView.setImageResource(R.drawable.purim_15);
-            // Set picture from SD-Card
-            // imageView.setImageBitmap(setPicFromSDCard());
+            imageView.setImageDrawable((Drawable) getDrawable(R.mipmap.meir_oval));       // TODO: put right picture
+            //imageView.setImageDrawable((Drawable) getDrawable(R.drawable.mail_read4));       // TODO: put right picture
             item.setImgItem(imageView);
 
-            listItems.add(item);
+            //listItems.add(item);
             //listItems.add(1, item);   // TODO: Insert
         }
-        catch (NoSuchProviderException e) {
+        catch (NoSuchProviderException e)
+        {
             e.printStackTrace();
-            //System.exit(1);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            //System.exit(2);
         }
-//        catch (IOException e) {
-//            e.printStackTrace();
-//            //System.exit(2);
-//        }
+        catch (MessagingException e)
+        {
+            e.printStackTrace();
+        }
 
-        //recyclerMain.setAdapter(adapterEmail);
 
         return item;
+    }
+
+    private void SetIOControls()
+    {
+        btnOpenMail = (Button)findViewById(R.id.btnOpenMail);
+        btnNewMail = (Button)findViewById(R.id.btnNewMail);
+        btnRefresh = (Button)findViewById(R.id.btnRefresh);
+        listFolders = (ListView) findViewById(R.id.listFolders);
+        lblEmailAddress = (TextView) findViewById(R.id.lblEmailAddress);
+        lblEmailTitle = (TextView) findViewById(R.id.lblEmailTitle);
+        lblFolderName = (TextView) findViewById(R.id.lblFolderName);
+        recyclerMain = (RecyclerView) findViewById(R.id.recyclerMain);
+
+        lblEmailTitle.setText("Hello " + MainActivity.MainUserName);
+        lblEmailAddress.setText(MainActivity.MailAdresss);
+        lblFolderName.setText("Inbox");
+
+        listFolders.bringToFront();
+        listFolders.setVisibility(View.INVISIBLE);
+
+        recyclerMain.setHasFixedSize(true);
+        recyclerMain.setLayoutManager(new LinearLayoutManager(this));
+        listItems = new ArrayList<>();  //new List<ListItemEmail>
+        IsTimerWork = false;
+
+        // Create the Child observer object that will fire the event
+        mailReader = new MailReader(ActivityMails.this, MainActivity.MailHostAdress, MainActivity.MailAdresss, MainActivity.MailPassword);
+        mailReader.IsHaveToCheckNewEmails = (MainActivity.MailCheckMailInterval>0);
+
+        // Events
+        btnOpenMail.setOnClickListener(this);
+        btnNewMail.setOnClickListener(this);
+        btnRefresh.setOnClickListener(this);
+        lblFolderName.setOnClickListener(this);
+
+        // Register the listener for this object
+        mailReader.setOnMessagesLoaded(new PersonalEvents.OnMessageLoaded()
+        {
+            // Listen to event. wait here when the event invoked in child object.
+            @Override
+            public void onDataLoaded(Message[] messages)
+            {
+                mailReader_RecivedMessages(messages);
+            }
+        });
+
+    }
+
+    private void mailReader_RecivedMessages(Message[] messages)
+    {
+
+        if (mailReader.IsHaveToCheckNewEmails)
+        {
+            TimerStop();
+        }
+
+        if (messages.length > 0)
+        {
+            FillList(messages, false);
+        }
+
+        if (mailReader.IsHaveToCheckNewEmails && !IsTimerWork)
+        {
+            TimerRun();
+        }
+
+    }
+
+    private void TimerRun()
+    {
+        System.out.println("Run timer " + (new Date()).toString());
+
+        IsTimerWork = true;
+
+        MailCheckTimerTask = new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                MailCheckTimer_onTick();
+            }
+        };
+
+
+        // Run the Timer
+        MailCheckTimer = new Timer();
+        int interval = MainActivity.MailCheckMailInterval * 1000 * 60;
+        MailCheckTimer.schedule(MailCheckTimerTask, interval, interval);
+    }
+
+    private void TimerStop()
+    {
+        System.out.println("Stop timer " + (new Date()).toString());
+
+        if (IsTimerWork)
+        {
+            MailCheckTimer.cancel();
+            MailCheckTimer.purge();
+            MailCheckTimerTask.cancel();
+            MailCheckTimer = null;
+            MailCheckTimerTask=null;
+            //MailCheckTimerTask.run();
+        }
+
+        IsTimerWork = false;
+    }
+
+    private void MailCheckTimer_onTick()
+    {
+        boolean isFoundNewMessages = false;
+
+        System.out.println("Run in Timer " + new Date().toString() + "/n");
+
+        if (mailReader.IsHaveToCheckNewEmails)
+        {
+            TimerStop();
+
+            isFoundNewMessages = mailReader.CheckNewMails();
+
+            if (isFoundNewMessages)
+            {
+                FetchMails(true);
+            }
+            else
+            {
+                TimerRun();
+            }
+        }
+    }
+
+
+
+    @Override
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
+            case R.id.btnOpenMail:
+                goBack();
+                break;
+
+            case R.id.btnRefresh:
+                TimerStop();
+                listItems = new ArrayList<>();
+                FetchMails();
+                break;
+
+            case R.id.btnNewMail:
+                //TimerStop();
+                //TimerRun();
+                break;
+
+            case R.id.lblFolderName:
+                TimerStop();
+                listFolders.setVisibility(View.VISIBLE);
+                 //TimerRun();
+                break;
+        }
+    }
+
+    // Fired from AdapterBaseList class (not from 'listFolder' control)
+    private void OnListClick(int listPositionIndex, String selectedItemText)          //AdapterView<?> adapterView, View view, int position, long arg3)
+    {
+        listFolders.setVisibility(View.INVISIBLE);
+
+        System.out.println("Item index: " + listPositionIndex + "  Item value: " + selectedItemText);
+
+        lblFolderName.setText(selectedItemText);
+        mailReader.FolderName = selectedItemText;
+
+        FetchMails();
+
     }
 
     private String extractFromAddress(String from)
@@ -405,7 +413,6 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
 
         TimerStop();
 
-        mailReader.IsHaveToCheckNewEmails = false;
         mailReader.CheckMailThread = null;
 
         returnedData = "Mail handle was finished";
@@ -419,55 +426,7 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         finish();
     }
 
-    private void TimerRun()
-    {
-        System.out.println("Run timer " + (new Date()).toString());
 
-        IsTimerWork = true;
-        // Run the Timer
-        MailCheckTimer.schedule(MailCheckTimerTask, 100, 9000); // MainActivity.MailCheckMailInterval
-    }
-
-    private void TimerStop()
-    {
-        System.out.println("Stop timer " + (new Date()).toString());
-        MailCheckTimer.cancel();
-        //MailCheckTimer.purge();
-        IsTimerWork = false;
-    }
-
-    @Override
-    public void onClick(View view)
-    {
-        switch (view.getId())
-        {
-            case R.id.btnOpenMail:
-                goBack();
-                break;
-
-            case R.id.btnRefresh:
-                TimerStop();
-                mailReader.LastMessageIndexWasRead = 0;
-                Messages = mailReader.FetchMails();
-                FillList(Messages);
-                TimerRun();
-                break;
-
-            case R.id.btnNewMail:
-                //TimerStop();
-                //ListItemEmail item = AddItem(Messages[0]);
-                //listItems.add(1, item);   // TODO: Insert
-                //recyclerMain.setAdapter(adapterEmail);
-                //TimerRun();
-                break;
-
-            case R.id.lblFolderName:
-                TimerStop();
-                listFolders.setVisibility(View.VISIBLE);
-                 //TimerRun();
-                break;
-        }
-    }
 
     private void FillFoldersListView()
     {
@@ -497,19 +456,6 @@ public class ActivityMails extends AppCompatActivity implements View.OnClickList
         adapterFoldersList.FillList();
     }
 
-    private void MailCheckTimer_onTick()
-    {
-        System.out.println("Run in Timer " + new Date().toString() + "/n");
-
-        //MailCheckTimer.cancel();
-        //MailCheckTimer.purge();
-        //MailCheckTimerTask.run();
-        if (mailReader.IsHaveToCheckNewEmails)
-        {
-            //Toast.makeText(this,"Checking new mails ...", Toast.LENGTH_SHORT).show();
-            mailReader.CheckNewMails();
-        }
-    }
 }
 
 //        for (int i=0; i<7; i++)

@@ -9,24 +9,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:paddingTop="5dp"
+    android:paddingTop="7dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardItemMail"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_margin="@dimen/cardview_compat_inset_shadow"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true">
+        android:layout_height="65dp"
+        android:layout_marginStart="1dp">
 
         <TableRow
             android:id="@+id/tableRowMail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="1dp">
-            <!--android:background="@color/card_view_background_mail"-->
+            <!--Done in func 'SetCardBackColor'-->
+            <!--android:background="@color/card_view_background_mail" -->
 
             <ImageView
                 android:id="@+id/imgItem"
@@ -34,31 +33,33 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:paddingTop="0dp"
-                android:src="@drawable/mail_read4"
-                app:srcCompat="@drawable/mail_read4" />
-
+                app:srcCompat="@mipmap/meir_oval" />
+            <!--android:src="@drawable/mail_read4"-->
+            <!--android:src="@mipmap/meir_oval"-->
+            <!--app:srcCompat="@drawable/oval"-->
 
             <LinearLayout
+                android:id="@+id/layLinearMain"
                 android:layout_width="230dp"
                 android:layout_height="match_parent"
-                android:paddingStart="14dp"
+                android:paddingStart="10dp"
                 android:paddingTop="1dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/lblSender"
                     android:layout_width="match_parent"
-                    android:layout_height="15dp"
+                    android:layout_height="16dp"
                     android:layout_weight="2"
                     android:text="Sender"
-                    android:textSize="16sp"
                     android:textColor="@color/titles_card_foreground_main_mail"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/lblSubject"
                     android:layout_width="match_parent"
-                    android:layout_height="16dp"
+                    android:layout_height="15dp"
                     android:layout_weight="1"
                     android:text="Subject"
                     android:textColor="@color/titles_card_foreground_second_mail"
@@ -67,7 +68,7 @@
                 <TextView
                     android:id="@+id/lblContent"
                     android:layout_width="match_parent"
-                    android:layout_height="16dp"
+                    android:layout_height="14dp"
                     android:layout_weight="2"
                     android:text="Content"
                     android:textSize="14sp"
@@ -84,6 +85,7 @@
                 android:text="Sent date"
                 android:textColor="@color/titles_card_foreground_second_mail"
                 android:textSize="12sp"
+                android:paddingTop="6dp"
                 android:visibility="visible" />
 
         </TableRow>

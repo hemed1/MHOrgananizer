@@ -1,12 +1,18 @@
 package com.example.meirh.mhorgananizer;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Matrix;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,20 +33,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String       MailAdresss;
     public static String       MailPassword;
     public static String       MailHostAdress;      // "imap.gmail.com"
-    public static String       MailCheckMailInterval;
-    public static boolean      MailStayOnLine;
+    public static int          MailCheckMailInterval;
     public static String       StorageSDCardName;
     // 1: Internal, 2: External, 3: Internal, External
     public static Integer      StorageLoadMode;
 
     public static final String  PREFS_NAME = "MHOrganaizerPrefsFile";
-    public static final String  PREFS_FILE_NAME = "MHOrganaizer-Config.txt";    // Environment.getExternalStorageDirectory().getPath()+"/"+
+    public static final String  PREFS_FILE_NAME = "MHOrganaizer-Config.txt";
     public static final String  SETTING_MAIL_USER_NAME = "UserName";
     public static final String  SETTING_MAIL_EMAIL_ADDRESS = "EmailAddress";
     public static final String  SETTING_MAIL_EMAIL_PASSWORD = "EmailPassword";
     public static final String  SETTING_MAIL_EMAIL_HOST_ADDRESS = "EmailHostAddress";
     public static final String  SETTING_MAIL_EMAIL_CHECK_INTERVAL = "EmailCheckMailInterval";
-    public static final String  SETTING_MAIL_EMAIL_STAY_ONLINE = "MailStayOnLine";
     public static final String  STORAGE_SDCARD_NAME = "StorageSDCardName";
     public static final String  STORAGE_LOAD_MODE = "StorageLoadMode";
 
@@ -57,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public final int    REQUEST_CODE_MEETINGS = 4;
     public final int    REQUEST_CODE_SETTING = 5;
 
+    private int                 deviceWidth;
 
 
     @Override
@@ -73,18 +78,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lblMainTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
     }
 
+
+    public static void FadeInPicture(final Context context, final ImageView imageView, final int fadeMode)
+    {
+        Handler handler = new Handler();
+
+        handler.postDelayed(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (fadeMode==1)
+                {
+                    Animation animationFadeIn = AnimationUtils.loadAnimation(context, R.anim.anim_fade_in);
+                    imageView.startAnimation(animationFadeIn);
+                }
+                else
+                {
+                    Animation animationFadeOut = AnimationUtils.loadAnimation(context, R.anim.anim_fade_out);
+                    imageView.startAnimation(animationFadeOut);
+                }
+            }
+        }, 100);
+    }
+
     @Override
     public void onClick(View view)
     {
         switch (view.getId())
         {
             case R.id.imageMail:
+                FadeInPicture(getApplicationContext(), imageMails, 2);
                 Intent intentMail = new Intent(MainActivity.this, ActivityMails.class);
                 intentMail.putExtra(MainActivity.SETTING_MAIL_USER_NAME, MainUserName);
                 intentMail.putExtra(MainActivity.SETTING_MAIL_EMAIL_ADDRESS, MailAdresss);
                 intentMail.putExtra(MainActivity.SETTING_MAIL_EMAIL_PASSWORD, MailPassword);
                 intentMail.putExtra(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS, MailHostAdress);
-                intentMail.putExtra(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE, MailStayOnLine);
                 startActivityForResult(intentMail, REQUEST_CODE_MAILS);
                 break;
 
@@ -102,14 +131,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.imageSetting:
+                FadeInPicture(getApplicationContext(), imageSetting, 2);
                 Intent intentSetting = new Intent(MainActivity.this, ActivitySettings.class);
                 intentSetting.putExtra(MainActivity.SETTING_MAIL_USER_NAME, MainUserName);
                 intentSetting.putExtra(MainActivity.SETTING_MAIL_EMAIL_ADDRESS, MailAdresss);
                 intentSetting.putExtra(MainActivity.SETTING_MAIL_EMAIL_PASSWORD, MailPassword);
                 intentSetting.putExtra(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS, MailHostAdress);
                 intentSetting.putExtra(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL, MailCheckMailInterval);
-                intentSetting.putExtra(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE, MailStayOnLine);
-
                 startActivityForResult(intentSetting, REQUEST_CODE_SETTING);
                 break;
         }
@@ -122,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         StorageLoadMode=1;
         StorageSDCardName="";
         MailHostAdress = "imap.gmail.com";
+        MailCheckMailInterval = 0;
 
         LoadByFileOnDisk();
     }
@@ -149,9 +178,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             MailHostAdress = prefs.getString(MainActivity.SETTING_MAIL_EMAIL_HOST_ADDRESS, "Not Found");
         }
-        if (prefs.contains(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE))
+        if (prefs.contains(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL))
         {
-            MailStayOnLine = prefs.getBoolean(MainActivity.SETTING_MAIL_EMAIL_STAY_ONLINE, false);
+            MailCheckMailInterval = prefs.getInt(MainActivity.SETTING_MAIL_EMAIL_CHECK_INTERVAL, 0);
         }
 
     }
@@ -203,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     pos = tmpLine.indexOf(SETTING_MAIL_EMAIL_CHECK_INTERVAL);
                     if (pos>-1 && (pos + SETTING_MAIL_EMAIL_CHECK_INTERVAL.length() + 1 < tmpLine.length()))
                     {
-                        MailCheckMailInterval = tmpLine.substring(pos + SETTING_MAIL_EMAIL_CHECK_INTERVAL.length() + 2);
+                        MailCheckMailInterval = Integer.valueOf(tmpLine.substring(pos + SETTING_MAIL_EMAIL_CHECK_INTERVAL.length() + 2));
                     }
                     pos = tmpLine.indexOf(STORAGE_SDCARD_NAME);
                     if (pos>-1 && (pos + STORAGE_SDCARD_NAME.length() + 1 < tmpLine.length()))
@@ -214,11 +243,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (pos>-1 && (pos + MainActivity.STORAGE_LOAD_MODE.length() + 1 < tmpLine.length()))
                     {
                         MainActivity.StorageLoadMode = Integer.valueOf(tmpLine.substring(pos + MainActivity.STORAGE_LOAD_MODE.length() + 2));
-                    }
-                    pos = tmpLine.indexOf(SETTING_MAIL_EMAIL_STAY_ONLINE);
-                    if (pos>-1 && (pos + SETTING_MAIL_EMAIL_STAY_ONLINE.length() + 1 < tmpLine.length()))
-                    {
-                        MailStayOnLine = Boolean.valueOf(tmpLine.substring(pos + SETTING_MAIL_EMAIL_STAY_ONLINE.length() + 2));
                     }
                 }
 
@@ -263,6 +287,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imageMusic.setOnClickListener(this);
         imageMeetings.setOnClickListener(this);
         imageSetting.setOnClickListener(this);
+
+        DisplayMetrics metrics = this.getResources().getDisplayMetrics();
+        deviceWidth = metrics.widthPixels;
+        //deviceWidth = this.getWindow().getDecorView().getWidth();
+
+        FadeInPicture(getApplicationContext(),imageMails, 1);
+        FadeInPicture(getApplicationContext(),imageMusic, 1);
+        FadeInPicture(getApplicationContext(), imageMeetings, 1);
+        FadeInPicture(getApplicationContext(), imageSetting, 1);
+
+        //imageMusic.setBackgroundResource(R.drawable.default1);
+
+        //SetImagesSize();
+    }
+
+    private void SetImagesSize()
+    {
+        int picWidth;
+
+
+        picWidth = (deviceWidth - (3 * 30)) / 2;
+
+        imageMusic.setMinimumWidth(picWidth);
+        imageMusic.setMaxWidth(picWidth);
+        imageMails.setMinimumWidth(picWidth);
+        imageSetting.setMinimumWidth(picWidth);
+        imageMeetings.setMinimumWidth(picWidth);
+
+        //imgSongArtist1.setScaleType(ImageView.ScaleType.CENTER_CROP);
     }
 
     /**

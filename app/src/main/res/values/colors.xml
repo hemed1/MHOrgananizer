@@ -12,7 +12,7 @@
 
     <color name="card_view_background_player">#ffffff</color>
 
-    <color name="card_view_background_mail">#232122</color>
+    <color name="card_view_background_mail">#2d2a2b</color>
     <color name="card_view_background_second_mail">#232122</color>
 
     <color name="titles_card_foreground_main_mail">#ffffff</color>

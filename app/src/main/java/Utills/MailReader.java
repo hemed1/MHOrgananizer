@@ -38,7 +38,7 @@ import com.example.meirh.mhorgananizer.ActivityMails;
 import com.example.meirh.mhorgananizer.MainActivity;
 
 
-public class MailReader extends AsyncTask<Void, Void, Message[]>
+public class MailReader     //extends AsyncTask<Void, Void, Message[]>
 {
 
     private String                              HostAddress = "imap.gmail.com";         //"pop.gmail.com";
@@ -85,51 +85,48 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         FolderName = "INBOX";
     }
 
-    @Override
-    protected void onCancelled()
-    {
-        super.onCancelled();
-        CheckMailThread=null;
-    }
-
-    @Override
-    protected void onProgressUpdate(Void... values)
-    {
-        super.onProgressUpdate(values);
-    }
-
-    @Override
-    protected void onPreExecute()
-    {
-        super.onPreExecute();
-        progressDialog = ProgressDialog.show(context, "Reciveing Mails... ", "Reading mails...", false);
-    }
-
-    @Override
-    protected Message[] doInBackground(Void... params)
-    {
-        Message[] messages = new Message[0];
-
-        messages = FetchMails();
-
-        //TryMe();
-
-        return messages;
-    }
-
-    @Override
-    protected void onPostExecute(Message[] messages)
-    {
-        super.onPostExecute(messages);
-
-        progressDialog.dismiss();
-
-        if (listener != null)
-        {
-            // Now let's fire listener here
-            listener.onDataLoaded(messages);
-        }
-    }
+//    @Override
+//    protected void onCancelled()
+//    {
+//        super.onCancelled();
+//        CheckMailThread=null;
+//    }
+//    @Override
+//    protected void onProgressUpdate(Void... values)
+//    {
+//        super.onProgressUpdate(values);
+//    }
+//
+//    @Override
+//    protected void onPreExecute()
+//    {
+//        super.onPreExecute();
+//        progressDialog = ProgressDialog.show(context, "Reciveing Mails... ", "Reading mails...", false);
+//    }
+//    @Override
+//    protected Message[] doInBackground(Void... params)
+//    {
+//        Message[] messages = new Message[0];
+//
+//        messages = FetchMails();
+//
+//        //progressDialog.dismiss();
+//
+//        return messages;
+//    }
+//    @Override
+//    protected void onPostExecute(Message[] messages)
+//    {
+//        super.onPostExecute(messages);
+//
+//        progressDialog.dismiss();
+//
+////        if (listener != null)
+////        {
+////            // Now let's fire listener here
+////            listener.onDataLoaded(messages);
+////        }
+//    }
 
 
     public Message[] FetchMails()
@@ -142,14 +139,14 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 
         //progressDialog.dismiss();
 
-        // TODO:  Meybe Yes
-//        if (listener != null)
-//        {
-//            // Now let's fire listener here
-//            listener.onDataLoaded(MessageResults);
-//        }
+        //Messages = ReadMailImap2();
+        //Messages = ReadMailPop3();
 
-        //Toast.makeText(context,"Finish to fetch mails. Items count: " + String.valueOf(messages.length), Toast.LENGTH_LONG).show();
+        ///if (listener != null && messages.length > 0)
+        //{
+        //    // Now let's fire listener here
+        //    listener.onDataLoaded(MessageResults);
+        //}
 
         return messages;
     }
@@ -192,13 +189,10 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
             }
             else
             {
-                fetachMessageFrom = tmpMessageCount - MainActivity.DEFUALT_MESSAGES_TO_READ -1;
+                fetachMessageFrom = tmpMessageCount - MainActivity.DEFUALT_MESSAGES_TO_READ + 1;
             }
             fetachMessageUntil = tmpMessageCount;
             LastMessageIndexWasRead = tmpMessageCount;
-
-            //Toast.makeText(context,"Fetching " + String.valueOf(fetachMessageUntil-fetachMessageFrom) + "mails from server ...", Toast.LENGTH_LONG).show();
-            //System.out.println("Fetching " + String.valueOf(fetachMessageUntil-fetachMessageFrom) + "mails from server ...");
 
             messages = folder.getMessages(fetachMessageFrom, fetachMessageUntil);
 
@@ -336,24 +330,6 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
 
     }
 
-//    public void TryMeAsync()
-//    {
-//
-//        Thread thread = new Thread() {
-//            @Override
-//            public void run()
-//            {
-//                if (listener != null)
-//                {
-//                    // Now let's fire listener here
-//                    listener.onDataLoaded(new Message[0]);
-//                }
-//            }
-//        };
-//
-//        thread.start();
-//    }
-
     public boolean CheckNewMails()
     {
         boolean  isFoundNewMessages = false;
@@ -362,42 +338,35 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         Object[]    mailObjects;
 
 
+
         try
         {
             //Toast.makeText(context,"Checking new mails ...", Toast.LENGTH_SHORT).show();
 
-            //while (IsHaveToCheckNewEmails)
+            System.out.println("'CheckNewMails' check new mails In loop  " + (new Date()).toString() + "/n");
+
+            // Connect to email server
+            mailObjects = ConnectServer();
+
+            if (mailObjects==null || mailObjects.length==0 || mailObjects[0]==null)
+            {
+                return false;
+            }
+
+            folder = (Folder) mailObjects[0];
+            store = (Store) mailObjects[1];
+
+            if (folder.getMessageCount() > LastMessageIndexWasRead)
+            {
+                System.out.println("'CheckNewMail()' found new mails" + new Date().toString()+"/n");
+                isFoundNewMessages = true;
+            }
+
+            //if (folder.hasNewMessages()) // TODO: this instead
             //{
-                //Thread.sleep(6000);     //Long.valueOf(MainActivity.MailCheckMailInterval) * 3600 * 1000);
-
-                System.out.println("'CheckNewMails' check new mails In loop  " + (new Date()).toString() + "/n");
-
-                // Connect to email server
-                mailObjects = ConnectServer();     // folder / store
-
-                if (mailObjects==null || mailObjects.length==0 || mailObjects[0]==null)
-                {
-                    return false;
-                }
-
-                folder = (Folder) mailObjects[0];
-                store = (Store) mailObjects[1];
-
-                //LastMessageIndexWasRead = folder.getMessageCount() - 2;  // TODO: Delete
-
-                if (folder.getMessageCount() > LastMessageIndexWasRead)
-                {
-                    System.out.println("'CheckNewMail()' found new mails" + new Date().toString()+"/n");
-                    isFoundNewMessages = true;
-                    //break;
-                }
-
-                //if (folder.hasNewMessages()) // TODO: this instead
-                //{
-                //    System.out.println("'CheckNewMail()' found new mails" + new Date().toString()+"/n");
-                //    isFoundNewMessages = true;
-                //    break;
-                //}
+            //    System.out.println("'CheckNewMail()' found new mails" + new Date().toString()+"/n");
+            //    isFoundNewMessages = true;
+            //    break;
             //}
 
             if (folder != null)
@@ -406,32 +375,16 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                 store.close();
             }
 
-            if (isFoundNewMessages)
-            {
-                MessageResults = FetchMails();
-
-                CheckMailThread = null;
-                //stopThread(this);
-
-                if (listener != null)
-                {
-                    // Now let's fire listener here
-                    listener.onDataLoaded(MessageResults);
-                }
-            }
-        }
+          }
         catch (Exception ex)
         {
-            //System.out.println("Exception rise at 'CheckNewMails': " + ex.getMessage());
             ex.printStackTrace();
         }
-
-        //folder = null;
-        //store = null;
 
         return isFoundNewMessages;
     }
 
+    // No in use
     public void CheckNewMailsAsyncThread()
     {
 
@@ -446,14 +399,14 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
                     CheckMailThread=null;
                     //stopThread(this);
 
-                    MessageResults = ReadMailImap();
+                    MessageResults = FetchMails();
 
-                    if (listener != null)
-                    {
-                        System.out.println("Going to fire event " + new Date().toString()+"/n");
-                        // Now let's fire listener here
-                        listener.onDataLoaded(MessageResults);
-                    }
+//                    if (listener != null)
+//                    {
+//                        System.out.println("Going to fire event " + new Date().toString()+"/n");
+//                        // Now let's fire listener here
+//                        listener.onDataLoaded(MessageResults);
+//                    }
                 }
             }
 
@@ -609,10 +562,11 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     public void printEnvelope(Message message) throws Exception
     {
         Address[] a;
+
         // FROM
         if ((a = message.getFrom()) != null)
         {
-            for (int j = 0; j < 2; j++)
+            for (int j = 0; j < 1; j++)
             {
                 System.out.println(("FROM: " + a[j]).toString());
             }
@@ -621,7 +575,7 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         // TO
         if ((a = message.getRecipients(Message.RecipientType.TO)) != null)
         {
-            for (int j = 0; j < 2; j++)
+            for (int j = 0; j < a.length; j++)
             {
                 System.out.println(("TO: " + a[j]).toString());
             }
@@ -632,6 +586,9 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         System.out.println("Subject : " + subject);
         System.out.println("Received Date : " + receivedDate.toString());
         System.out.println("Content : " + content);
+        //System.out.println("Content : " + message.getDescription());
+        //System.out.println("Content : " + message.getFileName());
+
         getContent(message);
     }
 
@@ -650,8 +607,8 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         }
         catch (Exception ex)
         {
-            System.out.println("Exception arise at get Content");
-            ex.printStackTrace();
+            System.out.println("Exception arise at get Content: " + ex.getMessage());
+            //ex.printStackTrace();
         }
     }
 
@@ -659,6 +616,8 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
     {
         // Dump input stream ..
         InputStream is = p.getInputStream();
+
+        //p.getHeader("a");
         // If "is" is not already buffered, wrap a BufferedInputStream
         // around it.
         if (!(is instanceof BufferedInputStream))
@@ -708,5 +667,82 @@ public class MailReader extends AsyncTask<Void, Void, Message[]>
         return LastMessageIndexWasRead;
     }
 
+    public boolean CheckNewMailsOld()
+    {
+        boolean  isFoundNewMessages = false;
+        Store   store = null;
+        Folder  folder = null;
+        Object[]    mailObjects;
+
+
+        try
+        {
+            //Toast.makeText(context,"Checking new mails ...", Toast.LENGTH_SHORT).show();
+
+            //while (IsHaveToCheckNewEmails)
+            //{
+            //Thread.sleep(6000);     //Long.valueOf(MainActivity.MailCheckMailInterval) * 3600 * 1000);
+
+            System.out.println("'CheckNewMails' check new mails In loop  " + (new Date()).toString() + "/n");
+
+            // Connect to email server
+            mailObjects = ConnectServer();     // folder / store
+
+            if (mailObjects==null || mailObjects.length==0 || mailObjects[0]==null)
+            {
+                return false;
+            }
+
+            folder = (Folder) mailObjects[0];
+            store = (Store) mailObjects[1];
+
+            //LastMessageIndexWasRead = folder.getMessageCount() - 2;  // TODO: Delete
+
+            if (folder.getMessageCount() > LastMessageIndexWasRead)
+            {
+                System.out.println("'CheckNewMail()' found new mails" + new Date().toString()+"/n");
+                isFoundNewMessages = true;
+                //break;
+            }
+
+            //if (folder.hasNewMessages()) // TODO: this instead
+            //{
+            //    System.out.println("'CheckNewMail()' found new mails" + new Date().toString()+"/n");
+            //    isFoundNewMessages = true;
+            //    break;
+            //}
+            //}
+
+            if (folder != null)
+            {
+                folder.close(true);
+                store.close();
+            }
+
+            if (isFoundNewMessages)
+            {
+                MessageResults = FetchMails();
+
+                CheckMailThread = null;
+                //stopThread(this);
+
+//                if (listener != null)
+//                {
+//                    // Now let's fire listener here
+//                    listener.onDataLoaded(MessageResults);
+//                }
+            }
+        }
+        catch (Exception ex)
+        {
+            //System.out.println("Exception rise at 'CheckNewMails': " + ex.getMessage());
+            ex.printStackTrace();
+        }
+
+        //folder = null;
+        //store = null;
+
+        return isFoundNewMessages;
+    }
 
 }
